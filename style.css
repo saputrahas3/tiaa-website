@@ -306,6 +306,7 @@
   /* ---------- footer cta ---------- */
   /* ---------- feature grid (fitur trading signals) ---------- */
   .feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  .feature-grid-single{grid-template-columns:1fr; max-width:400px; margin:0 auto;}
   .feature-card{
     background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
     padding:28px 24px; transition:border-color .2s, transform .2s;
