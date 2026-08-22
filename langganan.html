@@ -125,11 +125,11 @@
           <li>Free course trading selama 3 bulan</li>
           <li>Akses aktif langsung setelah pembayaran dikonfirmasi</li>
         </ul>
-        <a class="price-cta" href="#pembayaran">Pilih Paket</a>
+        <a class="price-cta" href="#pembayaran" data-package="3 Bulan — Rp35.000" data-qr="tiaa-payment-qr-3bulan.png">Pilih Paket</a>
       </div>
 
-      <div class="price-card featured">
-        <div class="price-badge">Paling Hemat</div>
+      <div class="price-card">
+        <div class="price-badge price-badge-secondary">Hemat</div>
         <div class="price-name">6 Bulan</div>
         <div class="price-amount mono">Rp50.000</div>
         <div class="price-period">akses selama 6 bulan</div>
@@ -139,10 +139,11 @@
           <li>Free course trading selama 6 bulan</li>
           <li>Akses aktif langsung setelah pembayaran dikonfirmasi</li>
         </ul>
-        <a class="price-cta" href="#pembayaran">Pilih Paket</a>
+        <a class="price-cta" href="#pembayaran" data-package="6 Bulan — Rp50.000" data-qr="tiaa-payment-qr-6bulan.png">Pilih Paket</a>
       </div>
 
-      <div class="price-card">
+      <div class="price-card featured">
+        <div class="price-badge">Paling Hemat</div>
         <div class="price-name">Lifetime</div>
         <div class="price-amount mono">Rp100.000</div>
         <div class="price-period">sekali bayar, gunakan selamanya</div>
@@ -152,18 +153,19 @@
           <li>Free course trading selamanya</li>
           <li>Akses aktif langsung setelah pembayaran dikonfirmasi</li>
         </ul>
-        <a class="price-cta" href="#pembayaran">Pilih Paket</a>
+        <a class="price-cta" href="#pembayaran" data-package="Lifetime — Rp100.000" data-qr="tiaa-payment-qr-lifetime.png">Pilih Paket</a>
       </div>
     </div>
 
-    <div class="payment-panel reveal" id="pembayaran">
+    <div class="payment-panel" id="pembayaran">
       <div class="payment-head">
         <div class="section-tag">Metode Pembayaran</div>
         <h3>Scan QRIS atau transfer langsung</h3>
+        <div class="payment-selected" id="paymentSelected"></div>
       </div>
       <div class="payment-methods">
         <div class="payment-qr">
-          <img src="tiaa-payment-qr.png" alt="QRIS Pembayaran TIAA">
+          <img src="tiaa-payment-qr-3bulan.png" alt="QRIS Pembayaran TIAA" id="paymentQrImg">
           <div class="payment-qr-label">Scan QRIS — semua e-wallet &amp; m-banking</div>
         </div>
         <div class="payment-transfer">

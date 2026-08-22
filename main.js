@@ -168,3 +168,32 @@
       }
     });
   })();
+
+  // pricing page: reveal the payment panel only after "Pilih Paket" is clicked
+  (function(){
+    const panel = document.getElementById('pembayaran');
+    if(!panel) return;
+    const selectedLabel = document.getElementById('paymentSelected');
+    const qrImg = document.getElementById('paymentQrImg');
+    const buttons = document.querySelectorAll('.price-cta[data-package]');
+
+    buttons.forEach(btn=>{
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        if(selectedLabel){
+          selectedLabel.textContent = 'Paket dipilih: ' + btn.getAttribute('data-package');
+        }
+        if(qrImg && btn.getAttribute('data-qr')){
+          qrImg.src = btn.getAttribute('data-qr');
+        }
+        panel.classList.add('open');
+        // trigger the fade/slide-in on the next frame
+        requestAnimationFrame(()=>{
+          requestAnimationFrame(()=>{
+            panel.classList.add('in-view');
+          });
+        });
+        panel.scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+    });
+  })();
