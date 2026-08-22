@@ -126,6 +126,7 @@
   // ambient candlestick field
   (function(){
     const field = document.getElementById('candleField');
+    if(!field) return;
     const n = 48;
     for(let i=0;i<n;i++){
       const bar = document.createElement('div');
