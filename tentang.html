@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tentang — TIAA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="tentang">
+
+
+<header>
+  <div class="wrap">
+    <div class="header-left">
+      <button class="hamburger-btn" id="hamburgerBtn" type="button" aria-label="Buka menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="brand">
+        <img class="brand-mark" src="tiaa-icon.png" alt="TIAA Logo">
+        <span class="brand-word">TIAA</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-pill">
+        <span class="live-dot"></span>
+        <span>SINKRONISASI PASAR AKTIF</span>
+      </div>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Ganti mode terang/gelap">
+        <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="ticker-bar" aria-label="Harga pair crypto berjalan">
+  <div class="ticker-track" id="tickerTrack">
+    <div class="ticker-loading">Memuat harga crypto…</div>
+  </div>
+</div>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+<aside class="side-menu" id="sideMenu" aria-hidden="true">
+
+  <div class="side-menu-header">
+    <div class="brand">
+      <img class="brand-mark" src="tiaa-icon.png" alt="TIAA Logo">
+      <span class="brand-word">TIAA</span>
+    </div>
+    <button class="side-menu-close" id="sideMenuClose" type="button" aria-label="Tutup menu">&times;</button>
+  </div>
+  <nav class="side-menu-nav">
+
+    <a class="side-menu-item" data-page="index" href="index.html">
+      <span class="side-menu-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      </span>
+      <span class="side-menu-label">Beranda</span>
+    </a>
+
+    <div class="side-menu-item" id="produkMenuItem" data-page="produk">
+      <button class="side-menu-trigger" type="button" aria-expanded="false">
+        <span class="side-menu-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8L12 3 3 8l9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+        </span>
+        <span class="side-menu-label">Produk</span>
+        <svg class="side-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <div class="side-submenu">
+        <a class="side-submenu-link" href="produk.html#fitur-signals">Fitur Trading Signals</a>
+        <a class="side-submenu-link" href="produk.html#signals-trading">Signals Trading</a>
+      </div>
+    </div>
+
+    <a class="side-menu-item" data-page="edukasi-berita" href="edukasi-berita.html">
+      <span class="side-menu-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h13a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z"/><path d="M4 4v13a3 3 0 0 0 3 3h13"/><path d="M8 8h8M8 12h8M8 16h4"/></svg>
+      </span>
+      <span class="side-menu-label">Edukasi &amp; Berita</span>
+    </a>
+
+    <a class="side-menu-item" data-page="langganan" href="langganan.html">
+      <span class="side-menu-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      </span>
+      <span class="side-menu-label">Layanan Berlangganan</span>
+    </a>
+
+    <a class="side-menu-item" data-page="tentang" href="tentang.html">
+      <span class="side-menu-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>
+      </span>
+      <span class="side-menu-label">Tentang</span>
+    </a>
+
+    <a class="side-menu-item" data-page="login" href="login.html">
+      <span class="side-menu-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+      </span>
+      <span class="side-menu-label">Masuk / Daftar</span>
+    </a>
+
+
+  </nav>
+</aside>
+
+<section id="tentang">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">Tentang</div>
+      <h2 class="section-title">Kenapa TIAA didirikan</h2>
+    </div>
+    <p class="about-text reveal">TIAA lahir dari satu keresahan sederhana: banyak trader pemula masuk ke pasar tanpa panduan yang jelas, mengandalkan tebakan dan ikut-ikutan sinyal yang tidak bisa dipertanggungjawabkan. TIAA dibangun untuk mengubah cara itu — menggabungkan analisa data pasar dengan kecerdasan buatan, supaya setiap sinyal yang sampai ke tangan member punya dasar yang jelas, bukan sekadar tebakan. Misi kami sederhana: membuat sinyal trading yang bisa dipercaya, mudah diakses, dan menemani setiap trader — dari yang baru mulai sampai yang sudah berpengalaman — dalam membaca pola pasar Crypto, Forex, dan Saham.</p>
+    <div class="founder-grid reveal">
+      <div class="founder-card">
+        <div class="founder-avatar">HA</div>
+        <div class="founder-name">Hermawan Ajik Saputra</div>
+        <div class="founder-role">Founder — TIAA Trading Signals</div>
+      </div>
+      <div class="founder-card">
+        <div class="founder-avatar">TN</div>
+        <div class="founder-name">Tiara Nurul Andini</div>
+        <div class="founder-role">Co-Founder — TIAA Trading Signals</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="footer-cta">
+  <div class="wrap">
+    <img class="brand-mark" src="tiaa-icon.png" alt="TIAA Logo">
+    <h3 class="footer-title">Pola sudah terbentuk. Tinggal dibaca.</h3>
+    <p class="footer-desc">Masuk ke dashboard untuk melihat sinyal trading, funding rate, dan analitik AI secara langsung.</p>
+    <a class="hero-cta" href="login.html">
+      Masuk ke Dashboard
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
+
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-col footer-brand-col">
+      <div class="brand">
+        <img class="brand-mark" src="tiaa-icon.png" alt="TIAA Logo">
+        <span class="brand-word">TIAA</span>
+      </div>
+      <p class="footer-tagline">Trading Intelligence · AI Analytics — sinyal Crypto, Forex, dan Saham berbasis data pasar langsung.</p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Navigasi</div>
+      <a href="index.html">Beranda</a>
+      <a href="produk.html">Produk</a>
+      <a href="edukasi-berita.html">Edukasi &amp; Berita</a>
+      <a href="langganan.html">Layanan Berlangganan</a>
+      <a href="tentang.html">Tentang</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Bantuan</div>
+      <a href="https://wa.me/6285821934478" target="_blank" rel="noopener noreferrer">Chat Admin WhatsApp</a>
+      <a href="login.html">Masuk ke Dashboard</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">TIAA — TRADING INTELLIGENCE · AI ANALYTICS</div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/6285821934478?text=Halo%20TIAA%2C%20saya%20ingin%20bertanya%20soal%20layanan%20trading%20signals" target="_blank" rel="noopener noreferrer" aria-label="Chat WhatsApp Admin TIAA">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.148.198 2.095 3.2 5.076 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.001 2C6.478 2 2 6.477 2 12c0 1.99.583 3.847 1.588 5.408L2 22l4.71-1.554A9.953 9.953 0 0 0 12.001 22C17.523 22 22 17.523 22 12S17.523 2 12.001 2zm0 18.2a8.176 8.176 0 0 1-4.418-1.294l-.317-.19-3.13 1.033 1.05-3.05-.207-.323A8.16 8.16 0 0 1 3.8 12c0-4.53 3.67-8.2 8.2-8.2s8.2 3.67 8.2 8.2-3.67 8.2-8.2 8.2z"/></svg>
+</a>
+
+<script src="main.js"></script>
+</body>
+</html>
