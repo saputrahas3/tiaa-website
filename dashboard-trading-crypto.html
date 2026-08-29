@@ -1151,10 +1151,10 @@ async function fetchJsonRace(urls, ms=8000){
 }
 async function fetchKlinesCrypto(symbol, interval, limit=100){
   try{
-    return await fetchJsonRace([`https://fapi.binance.com/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`]);
+    return await fetchJsonRace([`/binance-proxy/futures/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`]);
   }catch(e){
     usingSpotFallback = true;
-    return await fetchJsonRace([`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`]);
+    return await fetchJsonRace([`/binance-proxy/spot/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`]);
   }
 }
 
@@ -1238,8 +1238,8 @@ async function initCryptoPairs(){
 async function fetchAllPerpetualPairs(){
   try{
     const [info, tickers] = await Promise.all([
-      fetchJsonRace(['https://fapi.binance.com/fapi/v1/exchangeInfo']),
-      fetchJsonRace(['https://fapi.binance.com/fapi/v1/ticker/24hr']),
+      fetchJsonRace(['/binance-proxy/futures/fapi/v1/exchangeInfo']),
+      fetchJsonRace(['/binance-proxy/futures/fapi/v1/ticker/24hr']),
     ]);
     const tMap = {}; tickers.forEach(t=>tMap[t.symbol]=t);
     const perpetuals = info.symbols.filter(s=>s.contractType==='PERPETUAL' && s.status==='TRADING' && s.quoteAsset==='USDT');
@@ -1253,8 +1253,8 @@ async function fetchAllPerpetualPairs(){
     console.warn('Binance Futures tidak terjangkau, beralih ke Binance Spot sebagai fallback', e);
     usingSpotFallback = true;
     const [info, tickers] = await Promise.all([
-      fetchJsonRace(['https://api.binance.com/api/v3/exchangeInfo']),
-      fetchJsonRace(['https://api.binance.com/api/v3/ticker/24hr']),
+      fetchJsonRace(['/binance-proxy/spot/api/v3/exchangeInfo']),
+      fetchJsonRace(['/binance-proxy/spot/api/v3/ticker/24hr']),
     ]);
     const tMap = {}; tickers.forEach(t=>tMap[t.symbol]=t);
     const spotUsdt = info.symbols.filter(s=>s.status==='TRADING' && s.quoteAsset==='USDT' && s.isSpotTradingAllowed!==false);
@@ -1267,8 +1267,8 @@ async function fetchAllPerpetualPairs(){
   }
 }
 async function fetchAllBinanceTickers(){
-  try{ return await fetchJsonRace(['https://fapi.binance.com/fapi/v1/ticker/24hr']); }
-  catch(e){ usingSpotFallback = true; return await fetchJsonRace(['https://api.binance.com/api/v3/ticker/24hr']); }
+  try{ return await fetchJsonRace(['/binance-proxy/futures/fapi/v1/ticker/24hr']); }
+  catch(e){ usingSpotFallback = true; return await fetchJsonRace(['/binance-proxy/spot/api/v3/ticker/24hr']); }
 }
 
 
@@ -1283,7 +1283,11 @@ function connectCryptoWS(){
   try{
     // Futures ticker stream needs fstream.binance.com; if we already fell back to Spot
     // (Futures REST unreachable), the matching Spot WS host is stream.binance.com.
-    const wsUrl = usingSpotFallback ? 'wss://stream.binance.com:9443/ws/!ticker@arr' : 'wss://fstream.binance.com/ws/!ticker@arr';
+    // Same-origin proxy through our own Worker (see /binance-proxy/ws/* in worker/index.js) —
+    // this avoids the browser talking to Binance's WS host directly, which some Indonesian
+    // ISPs/mobile carriers block even when the REST fallback above already works.
+    const wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = wsProto + '//' + location.host + (usingSpotFallback ? '/binance-proxy/ws/spot-ticker' : '/binance-proxy/ws/futures-ticker');
     cryptoWS = new WebSocket(wsUrl);
     cryptoWS.onmessage = (ev)=>{
       let arr; try{ arr = JSON.parse(ev.data); }catch(e){ return; }
@@ -2080,10 +2084,10 @@ async function loadFoilsSentiment(symbol){
   window.__foilsPromise = (async()=>{
     try{
       const [premium, oi, oiHist, lsRatio, fng] = await Promise.all([
-        fetch(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`).then(r=>r.json()).catch(()=>null),
-        fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${symbol}`).then(r=>r.json()).catch(()=>null),
-        fetch(`https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=8`).then(r=>r.json()).catch(()=>null),
-        fetch(`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=1h&limit=1`).then(r=>r.json()).catch(()=>null),
+        fetch(`/binance-proxy/futures/fapi/v1/premiumIndex?symbol=${symbol}`).then(r=>r.json()).catch(()=>null),
+        fetch(`/binance-proxy/futures/fapi/v1/openInterest?symbol=${symbol}`).then(r=>r.json()).catch(()=>null),
+        fetch(`/binance-proxy/futures/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=8`).then(r=>r.json()).catch(()=>null),
+        fetch(`/binance-proxy/futures/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=1h&limit=1`).then(r=>r.json()).catch(()=>null),
         fetch('https://api.alternative.me/fng/?limit=1').then(r=>r.json()).catch(()=>null),
       ]);
       const fundingPct = premium?.lastFundingRate!=null ? parseFloat(premium.lastFundingRate)*100 : null;
@@ -2328,7 +2332,7 @@ async function loadDashboardOverview(){
     document.getElementById('ovBtcUpdated').textContent = new Date().toLocaleTimeString(uiLocale());
   };
   if(tickerMap['BTCUSDT']) renderBtc();
-  else fetch('https://fapi.binance.com/fapi/v1/ticker/24hr?symbol=BTCUSDT').then(r=>r.json()).then(t=>{ tickerMap['BTCUSDT']=t; renderBtc(); }).catch(()=>{});
+  else fetch('/binance-proxy/futures/fapi/v1/ticker/24hr?symbol=BTCUSDT').then(r=>r.json()).then(t=>{ tickerMap['BTCUSDT']=t; renderBtc(); }).catch(()=>{});
 
   // Fear & Greed mini
   fetch('https://api.alternative.me/fng/?limit=1').then(r=>r.json()).then(json=>{
@@ -2348,7 +2352,7 @@ async function loadDashboardOverview(){
   if(currentMarket==='crypto' && PAIRS.length>0){
     renderMovers(PAIRS.map(c=>tickerMap[c.pair]).filter(Boolean));
   } else {
-    fetch('https://fapi.binance.com/fapi/v1/ticker/24hr').then(r=>r.json()).then(arr=>{
+    fetch('/binance-proxy/futures/fapi/v1/ticker/24hr').then(r=>r.json()).then(arr=>{
       const usdtPerp = arr.filter(t=>t.symbol.endsWith('USDT'));
       renderMovers(usdtPerp);
     }).catch(()=>{});
