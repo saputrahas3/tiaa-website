@@ -154,6 +154,43 @@
   .backtest-strip{display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:8px; margin-top:12px;}
   .backtest-stat{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:10px 12px; text-align:center;}
   .backtest-stat .bt-label{font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;}
+
+  /* ---- Spot Signal / Futures Signal — card list ---- */
+  .sig-page-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; flex-wrap:wrap;}
+  .sig-page-title{font-size:19px; font-weight:800;}
+  .sig-count{color:var(--ink-dim); font-size:14px; font-weight:600;}
+  .sig-results-btn{background:#3b82f6; color:#fff; border:none; border-radius:8px; padding:9px 20px; font-size:13px; font-weight:700; cursor:pointer; transition:background .15s;}
+  .sig-results-btn:hover{background:#2563eb;}
+  .sig-disclaimer{border:1px solid var(--sell); background:var(--sell-glow); color:var(--sell); font-size:11.5px; font-weight:600; padding:10px 14px; border-radius:8px; margin-bottom:12px; text-align:center;}
+  .sig-algo-note{font-size:11px; color:var(--ink-dim); line-height:1.6; margin-bottom:14px; padding:0 2px;}
+  .sig-list{display:flex; flex-direction:column; gap:12px; padding-bottom:20px;}
+  .sig-card{background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px; transition:border-color .15s;}
+  .sig-card:hover{border-color:var(--accent);}
+  .sig-card-top{display:flex; align-items:center; gap:10px; cursor:pointer;}
+  .sig-icon{width:34px; height:34px; border-radius:50%; background:var(--panel); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:var(--accent); flex-shrink:0;}
+  .sig-card-info{flex:1; min-width:0;}
+  .sig-pair-name{color:#4f9cf9; font-weight:700; font-size:14.5px;}
+  .sig-open-date{color:var(--sell); font-size:11px; margin-top:1px; font-weight:600;}
+  .sig-chevron{color:var(--ink-dim); font-size:12px; transition:transform .2s; flex-shrink:0;}
+  .sig-card.open .sig-chevron{transform:rotate(180deg);}
+  .sig-pill-row{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;}
+  .sig-pill{border-radius:8px; padding:9px 10px; text-align:center; font-weight:700; font-size:12.5px; color:#0b0e11;}
+  .sig-pill.buy{background:var(--buy);}
+  .sig-pill.sell{background:var(--sell); color:#fff;}
+  .sig-pill.leverage{background:var(--buy);}
+  .sig-pill.capital{background:#c99a4d; color:#241a05;}
+  .sig-detail{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .sig-card.open .sig-detail{max-height:700px;}
+  .sig-entry-lines{font-size:12px; color:var(--ink-dim); margin-top:12px; display:flex; gap:20px; flex-wrap:wrap;}
+  .sig-entry-lines b{color:var(--ink); font-weight:700;}
+  .sig-target-row{display:flex; align-items:center; justify-content:space-between; gap:10px; background:#2b6fe0; border-radius:8px; padding:9px 12px; margin-top:8px; font-size:12.5px; font-weight:700; color:#fff;}
+  .sig-target-label{flex:0 0 auto;}
+  .sig-target-price{flex:1; text-align:center;}
+  .sig-target-pct{flex:0 0 auto; color:#22ff9e;}
+  .sig-stoploss{text-align:center; margin-top:12px;}
+  .sig-stoploss span{display:inline-block; background:rgba(246,70,93,0.16); border:1px solid var(--sell); color:var(--sell); font-weight:700; font-size:12px; border-radius:8px; padding:7px 18px;}
+  .sig-leverage-note{font-size:10.5px; line-height:1.6; color:var(--ink-dim); background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:9px 11px; margin-top:12px;}
+  .sig-leverage-note b{color:var(--accent);}
   .backtest-stat .bt-value{font-size:18px; font-weight:800; font-family:'JetBrains Mono',monospace;}
   .backtest-stat .bt-value.up{color:var(--buy);}
   .backtest-stat .bt-value.down{color:var(--sell);}
@@ -428,7 +465,9 @@
 
 <div id="page-trading" class="page active">
 <div class="market-tabs" id="marketTabs">
-  <div class="market-tab active" data-market="crypto">🪙 Crypto Perpetual Futures</div>
+  <div class="market-tab active" data-market="crypto" data-page="trading" onclick="switchPage('trading')">🪙 Crypto Perpetual Futures</div>
+  <div class="market-tab" data-page="spotsignal" onclick="switchPage('spotsignal')">🎯 <span data-i18n="tab_spot_signal">Spot Signal</span></div>
+  <div class="market-tab" data-page="futuresignal" onclick="switchPage('futuresignal')">⚡ <span data-i18n="tab_futures_signal">Futures Signal</span></div>
 </div>
 
 <div class="layout">
@@ -562,6 +601,36 @@
   </main>
 </div>
 </div><!-- /page-trading -->
+
+<!-- ===== Spot Signal ===== -->
+<div id="page-spotsignal" class="page">
+  <div class="page-inner">
+    <div class="sig-page-head">
+      <div class="sig-page-title">🎯 <span data-i18n="tab_spot_signal">Spot Signal</span> <span class="sig-count mono" id="spotSignalCount">(–)</span></div>
+      <button class="sig-results-btn" onclick="toggleSignalResults('spot')" data-i18n="btn_results">Results</button>
+    </div>
+    <div class="sig-disclaimer" data-i18n="sig_disclaimer">Trading berisiko. Sinyal ini bukan jaminan profit — keputusan &amp; risiko sepenuhnya di tangan kamu.</div>
+    <div class="backtest-strip" id="spotResultsPanel" style="display:none;"></div>
+    <div class="sig-algo-note" data-i18n="sig_algo_note_spot">Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4, dengan Target &amp; Stop Loss otomatis mengikuti rasio Risk:Reward.</div>
+    <div class="ind-note" style="padding:6px 2px 10px;" id="spotSignalNote" data-i18n="loading_signals">Memuat sinyal…</div>
+    <div id="spotSignalList" class="sig-list"></div>
+  </div>
+</div>
+
+<!-- ===== Perpetual Futures Signal ===== -->
+<div id="page-futuresignal" class="page">
+  <div class="page-inner">
+    <div class="sig-page-head">
+      <div class="sig-page-title">⚡ <span data-i18n="tab_futures_signal">Futures Signal</span> <span class="sig-count mono" id="futuresSignalCount">(–)</span></div>
+      <button class="sig-results-btn" onclick="toggleSignalResults('futures')" data-i18n="btn_results">Results</button>
+    </div>
+    <div class="sig-disclaimer" data-i18n="sig_disclaimer">Trading berisiko. Sinyal ini bukan jaminan profit — keputusan &amp; risiko sepenuhnya di tangan kamu.</div>
+    <div class="backtest-strip" id="futuresResultsPanel" style="display:none;"></div>
+    <div class="sig-algo-note" data-i18n="sig_algo_note_futures">Sinyal LONG/SHORT dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.</div>
+    <div class="ind-note" style="padding:6px 2px 10px;" id="futuresSignalNote" data-i18n="loading_signals">Memuat sinyal…</div>
+    <div id="futuresSignalList" class="sig-list"></div>
+  </div>
+</div>
 
 <!-- ===== Dashboard (overview) ===== -->
 <div id="page-dashboard" class="page">
@@ -765,6 +834,14 @@ const I18N = {
     sidebar_crypto: "Perpetual Futures · Vol 24h",
     unit_pair: "pair", unit_asset: "aset",
     fng_desc: "Indeks sentimen pasar crypto (0 = Extreme Fear, 100 = Extreme Greed) dari alternative.me — metodologi setara indeks fear & greed CoinMarketCap, dipakai gratis tanpa API key berbayar.",
+    tab_spot_signal: "Spot Signal", tab_futures_signal: "Futures Signal",
+    btn_results: "Results",
+    sig_disclaimer: "Trading berisiko. Sinyal ini bukan jaminan profit — keputusan & risiko sepenuhnya di tangan kamu.",
+    sig_algo_note_spot: "Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4, dengan Target & Stop Loss otomatis mengikuti rasio Risk:Reward.",
+    sig_algo_note_futures: "Sinyal LONG/SHORT dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.",
+    loading_signals: "Memuat sinyal…",
+    sig_no_active: "Belum ada sinyal BUY/SELL yang cukup kuat saat ini dari algoritma konfluensi. Coba lagi beberapa saat lagi.",
+    sig_failed: "Gagal memuat sinyal. Coba lagi.",
   },
   en: {
     brand_tag: "multi-market signal terminal",
@@ -822,6 +899,14 @@ const I18N = {
     sidebar_crypto: "Perpetual Futures · Vol 24h",
     unit_pair: "pairs", unit_asset: "asset",
     fng_desc: "Crypto market sentiment index (0 = Extreme Fear, 100 = Extreme Greed) from alternative.me — methodology equivalent to CoinMarketCap's fear & greed index, used free with no paid API key.",
+    tab_spot_signal: "Spot Signal", tab_futures_signal: "Futures Signal",
+    btn_results: "Results",
+    sig_disclaimer: "Trading is risky. These signals are not a profit guarantee — the decision and risk are entirely yours.",
+    sig_algo_note_spot: "Signals are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + Supply/Demand zones on the H4 timeframe, with Target & Stop Loss automatically following a Risk:Reward ratio.",
+    sig_algo_note_futures: "LONG/SHORT signals are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + Supply/Demand zones on the H4 timeframe. Leverage is auto-calculated from the Stop Loss distance to avoid over-leveraging (SL is always kept closer than the liquidation price), and Targets follow a Risk:Reward ratio.",
+    loading_signals: "Loading signals…",
+    sig_no_active: "No strong enough BUY/SELL signal from the confluence algorithm right now. Check back in a bit.",
+    sig_failed: "Failed to load signals. Please try again.",
   },
 };
 function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) ?? I18N.id[key] ?? key; }
@@ -2160,6 +2245,243 @@ function initEconomicCalendar(){
   container.appendChild(script);
 }
 
+/* ================= SPOT SIGNAL / FUTURES SIGNAL (card-list, own confluence algorithm) =================
+   Reuses the same indicator math as the main Trading Signal dashboard (computeSignal,
+   computeFibonacci, findSupplyDemandZones, stochastic, atr — all defined above) but scans
+   a whole basket of pairs on H4 and turns each qualifying BUY/SELL bias into a ready-to-read
+   trade card: entry (or entry zone for futures), 4 take-profit targets, a stop loss, a
+   suggested capital risk %, and — for futures — a conservative suggested leverage. */
+const SIGNAL_TARGET_PCTS = [0.03, 0.06, 0.12, 0.24]; // TP1..TP4 as % move from entry
+let spotSignalRows = [], futuresSignalRows = [];
+
+// Independent Binance SPOT data fetchers (api.binance.com) — kept separate from the
+// Futures-first fetchKlinesCrypto/fetchAllPerpetualPairs used by the rest of the
+// dashboard, since "Spot Signal" specifically means the real Spot market, not Futures.
+async function fetchSpotTopPairs(limit=25){
+  const [info, tickers] = await Promise.all([
+    fetchJsonRace(['https://api.binance.com/api/v3/exchangeInfo']),
+    fetchJsonRace(['https://api.binance.com/api/v3/ticker/24hr']),
+  ]);
+  const tMap = {}; tickers.forEach(t=>tMap[t.symbol]=t);
+  const spotUsdt = info.symbols.filter(s=>s.status==='TRADING' && s.quoteAsset==='USDT' && s.isSpotTradingAllowed!==false);
+  return spotUsdt
+    .map(s=>({ symbol:s.baseAsset, pair:s.symbol, quoteVolume: parseFloat(tMap[s.symbol]?.quoteVolume || 0) }))
+    .filter(c=>c.quoteVolume>0)
+    .sort((a,b)=>b.quoteVolume-a.quoteVolume)
+    .slice(0, limit);
+}
+async function getSpotOHLC(symbol, tf){
+  const limit = tf.resample ? Math.min(500, 100*tf.resample) : 100;
+  const k = await fetchJsonRace([`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${tf.interval}&limit=${limit}`]);
+  const raw = {
+    opens:k.map(c=>parseFloat(c[1])), highs:k.map(c=>parseFloat(c[2])),
+    lows:k.map(c=>parseFloat(c[3])), closes:k.map(c=>parseFloat(c[4])),
+    volumes:k.map(c=>parseFloat(c[5])), times:k.map(c=>Math.floor(c[0]/1000)),
+  };
+  return tf.resample ? resampleOHLC(raw, tf.resample) : raw;
+}
+
+// Walk forward (no lookahead) through the candle history to find the most recent time
+// the bias flipped INTO the bias it currently holds — this is what powers the "Open on
+// {date}" line on each card, same walk-forward approach used by the historical signal
+// scan elsewhere in this file.
+function findBiasStartTime(ohlc, currentBias){
+  const {highs, lows, closes, times} = ohlc;
+  const WARMUP = 30;
+  if(!closes || closes.length < WARMUP+5) return null;
+  let lastFlipTime = times[times.length-1], lastBias = 'neutral';
+  for(let i=WARMUP;i<closes.length;i++){
+    const slice = {highs:highs.slice(0,i+1), lows:lows.slice(0,i+1), closes:closes.slice(0,i+1)};
+    const sig = computeSignal(slice);
+    if(sig.bias!==lastBias && sig.bias===currentBias) lastFlipTime = times[i];
+    lastBias = sig.bias;
+  }
+  return lastFlipTime;
+}
+
+// Suggests a leverage that keeps the Stop Loss comfortably BEFORE the liquidation price
+// — i.e. avoids over-leveraging. Liquidation distance (isolated margin, no funding/fees)
+// is approximately 100%/leverage away from entry, so leverage is solved backwards from
+// the SL distance with a 2x safety buffer (SL should sit at ~half the distance to
+// liquidation, not right up against it), then capped to a conservative ceiling and
+// snapped down to a common leverage step so it's a leverage a person can actually pick
+// on an exchange.
+const LEVERAGE_STEPS = [1,2,3,5,8,10,15,20];
+const LEVERAGE_SAFETY_RATIO = 0.5;   // SL triggers at ~50% of the distance to liquidation
+const LEVERAGE_MAX_CAP = 20;         // hard ceiling regardless of how tight the SL is
+function suggestSafeLeverage(entryPrice, stoplossPrice){
+  const slDistPct = Math.abs(entryPrice-stoplossPrice)/entryPrice*100;
+  if(!slDistPct || slDistPct<=0) return { leverage:1, slDistPct:0, liqDistPct:null };
+  const rawMax = (LEVERAGE_SAFETY_RATIO*100)/slDistPct;
+  const capped = Math.min(rawMax, LEVERAGE_MAX_CAP);
+  let leverage = 1;
+  for(const step of LEVERAGE_STEPS){ if(step<=capped) leverage = step; else break; }
+  const liqDistPct = 100/leverage; // approx distance to liquidation at the chosen leverage
+  return { leverage, slDistPct, liqDistPct };
+}
+
+// Turns a computeSignal() result into a concrete tradeable setup: entry, TP1-4 (fixed
+// 3/6/12/24% moves off entry — a simple geometric risk:reward ladder), a stop loss
+// (placed just beyond the nearest opposite Supply/Demand zone when one exists, ATR-based
+// otherwise), a suggested capital risk % (tighter on higher-ATR/more volatile pairs), a
+// safe suggested leverage sized off the SL distance (futures only — spot is never
+// leveraged), and a secondary entry (nearest Fibonacci level behind price) used as
+// "Entry 2" for futures scale-in.
+function computeSignalSetup(ohlc, sig, direction, market){
+  const price = ohlc.closes.at(-1);
+  const atrVal = atr(ohlc.highs, ohlc.lows, ohlc.closes, 14);
+  const atrPct = atrVal ? (atrVal/price*100) : 1.5;
+  const zones = (atrVal && ohlc.closes.length>=30) ? findSupplyDemandZones(ohlc.highs, ohlc.lows, ohlc.closes, atrVal) : {demandZones:[], supplyZones:[]};
+  let stoploss;
+  if(direction==='buy'){
+    const nearestDemand = zones.demandZones.filter(z=>z.low<price).sort((a,b)=>b.low-a.low)[0];
+    stoploss = nearestDemand ? nearestDemand.low*0.995 : price*(1-Math.max(1.5, Math.min(atrPct*1.3, 10))/100);
+  } else {
+    const nearestSupply = zones.supplyZones.filter(z=>z.high>price).sort((a,b)=>a.high-b.high)[0];
+    stoploss = nearestSupply ? nearestSupply.high*1.005 : price*(1+Math.max(1.5, Math.min(atrPct*1.3, 10))/100);
+  }
+  const targets = SIGNAL_TARGET_PCTS.map(p => direction==='buy' ? price*(1+p) : price*(1-p));
+  const capitalPct = atrPct<=3 ? 2 : 1; // lower ATR% (calmer pair) -> can size a bit bigger
+  let entry2 = price;
+  if(sig.fib){
+    const candidates = sig.fib.levels.map(l=>l.price).filter(p => direction==='buy' ? p<price : p>price);
+    if(candidates.length){ entry2 = direction==='buy' ? Math.max(...candidates) : Math.min(...candidates); }
+  }
+  const leverageInfo = market==='futures' ? suggestSafeLeverage(price, stoploss) : null;
+  return { price, entry2, stoploss, targets, capitalPct, atrPct, leverageInfo };
+}
+
+// Scans a basket of pairs on H4, keeps only pairs with a non-neutral bias (and, for Spot,
+// only BUY — spot can't short), and builds the full setup for each.
+async function buildSignalRows(pairs, {market, allowShort}){
+  const tf = TFS.find(t=>t.label==='H4') || TFS[TFS.length-1];
+  const rows = [];
+  for(const c of pairs){
+    try{
+      const ohlc = market==='spot' ? await getSpotOHLC(c.pair, tf) : await getOHLC(c.pair, tf);
+      if(!ohlc.closes || ohlc.closes.length<40) continue;
+      const sig = computeSignal(ohlc);
+      if(sig.bias==='neutral') continue;
+      if(sig.bias==='sell' && !allowShort) continue;
+      const setup = computeSignalSetup(ohlc, sig, sig.bias, market);
+      const openTime = findBiasStartTime(ohlc, sig.bias);
+      rows.push({ symbol:c.symbol, pair:c.pair, bias:sig.bias, setup, openTime, ohlc });
+    }catch(e){ /* skip this pair, keep scanning the rest of the basket */ }
+  }
+  rows.sort((a,b)=>(b.openTime||0)-(a.openTime||0));
+  return rows;
+}
+
+async function loadSpotSignalPage(){
+  const note = document.getElementById('spotSignalNote'), list = document.getElementById('spotSignalList');
+  document.getElementById('spotResultsPanel').style.display = 'none';
+  note.textContent = t('loading_signals'); note.style.display='block'; list.innerHTML = '';
+  try{
+    const pairs = await fetchSpotTopPairs(25);
+    spotSignalRows = await buildSignalRows(pairs, {market:'spot', allowShort:false});
+    renderSignalList('spot', spotSignalRows);
+  }catch(e){ console.error(e); note.textContent = t('sig_failed'); }
+}
+async function loadFuturesSignalPage(){
+  const note = document.getElementById('futuresSignalNote'), list = document.getElementById('futuresSignalList');
+  document.getElementById('futuresResultsPanel').style.display = 'none';
+  note.textContent = t('loading_signals'); note.style.display='block'; list.innerHTML = '';
+  try{
+    let pairs = PAIRS.length ? PAIRS.slice(0,25) : (await fetchAllPerpetualPairs()).pairs.slice(0,25);
+    futuresSignalRows = await buildSignalRows(pairs, {market:'futures', allowShort:true});
+    renderSignalList('futures', futuresSignalRows);
+  }catch(e){ console.error(e); note.textContent = t('sig_failed'); }
+}
+
+function renderSignalList(kind, rows){
+  const listEl = document.getElementById(kind==='spot' ? 'spotSignalList' : 'futuresSignalList');
+  const countEl = document.getElementById(kind==='spot' ? 'spotSignalCount' : 'futuresSignalCount');
+  const noteEl = document.getElementById(kind==='spot' ? 'spotSignalNote' : 'futuresSignalNote');
+  countEl.textContent = '('+rows.length+')';
+  if(!rows.length){ noteEl.textContent = t('sig_no_active'); noteEl.style.display='block'; listEl.innerHTML=''; return; }
+  noteEl.style.display = 'none';
+  listEl.innerHTML = rows.map((r,i)=>renderSignalCard(r,i,kind)).join('');
+}
+function renderSignalCard(r, i, kind){
+  const isBuy = r.bias==='buy';
+  const openDateStr = r.openTime ? new Date(r.openTime*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'}) : '–';
+  const subLabel = kind==='futures' ? (isBuy?'LONG':'SHORT')+' · Open on '+openDateStr : 'Open on '+openDateStr;
+  const targetsHtml = r.setup.targets.map((tp,idx)=>`
+    <div class="sig-target-row">
+      <div class="sig-target-label">Target ${String(idx+1).padStart(2,'0')}</div>
+      <div class="sig-target-price mono">${formatPrice(tp)}</div>
+      <div class="sig-target-pct">${(SIGNAL_TARGET_PCTS[idx]*100).toFixed(0)}%</div>
+    </div>`).join('');
+  const entryLinesHtml = kind==='futures' ? `
+    <div class="sig-entry-lines">
+      <div>Entry 1: <b class="mono">${formatPrice(r.setup.price)}</b></div>
+      <div>Entry 2: <b class="mono">${formatPrice(r.setup.entry2)}</b></div>
+    </div>` : '';
+  const lev = r.setup.leverageInfo;
+  const firstPillHtml = kind==='futures'
+    ? `<div class="sig-pill leverage">Leverage: ${lev.leverage}x</div>`
+    : `<div class="sig-pill buy">BUY: ${formatPrice(r.setup.price)}</div>`;
+  const leverageNoteHtml = kind==='futures' ? `
+    <div class="sig-leverage-note">
+      Saran leverage <b>${lev.leverage}x</b> dihitung dari jarak SL (${lev.slDistPct.toFixed(2)}%) supaya SL kena
+      <b>lebih dulu</b> dibanding harga likuidasi (≈${lev.liqDistPct.toFixed(1)}% dari entry) — jangan pakai leverage
+      lebih tinggi dari saran ini di pair yang sama.
+    </div>` : '';
+  return `<div class="sig-card" id="sigcard-${kind}-${i}">
+    <div class="sig-card-top" onclick="toggleSigCard('${kind}',${i})">
+      <div class="sig-icon">${r.symbol.slice(0,1)}</div>
+      <div class="sig-card-info">
+        <div class="sig-pair-name">${r.symbol} / USDT</div>
+        <div class="sig-open-date">${subLabel}</div>
+      </div>
+      <div class="sig-chevron">▾</div>
+    </div>
+    <div class="sig-pill-row">
+      ${firstPillHtml}
+      <div class="sig-pill capital">Capital: ${r.setup.capitalPct}%</div>
+    </div>
+    <div class="sig-detail">
+      ${entryLinesHtml}
+      ${targetsHtml}
+      <div class="sig-stoploss"><span>STOPLOSS: ${formatPrice(r.setup.stoploss)}</span></div>
+      ${leverageNoteHtml}
+    </div>
+  </div>`;
+}
+function toggleSigCard(kind, i){
+  document.getElementById(`sigcard-${kind}-${i}`)?.classList.toggle('open');
+}
+
+// "Results" button — quick aggregate readout (win rate / count / avg move) of how the
+// currently-listed signals are doing right now (entry vs latest price), reusing the same
+// backtest-stat card styling as the main dashboard's historical backtest strip.
+function toggleSignalResults(kind){
+  const panel = document.getElementById(kind==='spot' ? 'spotResultsPanel' : 'futuresResultsPanel');
+  const rows = kind==='spot' ? spotSignalRows : futuresSignalRows;
+  const showing = panel.style.display === 'grid';
+  if(showing){ panel.style.display = 'none'; return; }
+  if(!rows.length){
+    panel.innerHTML = `<div class="backtest-stat" style="grid-column:1/-1;"><div class="bt-label">${t('backtest_label')}</div><div class="bt-value" style="font-size:12px; font-weight:600; color:var(--ink-dim);">${t('backtest_not_enough')}</div></div>`;
+    panel.style.display = 'grid'; return;
+  }
+  let wins=0, losses=0, totalPct=0;
+  rows.forEach(r=>{
+    const last = r.ohlc.closes.at(-1), entry = r.setup.price;
+    const movePct = (last-entry)/entry*100;
+    const favorable = r.bias==='buy' ? movePct>=0 : movePct<=0;
+    if(favorable) wins++; else losses++;
+    totalPct += r.bias==='buy' ? movePct : -movePct;
+  });
+  const total = wins+losses, winRatePct = Math.round((wins/total)*100), avgPct = totalPct/total;
+  panel.innerHTML = `
+    <div class="backtest-stat"><div class="bt-label">${t('backtest_winrate')}</div><div class="bt-value ${winRatePct>=50?'up':'down'}">${winRatePct}%</div></div>
+    <div class="backtest-stat"><div class="bt-label">${t('backtest_signals')}</div><div class="bt-value">${total}</div></div>
+    <div class="backtest-stat"><div class="bt-label">${t('backtest_wl')}</div><div class="bt-value"><span class="up">${wins}</span> / <span class="down">${losses}</span></div></div>
+    <div class="backtest-stat"><div class="bt-label">${t('backtest_avg')}</div><div class="bt-value ${avgPct>=0?'up':'down'}">${avgPct>=0?'+':''}${avgPct.toFixed(2)}%</div></div>
+  `;
+  panel.style.display = 'grid';
+}
+
 /* ================= NAVIGATION DRAWER / MULTI-PAGE ================= */
 function openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); }
 function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); }
@@ -2173,11 +2495,14 @@ const PAGE_LOADERS = {
   feargreed: ()=>loadFearGreedPage(),
   movers: ()=>renderTopMovers(),
   news: ()=>loadNews(currentPair),
+  spotsignal: ()=>loadSpotSignalPage(),
+  futuresignal: ()=>loadFuturesSignalPage(),
 };
 const loadedPages = new Set(['trading']);
 function switchPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+page));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
+  document.querySelectorAll('.market-tab').forEach(m=>m.classList.toggle('active', m.dataset.page===page));
   closeDrawer();
   // Lazy-load each page's content only the first time it's opened, so switching pages
   // stays instant and we don't fire off widgets/fetches for pages nobody visits.
