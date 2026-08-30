@@ -1,10 +1,12 @@
-name = "tiaa"
+name = "tiaa-website"
 main = "src/index.js"
 compatibility_date = "2024-09-23"
 
 # Semua file website (index.html, login.html, dashboard-trading-crypto.html, dll)
 # ada langsung di root repo ini (bukan di folder public/), jadi directory di bawah
 # ini diarahkan ke "." (root) supaya Cloudflare menyajikan file-file itu apa adanya.
+# .assetsignore (di root juga) mengecualikan node_modules, src/, dan file config
+# supaya tidak ikut ter-upload sebagai "aset situs".
 [assets]
 directory = "."
 binding = "ASSETS"
