@@ -1169,7 +1169,7 @@ function computeSignal(ohlc){
 // can be honest about it (funding rate / open interest / long-short ratio are
 // Futures-only concepts and get hidden on the Binance Spot tier).
 let usingSpotFallback = false;
-async function fetchJsonRace(urls, ms=8000){
+async function fetchJsonRace(urls, ms=15000){
   let lastErr = null;
   for(const url of urls){
     try{
