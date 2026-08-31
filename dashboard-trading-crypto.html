@@ -121,13 +121,6 @@
   }
   .market-tab:hover{color:var(--ink);}
   .market-tab.active{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
-  .sig-back-row{padding:10px 20px 0; background:var(--panel);}
-  .sig-back-btn{
-    display:inline-flex; align-items:center; gap:6px; background:transparent; border:1px solid var(--line);
-    color:var(--ink-dim); border-radius:8px; padding:7px 14px; font-size:12px; font-weight:600;
-    cursor:pointer; transition:all .15s;
-  }
-  .sig-back-btn:hover{color:var(--accent); border-color:var(--accent);}
 
   /* ---- Layout ---- */
   .layout{display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 106px);}
@@ -560,19 +553,13 @@
 
 <!-- ===== Spot Signal ===== -->
 <div id="page-spotsignal" class="page">
-  <div class="market-tabs">
-    <div class="market-tab" data-page="trading" onclick="switchPage('trading')">🪙 Crypto Perpetual Futures</div>
-    <div class="market-tab active" data-page="spotsignal" onclick="switchPage('spotsignal')">🎯 <span data-i18n="tab_spot_signal">Spot Signal</span></div>
-    <div class="market-tab" data-page="futuresignal" onclick="switchPage('futuresignal')">⚡ <span data-i18n="tab_futures_signal">Futures Signal</span></div>
-  </div>
-  <div class="sig-back-row"><button class="sig-back-btn" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></button></div>
   <div class="page-inner">
     <div class="sig-page-head">
       <div class="sig-page-title">🎯 <span data-i18n="tab_spot_signal">Spot Signal</span> <span class="sig-count mono" id="spotSignalCount">(–)</span></div>
       <button class="sig-results-btn" onclick="toggleSignalResults('spot')" data-i18n="btn_results">Results</button>
     </div>
     <div class="backtest-strip" id="spotResultsPanel" style="display:none;"></div>
-    <div class="sig-algo-note" data-i18n="sig_algo_note_spot">Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand, dianalisis di semua timeframe besar (H4, H8, H12, D1, W1, MN) lalu digabung jadi 1 kesimpulan akhir, dengan Target &amp; Stop Loss otomatis mengikuti rasio Risk:Reward.</div>
+    <div class="sig-algo-note" data-i18n="sig_algo_note_spot">Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4, dengan Target &amp; Stop Loss otomatis mengikuti rasio Risk:Reward.</div>
     <div class="ind-note" style="padding:6px 2px 10px;" id="spotSignalNote" data-i18n="loading_signals">Memuat sinyal…</div>
     <div id="spotSignalList" class="sig-list"></div>
     <div class="sig-disclaimer" style="margin-top:16px; margin-bottom:0;" data-i18n="sig_disclaimer">Bukan ajakan untuk menjual atau membeli. Sinyal ini bukan jaminan profit — keputusan &amp; risiko sepenuhnya di tangan kamu.</div>
@@ -581,19 +568,13 @@
 
 <!-- ===== Perpetual Futures Signal ===== -->
 <div id="page-futuresignal" class="page">
-  <div class="market-tabs">
-    <div class="market-tab" data-page="trading" onclick="switchPage('trading')">🪙 Crypto Perpetual Futures</div>
-    <div class="market-tab" data-page="spotsignal" onclick="switchPage('spotsignal')">🎯 <span data-i18n="tab_spot_signal">Spot Signal</span></div>
-    <div class="market-tab active" data-page="futuresignal" onclick="switchPage('futuresignal')">⚡ <span data-i18n="tab_futures_signal">Futures Signal</span></div>
-  </div>
-  <div class="sig-back-row"><button class="sig-back-btn" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></button></div>
   <div class="page-inner">
     <div class="sig-page-head">
       <div class="sig-page-title">⚡ <span data-i18n="tab_futures_signal">Futures Signal</span> <span class="sig-count mono" id="futuresSignalCount">(–)</span></div>
       <button class="sig-results-btn" onclick="toggleSignalResults('futures')" data-i18n="btn_results">Results</button>
     </div>
     <div class="backtest-strip" id="futuresResultsPanel" style="display:none;"></div>
-    <div class="sig-algo-note" data-i18n="sig_algo_note_futures">Sinyal LONG/SHORT (tipe scalping) dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand, dianalisis di semua timeframe (M1 s/d MN) lalu digabung jadi 1 keputusan akhir. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.</div>
+    <div class="sig-algo-note" data-i18n="sig_algo_note_futures">Sinyal LONG/SHORT dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.</div>
     <div class="ind-note" style="padding:6px 2px 10px;" id="futuresSignalNote" data-i18n="loading_signals">Memuat sinyal…</div>
     <div id="futuresSignalList" class="sig-list"></div>
     <div class="sig-disclaimer" style="margin-top:16px; margin-bottom:0;" data-i18n="sig_disclaimer">Bukan ajakan untuk menjual atau membeli. Sinyal ini bukan jaminan profit — keputusan &amp; risiko sepenuhnya di tangan kamu.</div>
@@ -798,11 +779,10 @@ const I18N = {
     unit_pair: "pair", unit_asset: "aset",
     fng_desc: "Indeks sentimen pasar crypto (0 = Extreme Fear, 100 = Extreme Greed) dari alternative.me — metodologi setara indeks fear & greed CoinMarketCap, dipakai gratis tanpa API key berbayar.",
     tab_spot_signal: "Spot Signal", tab_futures_signal: "Futures Signal",
-    back_to_dashboard: "Kembali ke Dashboard",
     btn_results: "Results",
     sig_disclaimer: "Bukan ajakan untuk menjual atau membeli. Sinyal ini bukan jaminan profit — keputusan & risiko sepenuhnya di tangan kamu.",
-    sig_algo_note_spot: "Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand, dianalisis di semua timeframe besar (H4, H8, H12, D1, W1, MN) lalu digabung jadi 1 kesimpulan akhir, dengan Target & Stop Loss otomatis mengikuti rasio Risk:Reward.",
-    sig_algo_note_futures: "Sinyal LONG/SHORT (tipe scalping) dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand, dianalisis di semua timeframe (M1 s/d MN) lalu digabung jadi 1 keputusan akhir. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.",
+    sig_algo_note_spot: "Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4, dengan Target & Stop Loss otomatis mengikuti rasio Risk:Reward.",
+    sig_algo_note_futures: "Sinyal LONG/SHORT dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.",
     loading_signals: "Memuat sinyal…",
     sig_no_active: "Belum ada sinyal BUY/SELL yang cukup kuat saat ini dari algoritma konfluensi. Coba lagi beberapa saat lagi.",
     sig_failed: "Gagal memuat sinyal. Coba lagi.",
@@ -859,11 +839,10 @@ const I18N = {
     unit_pair: "pairs", unit_asset: "asset",
     fng_desc: "Crypto market sentiment index (0 = Extreme Fear, 100 = Extreme Greed) from alternative.me — methodology equivalent to CoinMarketCap's fear & greed index, used free with no paid API key.",
     tab_spot_signal: "Spot Signal", tab_futures_signal: "Futures Signal",
-    back_to_dashboard: "Back to Dashboard",
     btn_results: "Results",
     sig_disclaimer: "Not an offer or solicitation to buy or sell. These signals are not a profit guarantee — the decision and risk are entirely yours.",
-    sig_algo_note_spot: "Signals are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + Supply/Demand zones, analyzed across every big timeframe (H4, H8, H12, D1, W1, MN) and combined into ONE final conclusion, with Target & Stop Loss automatically following a Risk:Reward ratio.",
-    sig_algo_note_futures: "LONG/SHORT signals (scalping-style) are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + Supply/Demand zones, analyzed across every timeframe (M1 through MN) and combined into ONE final decision. Leverage is auto-calculated from the Stop Loss distance to avoid over-leveraging (SL is always kept closer than the liquidation price), and Targets follow a Risk:Reward ratio.",
+    sig_algo_note_spot: "Signals are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + Supply/Demand zones on the H4 timeframe, with Target & Stop Loss automatically following a Risk:Reward ratio.",
+    sig_algo_note_futures: "LONG/SHORT signals are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + Supply/Demand zones on the H4 timeframe. Leverage is auto-calculated from the Stop Loss distance to avoid over-leveraging (SL is always kept closer than the liquidation price), and Targets follow a Risk:Reward ratio.",
     loading_signals: "Loading signals…",
     sig_no_active: "No strong enough BUY/SELL signal from the confluence algorithm right now. Check back in a bit.",
     sig_failed: "Failed to load signals. Please try again.",
@@ -909,14 +888,12 @@ const CRYPTO_TFS = [
   {label:"M15", interval:"15m"},{label:"M30", interval:"30m"},
   {label:"H1",  interval:"1h"}, {label:"H2",  interval:"2h"},
   {label:"H3",  interval:"1h", resample:3}, {label:"H4",  interval:"4h"},
-  {label:"H8",  interval:"8h"}, {label:"H12", interval:"12h"},
   {label:"D1",  interval:"1d"}, {label:"W1",  interval:"1w"},
-  {label:"MN",  interval:"1M"},
 ];
 // Weight given to each timeframe's bias when computing the multi-timeframe confluence
-// score in computeSetupRecommendation() and computeMultiTfBias() — bigger timeframes
-// (H4/H8/H12/D1/W1/MN) carry more weight since they're less noisy than M1/M5.
-const TF_WEIGHT = {M1:0.5, M5:0.5, M15:0.75, M30:0.75, H1:1, H2:1.15, H3:1.3, H4:1.5, H8:1.75, H12:2, D1:2.25, W1:2.75, MN:3.25};
+// score in computeSetupRecommendation() — bigger timeframes (H4/D1/W1) carry more
+// weight since they're less noisy than M1/M5.
+const TF_WEIGHT = {M1:0.5, M5:0.5, M15:0.75, M30:0.75, H1:1, H2:1.15, H3:1.3, H4:1.5, D1:2, W1:2.5};
 /* ================= GLOBAL STATE ================= */
 const currentMarket = 'crypto';     // dashboard is crypto-only (perpetual futures)
 const TFS = CRYPTO_TFS;
@@ -2301,10 +2278,8 @@ function suggestSafeLeverage(entryPrice, stoplossPrice){
 // (placed just beyond the nearest opposite Supply/Demand zone when one exists, ATR-based
 // otherwise), a suggested capital risk % (tighter on higher-ATR/more volatile pairs), and
 // a safe suggested leverage sized off the SL distance (futures only — spot is never
-// leveraged). Only ONE entry price — no more "Entry 2" scale-in level. `ohlc` here is the
-// BASIS candle set (see computeMultiTfBias below) — the direction itself already comes
-// from a multi-timeframe vote, this only prices the entry/SL/TP off real recent structure.
-function computeSignalSetup(ohlc, direction, market){
+// leveraged). Only ONE entry price — no more "Entry 2" scale-in level.
+function computeSignalSetup(ohlc, sig, direction, market){
   const price = ohlc.closes.at(-1);
   const atrVal = atr(ohlc.highs, ohlc.lows, ohlc.closes, 14);
   const atrPct = atrVal ? (atrVal/price*100) : 1.5;
@@ -2352,55 +2327,15 @@ function logWrResult(market, r, result, exitPrice){
   saveWrLog(log);
 }
 
-/* ---- MULTI-TIMEFRAME CONFLUENCE (Spot & Futures Signal scanners) ----
-   Spot Signal only looks at the BIG timeframes (H4/H8/H12/D1/W1/MN) since spot is a
-   swing/position style — no point reacting to 1-minute noise. Futures Signal is scalping,
-   so it votes across EVERY timeframe the dashboard has (M1..MN) for a faster, more
-   reactive read. Either way, each timeframe's bias is fetched in PARALLEL (fast) and
-   combined into ONE weighted decision — a signal only opens when there's real agreement
-   across timeframes, not just a single noisy candle. */
-const SPOT_SIGNAL_TFS = ['H4','H8','H12','D1','W1','MN'];
-const FUTURES_SIGNAL_TFS = TFS.map(t=>t.label); // scalping: vote across every available timeframe
-async function computeMultiTfBias(pair, tfLabels, market, basisTfLabel){
-  const tfDefs = tfLabels.map(l=>TFS.find(t=>t.label===l)).filter(Boolean);
-  const results = await Promise.all(tfDefs.map(async tf=>{
-    try{
-      const ohlc = market==='spot' ? await getSpotOHLC(pair, tf) : await getOHLC(pair, tf);
-      if(!ohlc.closes || ohlc.closes.length<40) return {tf:tf.label, sig:null, ohlc:null};
-      return {tf:tf.label, sig:computeSignal(ohlc), ohlc};
-    }catch(e){ return {tf:tf.label, sig:null, ohlc:null}; }
-  }));
-  let weightedScore=0, maxWeight=0, buyCount=0, sellCount=0, validCount=0;
-  results.forEach(r=>{
-    const w = TF_WEIGHT[r.tf]||1; maxWeight+=w;
-    if(!r.sig) return;
-    validCount++;
-    if(r.sig.bias==='buy'){ weightedScore+=w; buyCount++; }
-    else if(r.sig.bias==='sell'){ weightedScore-=w; sellCount++; }
-  });
-  const confidencePct = maxWeight ? Math.round((Math.abs(weightedScore)/maxWeight)*100) : 0;
-  const rawBias = weightedScore>0 ? 'buy' : weightedScore<0 ? 'sell' : 'neutral';
-  // Needs enough timeframes actually online AND a real weighted majority (>=55%) before
-  // it counts as a signal — otherwise it's NEUTRAL (no trade), same threshold the single-
-  // pair "Position Setup Recommendation" card uses.
-  const enoughData = validCount >= Math.ceil(tfDefs.length*0.6);
-  const bias = (rawBias==='neutral' || confidencePct<55 || !enoughData) ? 'neutral' : rawBias;
-  const basis = results.find(r=>r.tf===basisTfLabel && r.ohlc) || results.find(r=>r.ohlc);
-  return { bias, confidencePct, buyCount, sellCount, total:tfDefs.length, ohlc: basis?.ohlc };
-}
-
-// Scans a basket of pairs, votes each pair's direction across multiple timeframes (see
-// computeMultiTfBias), and syncs the result into the persisted signal store. A pair with a
-// fresh qualifying non-neutral bias that ISN'T tracked yet gets a brand-new persisted
-// signal (entry/SL/TP/date fixed from here on). A pair that's ALREADY tracked only gets
-// checked against its own frozen levels: did price touch a target (✓ checkmark; once
-// every target is hit → WIN, logged + removed)? did it hit the Stop Loss (LOSS, logged +
-// removed)? did the multi-timeframe vote flip against the stored direction (INVALID,
-// removed with no win/loss recorded)? The stored entry/stoploss/targets/openTime
-// themselves are NEVER edited by this loop.
+// Scans a basket of pairs on H4. A pair with a fresh qualifying non-neutral bias that
+// ISN'T tracked yet gets a brand-new persisted signal (entry/SL/TP/date fixed from here
+// on). A pair that's ALREADY tracked only gets checked against its own frozen levels: did
+// price touch a target (✓ checkmark; once every target is hit → WIN, logged + removed)?
+// did it hit the Stop Loss (LOSS, logged + removed)? did the live confluence flip against
+// the stored direction (INVALID, removed with no win/loss recorded)? The stored
+// entry/stoploss/targets/openTime themselves are NEVER edited by this loop.
 async function scanAndSyncSignals(pairs, {market, allowShort}){
-  const tfLabels = market==='spot' ? SPOT_SIGNAL_TFS : FUTURES_SIGNAL_TFS;
-  const basisTfLabel = market==='spot' ? 'H4' : 'H1'; // smaller TF used only to price entry/SL/TP
+  const tf = TFS.find(t=>t.label==='H4') || TFS[TFS.length-1];
   const stored = loadStoredSignals(market);
   // Also recheck pairs already being tracked even if they fell out of this run's top-N
   // volume basket, so an open signal doesn't get "stuck" un-updated.
@@ -2409,14 +2344,15 @@ async function scanAndSyncSignals(pairs, {market, allowShort}){
 
   for(const c of scanList){
     try{
-      const mtf = await computeMultiTfBias(c.pair, tfLabels, market, basisTfLabel);
-      if(!mtf.ohlc || mtf.ohlc.closes.length<40) continue;
+      const ohlc = market==='spot' ? await getSpotOHLC(c.pair, tf) : await getOHLC(c.pair, tf);
+      if(!ohlc.closes || ohlc.closes.length<40) continue;
+      const sig = computeSignal(ohlc);
       const existing = stored[c.pair];
 
       if(existing){
-        const sinceIdx = mtf.ohlc.times.findIndex(tm=>tm>=existing.openTime);
-        const highs = sinceIdx>=0 ? mtf.ohlc.highs.slice(sinceIdx) : mtf.ohlc.highs;
-        const lows = sinceIdx>=0 ? mtf.ohlc.lows.slice(sinceIdx) : mtf.ohlc.lows;
+        const sinceIdx = ohlc.times.findIndex(tm=>tm>=existing.openTime);
+        const highs = sinceIdx>=0 ? ohlc.highs.slice(sinceIdx) : ohlc.highs;
+        const lows = sinceIdx>=0 ? ohlc.lows.slice(sinceIdx) : ohlc.lows;
         const hiSince = Math.max(...highs), loSince = Math.min(...lows);
         const isBuy = existing.bias==='buy';
         const slHit = isBuy ? loSince<=existing.stoploss : hiSince>=existing.stoploss;
@@ -2436,8 +2372,8 @@ async function scanAndSyncSignals(pairs, {market, allowShort}){
           delete stored[c.pair];
           continue;
         }
-        if(mtf.bias!=='neutral' && mtf.bias!==existing.bias){
-          // Multi-timeframe vote flipped against the open signal — invalidate & remove (not a win/loss).
+        if(sig.bias!=='neutral' && sig.bias!==existing.bias){
+          // Confluence flipped against the open signal — invalidate & remove (not a win/loss).
           delete stored[c.pair];
           continue;
         }
@@ -2445,16 +2381,15 @@ async function scanAndSyncSignals(pairs, {market, allowShort}){
         continue;
       }
 
-      if(mtf.bias==='neutral') continue;
-      if(mtf.bias==='sell' && !allowShort) continue;
-      const setup = computeSignalSetup(mtf.ohlc, mtf.bias, market);
-      const openTime = findBiasStartTime(mtf.ohlc, mtf.bias) || mtf.ohlc.times.at(-1);
+      if(sig.bias==='neutral') continue;
+      if(sig.bias==='sell' && !allowShort) continue;
+      const setup = computeSignalSetup(ohlc, sig, sig.bias, market);
+      const openTime = findBiasStartTime(ohlc, sig.bias) || ohlc.times.at(-1);
       stored[c.pair] = {
-        symbol:c.symbol, pair:c.pair, bias:mtf.bias,
+        symbol:c.symbol, pair:c.pair, bias:sig.bias,
         entry:setup.price, stoploss:setup.stoploss, targets:setup.targets,
         capitalPct:setup.capitalPct, atrPct:setup.atrPct, leverageInfo:setup.leverageInfo,
-        openTime, hit:[false,false,false,false],
-        tfAgree: `${mtf.bias==='buy'?mtf.buyCount:mtf.sellCount}/${mtf.total}`, tfConfidence: mtf.confidencePct
+        openTime, hit:[false,false,false,false]
       };
     }catch(e){ /* skip this pair, keep scanning the rest of the basket */ }
   }
