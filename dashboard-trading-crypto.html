@@ -121,6 +121,13 @@
   }
   .market-tab:hover{color:var(--ink);}
   .market-tab.active{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
+  .sig-back-row{padding:10px 20px 0; background:var(--panel);}
+  .sig-back-btn{
+    display:inline-flex; align-items:center; gap:6px; background:transparent; border:1px solid var(--line);
+    color:var(--ink-dim); border-radius:8px; padding:7px 14px; font-size:12px; font-weight:600;
+    cursor:pointer; transition:all .15s;
+  }
+  .sig-back-btn:hover{color:var(--accent); border-color:var(--accent);}
 
   /* ---- Layout ---- */
   .layout{display:grid; grid-template-columns:240px 1fr; min-height:calc(100vh - 106px);}
@@ -159,8 +166,8 @@
   .sig-page-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; flex-wrap:wrap;}
   .sig-page-title{font-size:19px; font-weight:800;}
   .sig-count{color:var(--ink-dim); font-size:14px; font-weight:600;}
-  .sig-results-btn{background:#3b82f6; color:#fff; border:none; border-radius:8px; padding:9px 20px; font-size:13px; font-weight:700; cursor:pointer; transition:background .15s;}
-  .sig-results-btn:hover{background:#2563eb;}
+  .sig-results-btn{background:var(--accent); color:var(--accent-ink); border:none; border-radius:8px; padding:9px 20px; font-size:13px; font-weight:700; cursor:pointer; transition:background .15s;}
+  .sig-results-btn:hover{background:var(--accent-deep);}
   .sig-disclaimer{border:1px solid var(--sell); background:var(--sell-glow); color:var(--sell); font-size:11.5px; font-weight:600; padding:10px 14px; border-radius:8px; margin-bottom:12px; text-align:center;}
   .sig-algo-note{font-size:11px; color:var(--ink-dim); line-height:1.6; margin-bottom:14px; padding:0 2px;}
   .sig-list{display:flex; flex-direction:column; gap:12px; padding-bottom:20px;}
@@ -169,8 +176,10 @@
   .sig-card-top{display:flex; align-items:center; gap:10px; cursor:pointer;}
   .sig-icon{width:34px; height:34px; border-radius:50%; background:var(--panel); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:var(--accent); flex-shrink:0;}
   .sig-card-info{flex:1; min-width:0;}
-  .sig-pair-name{color:#4f9cf9; font-weight:700; font-size:14.5px;}
-  .sig-open-date{color:var(--sell); font-size:11px; margin-top:1px; font-weight:600;}
+  .sig-pair-name{color:var(--accent); font-weight:700; font-size:14.5px;}
+  .sig-open-date{color:var(--ink-dim); font-size:11px; margin-top:1px; font-weight:600;}
+  .sig-open-date.long{color:var(--buy);}
+  .sig-open-date.short{color:var(--sell);}
   .sig-chevron{color:var(--ink-dim); font-size:12px; transition:transform .2s; flex-shrink:0;}
   .sig-card.open .sig-chevron{transform:rotate(180deg);}
   .sig-pill-row{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;}
@@ -178,15 +187,17 @@
   .sig-pill.buy{background:var(--buy);}
   .sig-pill.sell{background:var(--sell); color:#fff;}
   .sig-pill.leverage{background:var(--buy);}
-  .sig-pill.capital{background:#c99a4d; color:#241a05;}
+  .sig-pill.capital{background:var(--accent); color:var(--accent-ink);}
   .sig-detail{max-height:0; overflow:hidden; transition:max-height .3s ease;}
   .sig-card.open .sig-detail{max-height:700px;}
   .sig-entry-lines{font-size:12px; color:var(--ink-dim); margin-top:12px; display:flex; gap:20px; flex-wrap:wrap;}
   .sig-entry-lines b{color:var(--ink); font-weight:700;}
-  .sig-target-row{display:flex; align-items:center; justify-content:space-between; gap:10px; background:#2b6fe0; border-radius:8px; padding:9px 12px; margin-top:8px; font-size:12.5px; font-weight:700; color:#fff;}
+  .sig-target-row{display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:9px 12px; margin-top:8px; font-size:12.5px; font-weight:700; color:var(--ink);}
+  .sig-target-row.sig-target-hit{background:var(--buy-glow); border-color:var(--buy); color:var(--buy);}
   .sig-target-label{flex:0 0 auto;}
   .sig-target-price{flex:1; text-align:center;}
-  .sig-target-pct{flex:0 0 auto; color:#22ff9e;}
+  .sig-target-pct{flex:0 0 auto; color:var(--accent);}
+  .sig-target-row.sig-target-hit .sig-target-pct{color:var(--buy);}
   .sig-stoploss{text-align:center; margin-top:12px;}
   .sig-stoploss span{display:inline-block; background:rgba(246,70,93,0.16); border:1px solid var(--sell); color:var(--sell); font-weight:700; font-size:12px; border-radius:8px; padding:7px 18px;}
   .sig-leverage-note{font-size:10.5px; line-height:1.6; color:var(--ink-dim); background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:9px 11px; margin-top:12px;}
@@ -253,31 +264,6 @@
     font-size:13px; line-height:1.7; color:var(--ink);
   }
   .setup-analysis .caution{color:var(--sell); font-weight:600;}
-  .setup-apply-btn{
-    margin-top:14px; background:transparent; border:1px solid var(--accent); color:var(--accent);
-    padding:9px 14px; border-radius:6px; font-weight:600; font-size:12px; cursor:pointer; letter-spacing:0.3px;
-  }
-  .setup-apply-btn:hover{background:var(--accent-glow);}
-
-  /* ---- Calculator ---- */
-  .calc-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
-  @media (max-width:600px){.calc-grid{grid-template-columns:1fr;}}
-  .field{display:flex; flex-direction:column; gap:6px;}
-  .field label{font-size:11px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:1px;}
-  .field input, .field select{
-    background:var(--panel-2); border:1px solid var(--line); border-radius:6px;
-    padding:9px 10px; color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:13px;
-  }
-  .field input:focus, .field select:focus{outline:none; border-color:var(--accent);}
-  .dir-toggle{display:flex; border-radius:6px; overflow:hidden; border:1px solid var(--line);}
-  .dir-toggle button{flex:1; padding:9px; background:var(--panel-2); color:var(--ink-dim); border:none; cursor:pointer; font-weight:600; font-size:12px;}
-  .dir-toggle button.active.long{background:var(--buy-glow); color:var(--buy);}
-  .dir-toggle button.active.short{background:var(--sell-glow); color:var(--sell);}
-  .calc-btn{
-    margin-top:6px; background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
-    padding:11px; font-weight:700; font-size:13px; cursor:pointer; letter-spacing:0.5px;
-  }
-  .calc-btn:hover{background:var(--accent-deep);}
   .result-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:10px; margin-top:14px;}
   .result-box{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:10px 12px;}
   .result-box .rl{font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:1px;}
@@ -525,7 +511,6 @@
         </div>
         <div class="setup-metrics" id="setupMetrics"></div>
         <div class="setup-analysis" id="setupAnalysis" data-i18n="analyzing_tf">Menganalisis konfluensi timeframe…</div>
-        <button class="setup-apply-btn" onclick="applySetupToCalculator()" data-i18n="btn_apply_calc">Terapkan ke Kalkulator ↓</button>
       </div>
     </div>
 
@@ -566,35 +551,6 @@
     </div>
 
     <div class="card">
-      <div class="card-title"><span data-i18n="card_calculator">Kalkulator Entry / TP / SL</span></div>
-      <div class="card-body">
-        <div class="calc-grid">
-          <div class="field">
-            <label data-i18n="label_direction">Arah Posisi</label>
-            <div class="dir-toggle">
-              <button id="btnLong" class="active long" onclick="setDir('long')">LONG / BUY</button>
-              <button id="btnShort" class="short" onclick="setDir('short')">SHORT / SELL</button>
-            </div>
-          </div>
-          <div class="field">
-            <label data-i18n="label_entry_price">Harga Entry</label>
-            <input id="inEntry" class="mono" type="number" placeholder="0.00" step="any">
-          </div>
-          <div class="field">
-            <label data-i18n="label_sl_pct">Stop Loss — jarak (%)</label>
-            <input id="inSlPct" class="mono" type="number" value="1.5" step="0.1">
-          </div>
-          <div class="field">
-            <label data-i18n="label_rr_ratio">Rasio Risk:Reward (TP1 / TP2 / TP3)</label>
-            <input id="inRatios" class="mono" value="1.5, 2.5, 4" >
-          </div>
-        </div>
-        <button class="calc-btn" onclick="calcTPSL()" data-i18n="btn_calc">Hitung Entry / TP / SL</button>
-        <div class="result-grid" id="calcResult"></div>
-      </div>
-    </div>
-
-    <div class="card">
       <div class="card-title"><span data-i18n="card_entry_why">Kenapa Sinyal Ini Layak Dipertimbangkan?</span></div>
       <div class="card-body" id="entryWhyBody"><div class="ind-note" data-i18n="waiting_analysis">Menunggu hasil analisis…</div></div>
     </div>
@@ -604,31 +560,43 @@
 
 <!-- ===== Spot Signal ===== -->
 <div id="page-spotsignal" class="page">
+  <div class="market-tabs">
+    <div class="market-tab" data-page="trading" onclick="switchPage('trading')">🪙 Crypto Perpetual Futures</div>
+    <div class="market-tab active" data-page="spotsignal" onclick="switchPage('spotsignal')">🎯 <span data-i18n="tab_spot_signal">Spot Signal</span></div>
+    <div class="market-tab" data-page="futuresignal" onclick="switchPage('futuresignal')">⚡ <span data-i18n="tab_futures_signal">Futures Signal</span></div>
+  </div>
+  <div class="sig-back-row"><button class="sig-back-btn" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></button></div>
   <div class="page-inner">
     <div class="sig-page-head">
       <div class="sig-page-title">🎯 <span data-i18n="tab_spot_signal">Spot Signal</span> <span class="sig-count mono" id="spotSignalCount">(–)</span></div>
       <button class="sig-results-btn" onclick="toggleSignalResults('spot')" data-i18n="btn_results">Results</button>
     </div>
-    <div class="sig-disclaimer" data-i18n="sig_disclaimer">Trading berisiko. Sinyal ini bukan jaminan profit — keputusan &amp; risiko sepenuhnya di tangan kamu.</div>
     <div class="backtest-strip" id="spotResultsPanel" style="display:none;"></div>
-    <div class="sig-algo-note" data-i18n="sig_algo_note_spot">Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4, dengan Target &amp; Stop Loss otomatis mengikuti rasio Risk:Reward.</div>
+    <div class="sig-algo-note" data-i18n="sig_algo_note_spot">Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand, dianalisis di semua timeframe besar (H4, H8, H12, D1, W1, MN) lalu digabung jadi 1 kesimpulan akhir, dengan Target &amp; Stop Loss otomatis mengikuti rasio Risk:Reward.</div>
     <div class="ind-note" style="padding:6px 2px 10px;" id="spotSignalNote" data-i18n="loading_signals">Memuat sinyal…</div>
     <div id="spotSignalList" class="sig-list"></div>
+    <div class="sig-disclaimer" style="margin-top:16px; margin-bottom:0;" data-i18n="sig_disclaimer">Bukan ajakan untuk menjual atau membeli. Sinyal ini bukan jaminan profit — keputusan &amp; risiko sepenuhnya di tangan kamu.</div>
   </div>
 </div>
 
 <!-- ===== Perpetual Futures Signal ===== -->
 <div id="page-futuresignal" class="page">
+  <div class="market-tabs">
+    <div class="market-tab" data-page="trading" onclick="switchPage('trading')">🪙 Crypto Perpetual Futures</div>
+    <div class="market-tab" data-page="spotsignal" onclick="switchPage('spotsignal')">🎯 <span data-i18n="tab_spot_signal">Spot Signal</span></div>
+    <div class="market-tab active" data-page="futuresignal" onclick="switchPage('futuresignal')">⚡ <span data-i18n="tab_futures_signal">Futures Signal</span></div>
+  </div>
+  <div class="sig-back-row"><button class="sig-back-btn" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></button></div>
   <div class="page-inner">
     <div class="sig-page-head">
       <div class="sig-page-title">⚡ <span data-i18n="tab_futures_signal">Futures Signal</span> <span class="sig-count mono" id="futuresSignalCount">(–)</span></div>
       <button class="sig-results-btn" onclick="toggleSignalResults('futures')" data-i18n="btn_results">Results</button>
     </div>
-    <div class="sig-disclaimer" data-i18n="sig_disclaimer">Trading berisiko. Sinyal ini bukan jaminan profit — keputusan &amp; risiko sepenuhnya di tangan kamu.</div>
     <div class="backtest-strip" id="futuresResultsPanel" style="display:none;"></div>
-    <div class="sig-algo-note" data-i18n="sig_algo_note_futures">Sinyal LONG/SHORT dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.</div>
+    <div class="sig-algo-note" data-i18n="sig_algo_note_futures">Sinyal LONG/SHORT (tipe scalping) dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand, dianalisis di semua timeframe (M1 s/d MN) lalu digabung jadi 1 keputusan akhir. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.</div>
     <div class="ind-note" style="padding:6px 2px 10px;" id="futuresSignalNote" data-i18n="loading_signals">Memuat sinyal…</div>
     <div id="futuresSignalList" class="sig-list"></div>
+    <div class="sig-disclaimer" style="margin-top:16px; margin-bottom:0;" data-i18n="sig_disclaimer">Bukan ajakan untuk menjual atau membeli. Sinyal ini bukan jaminan profit — keputusan &amp; risiko sepenuhnya di tangan kamu.</div>
   </div>
 </div>
 
@@ -799,12 +767,9 @@ const I18N = {
     th_timeframe: "Timeframe", th_signal: "Sinyal",
     card_signals: "Sinyal Multi-Timeframe", card_setup_per_tf: "Sinyal & Setup per Timeframe",
     card_setup_reco: "Rekomendasi Setup Posisi", analyzing_tf: "Menganalisis konfluensi timeframe…",
-    btn_apply_calc: "Terapkan ke Kalkulator ↓",
+    setup_no_trade: "⏳ Menunggu Sinyal Searah",
     card_winrate: "Win Rate Score", setup_readiness: "Kesiapan Setup",
     card_sd_zones: "Supply & Demand Zones", card_structure: "Struktur Pasar & Pola Chart",
-    card_calculator: "Kalkulator Entry / TP / SL", label_direction: "Arah Posisi",
-    label_entry_price: "Harga Entry", label_sl_pct: "Stop Loss — jarak (%)",
-    label_rr_ratio: "Rasio Risk:Reward (TP1 / TP2 / TP3)", btn_calc: "Hitung Entry / TP / SL",
     card_entry_why: "Kenapa Sinyal Ini Layak Dipertimbangkan?", waiting_analysis: "Menunggu hasil analisis…",
     ov_top_gainer: "Top Gainer 24h", ov_top_loser: "Top Loser 24h", latest_news: "Berita Terbaru",
     livechart_title: "Live Chart Pro", livechart_sub: "Full toolbar · drawing tools · multi-studies",
@@ -829,16 +794,15 @@ const I18N = {
     no_patterns: "Belum ada pola/struktur yang cukup jelas terdeteksi.",
     no_dominant_signal: "Belum ada arah sinyal yang cukup dominan saat ini — ringkasan alasan entry akan muncul begitu Setup Posisi menunjukkan status LONG atau SHORT.",
     no_strong_signal_score: "Belum ada arah sinyal yang cukup kuat untuk dinilai (status: NO TRADE). Skor akan muncul begitu Setup Posisi menunjukkan LONG atau SHORT.",
-    no_setup_alert: "Belum ada arah setup yang cukup kuat untuk diterapkan (status: NO TRADE). Tunggu sinyal lebih searah dulu.",
-    info: "Info", fill_entry_price: "Isi harga entry dulu", entry: "Entry", stop_loss: "Stop Loss",
     sidebar_crypto: "Perpetual Futures · Vol 24h",
     unit_pair: "pair", unit_asset: "aset",
     fng_desc: "Indeks sentimen pasar crypto (0 = Extreme Fear, 100 = Extreme Greed) dari alternative.me — metodologi setara indeks fear & greed CoinMarketCap, dipakai gratis tanpa API key berbayar.",
     tab_spot_signal: "Spot Signal", tab_futures_signal: "Futures Signal",
+    back_to_dashboard: "Kembali ke Dashboard",
     btn_results: "Results",
-    sig_disclaimer: "Trading berisiko. Sinyal ini bukan jaminan profit — keputusan & risiko sepenuhnya di tangan kamu.",
-    sig_algo_note_spot: "Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4, dengan Target & Stop Loss otomatis mengikuti rasio Risk:Reward.",
-    sig_algo_note_futures: "Sinyal LONG/SHORT dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + zona Supply/Demand pada timeframe H4. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.",
+    sig_disclaimer: "Bukan ajakan untuk menjual atau membeli. Sinyal ini bukan jaminan profit — keputusan & risiko sepenuhnya di tangan kamu.",
+    sig_algo_note_spot: "Sinyal dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand, dianalisis di semua timeframe besar (H4, H8, H12, D1, W1, MN) lalu digabung jadi 1 kesimpulan akhir, dengan Target & Stop Loss otomatis mengikuti rasio Risk:Reward.",
+    sig_algo_note_futures: "Sinyal LONG/SHORT (tipe scalping) dihitung dari konfluensi Tren (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + zona Supply/Demand, dianalisis di semua timeframe (M1 s/d MN) lalu digabung jadi 1 keputusan akhir. Leverage otomatis dihitung dari jarak Stop Loss agar posisi tidak over-leverage (SL selalu dijaga kena lebih dulu sebelum harga likuidasi), lalu Target mengikuti rasio Risk:Reward.",
     loading_signals: "Memuat sinyal…",
     sig_no_active: "Belum ada sinyal BUY/SELL yang cukup kuat saat ini dari algoritma konfluensi. Coba lagi beberapa saat lagi.",
     sig_failed: "Gagal memuat sinyal. Coba lagi.",
@@ -864,12 +828,9 @@ const I18N = {
     th_timeframe: "Timeframe", th_signal: "Signal",
     card_signals: "Multi-Timeframe Signals", card_setup_per_tf: "Signal & Setup per Timeframe",
     card_setup_reco: "Position Setup Recommendation", analyzing_tf: "Analyzing timeframe confluence…",
-    btn_apply_calc: "Apply to Calculator ↓",
+    setup_no_trade: "⏳ Waiting For An Aligned Signal",
     card_winrate: "Win Rate Score", setup_readiness: "Setup Readiness",
     card_sd_zones: "Supply & Demand Zones", card_structure: "Market Structure & Chart Patterns",
-    card_calculator: "Entry / TP / SL Calculator", label_direction: "Position Direction",
-    label_entry_price: "Entry Price", label_sl_pct: "Stop Loss — distance (%)",
-    label_rr_ratio: "Risk:Reward Ratio (TP1 / TP2 / TP3)", btn_calc: "Calculate Entry / TP / SL",
     card_entry_why: "Why This Signal Is Worth Considering?", waiting_analysis: "Waiting for analysis results…",
     ov_top_gainer: "Top Gainer 24h", ov_top_loser: "Top Loser 24h", latest_news: "Latest News",
     livechart_title: "Live Chart Pro", livechart_sub: "Full toolbar · drawing tools · multi-studies",
@@ -894,16 +855,15 @@ const I18N = {
     no_patterns: "No sufficiently clear pattern/structure detected yet.",
     no_dominant_signal: "No sufficiently dominant signal direction right now — the entry-reason summary will appear once the Position Setup shows a LONG or SHORT status.",
     no_strong_signal_score: "No sufficiently strong signal direction to score yet (status: NO TRADE). The score will appear once the Position Setup shows LONG or SHORT.",
-    no_setup_alert: "There is no strong enough setup direction to apply yet (status: NO TRADE). Wait for a more directional signal.",
-    info: "Info", fill_entry_price: "Fill in the entry price first", entry: "Entry", stop_loss: "Stop Loss",
     sidebar_crypto: "Perpetual Futures · Vol 24h",
     unit_pair: "pairs", unit_asset: "asset",
     fng_desc: "Crypto market sentiment index (0 = Extreme Fear, 100 = Extreme Greed) from alternative.me — methodology equivalent to CoinMarketCap's fear & greed index, used free with no paid API key.",
     tab_spot_signal: "Spot Signal", tab_futures_signal: "Futures Signal",
+    back_to_dashboard: "Back to Dashboard",
     btn_results: "Results",
-    sig_disclaimer: "Trading is risky. These signals are not a profit guarantee — the decision and risk are entirely yours.",
-    sig_algo_note_spot: "Signals are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + Supply/Demand zones on the H4 timeframe, with Target & Stop Loss automatically following a Risk:Reward ratio.",
-    sig_algo_note_futures: "LONG/SHORT signals are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(14,3) + Fibonacci Retracement + Supply/Demand zones on the H4 timeframe. Leverage is auto-calculated from the Stop Loss distance to avoid over-leveraging (SL is always kept closer than the liquidation price), and Targets follow a Risk:Reward ratio.",
+    sig_disclaimer: "Not an offer or solicitation to buy or sell. These signals are not a profit guarantee — the decision and risk are entirely yours.",
+    sig_algo_note_spot: "Signals are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + Supply/Demand zones, analyzed across every big timeframe (H4, H8, H12, D1, W1, MN) and combined into ONE final conclusion, with Target & Stop Loss automatically following a Risk:Reward ratio.",
+    sig_algo_note_futures: "LONG/SHORT signals (scalping-style) are computed from a confluence of Trend (EMA9/21/50) + RSI(14) + Stochastic(5,3,3) + Fibonacci Retracement + Supply/Demand zones, analyzed across every timeframe (M1 through MN) and combined into ONE final decision. Leverage is auto-calculated from the Stop Loss distance to avoid over-leveraging (SL is always kept closer than the liquidation price), and Targets follow a Risk:Reward ratio.",
     loading_signals: "Loading signals…",
     sig_no_active: "No strong enough BUY/SELL signal from the confluence algorithm right now. Check back in a bit.",
     sig_failed: "Failed to load signals. Please try again.",
@@ -949,12 +909,14 @@ const CRYPTO_TFS = [
   {label:"M15", interval:"15m"},{label:"M30", interval:"30m"},
   {label:"H1",  interval:"1h"}, {label:"H2",  interval:"2h"},
   {label:"H3",  interval:"1h", resample:3}, {label:"H4",  interval:"4h"},
+  {label:"H8",  interval:"8h"}, {label:"H12", interval:"12h"},
   {label:"D1",  interval:"1d"}, {label:"W1",  interval:"1w"},
+  {label:"MN",  interval:"1M"},
 ];
 // Weight given to each timeframe's bias when computing the multi-timeframe confluence
-// score in computeSetupRecommendation() — bigger timeframes (H4/D1/W1) carry more
-// weight since they're less noisy than M1/M5.
-const TF_WEIGHT = {M1:0.5, M5:0.5, M15:0.75, M30:0.75, H1:1, H2:1.15, H3:1.3, H4:1.5, D1:2, W1:2.5};
+// score in computeSetupRecommendation() and computeMultiTfBias() — bigger timeframes
+// (H4/H8/H12/D1/W1/MN) carry more weight since they're less noisy than M1/M5.
+const TF_WEIGHT = {M1:0.5, M5:0.5, M15:0.75, M30:0.75, H1:1, H2:1.15, H3:1.3, H4:1.5, H8:1.75, H12:2, D1:2.25, W1:2.75, MN:3.25};
 /* ================= GLOBAL STATE ================= */
 const currentMarket = 'crypto';     // dashboard is crypto-only (perpetual futures)
 const TFS = CRYPTO_TFS;
@@ -962,7 +924,6 @@ let PAIRS = [];                     // current market's pair list [{rank,symbol,
 let pairMetaMap = {};               // pair -> {tv, name}
 let tickerMap = {};                 // crypto: Binance symbol -> ticker obj
 let currentPair = "BTCUSDT";
-let currentDir = "long";
 let currentSignalRows = [];
 let cryptoWS = null;              // persistent Binance Futures all-market ticker stream (crypto only)
 let cryptoWSRetryTimer = null;
@@ -1045,18 +1006,21 @@ function bollinger(closes, period=20, mult=2){
   const bandwidthPct = basis ? (upper-lower)/basis*100 : 0;
   return { basis, upper, lower, pctB, bandwidthPct };
 }
-// Stochastic Oscillator (%K, %D) — standard 14,3,3. %K = position of the latest close
-// within the recent high/low range; %D is a 3-period SMA of %K (the signal line).
+// Stochastic Oscillator — Slow Stochastic (5,3,3): raw %K over a 5-period high/low range,
+// smoothed (slowing) over 3 periods to get %K, then %D is a 3-period SMA of that %K.
 // Cross of %K above/below %D in the oversold/overbought zone is the classic trigger.
-function stochastic(highs, lows, closes, kPeriod=14, dPeriod=3){
+function stochastic(highs, lows, closes, kPeriod=5, slowing=3, dPeriod=3){
   const n = closes.length;
-  if(n < kPeriod+dPeriod) return null;
-  const kVals = [];
+  if(n < kPeriod+slowing+dPeriod) return null;
+  const rawK = [];
   for(let i=kPeriod-1; i<n; i++){
     const hSlice = highs.slice(i-kPeriod+1, i+1), lSlice = lows.slice(i-kPeriod+1, i+1);
     const hh = Math.max(...hSlice), ll = Math.min(...lSlice);
-    kVals.push(hh>ll ? (closes[i]-ll)/(hh-ll)*100 : 50);
+    rawK.push(hh>ll ? (closes[i]-ll)/(hh-ll)*100 : 50);
   }
+  if(rawK.length < slowing) return null;
+  const kVals = []; // slowed %K = SMA(rawK, slowing)
+  for(let i=slowing-1; i<rawK.length; i++) kVals.push(rawK.slice(i-slowing+1, i+1).reduce((s,v)=>s+v,0)/slowing);
   if(kVals.length < dPeriod) return null;
   const dVals = [];
   for(let i=dPeriod-1; i<kVals.length; i++) dVals.push(kVals.slice(i-dPeriod+1, i+1).reduce((s,v)=>s+v,0)/dPeriod);
@@ -1146,7 +1110,7 @@ function computeSignal(ohlc){
   const e50 = e50arr ? e50arr.at(-1) : null;
   const m = macdFull(closes);
   const bb = bollinger(closes,20,2);
-  const stoch = closes.length>=20 ? stochastic(highs, lows, closes, 14, 3) : null;
+  const stoch = closes.length>=20 ? stochastic(highs, lows, closes) : null;
   const fib = closes.length>=20 ? computeFibonacci(highs, lows, closes, Math.min(80, closes.length)) : null;
   const sr = closes.length>=10 ? findSupportResistance(highs, lows, closes) : null;
   const price = closes.at(-1);
@@ -1197,15 +1161,19 @@ function computeSignal(ohlc){
   return { rsi:r, ema9:e9, ema21:e21, ema50:e50, macd:m, bb, stoch, fib, sr, longScore, shortScore, label, bias };
 }
 
-/* ================= DATA ADAPTERS ================= */
-// Binance Futures (fapi.binance.com) is the primary source. Some networks/ISPs/regions
-// block or throttle it (or a browser extension blocks it) while Binance Spot
-// (api.binance.com) still works — that mismatch is the most common cause of "Gagal
-// memuat" errors. Every crypto fetch below tries Futures first, then transparently
-// falls back to Spot, and flips `usingSpotFallback` so the UI can be honest about it
-// (funding rate / open interest / long-short ratio are Futures-only concepts and get
-// hidden on the Spot fallback instead of silently erroring).
+/* ================= DATA ADAPTERS (Binance -> Bybit -> OKX) ================= */
+// Binance is the primary source. Some ISPs/networks in Indonesia (and elsewhere) throttle
+// or block it outright — when that happens every fetch below transparently retries on
+// Bybit, then OKX, before finally giving up. All three return candles in a different raw
+// shape, so everything gets normalized into ONE {opens,highs,lows,closes,volumes,times}
+// object before it reaches the signal engine — nothing downstream (indicators, charts,
+// the Spot/Futures Signal scanners) needs to know or care which exchange actually
+// answered. `activeDataSource` records which one did (for the UI); `usingSpotFallback`
+// keeps its original meaning — true only once we've exhausted every FUTURES-style source
+// and dropped down to genuine Spot data, at which point Futures-only concepts (funding
+// rate / open interest / leverage) get hidden rather than silently erroring.
 let usingSpotFallback = false;
+let activeDataSource = 'binance'; // 'binance' | 'bybit' | 'okx' — whichever last answered successfully
 async function fetchJsonRace(urls, ms=8000){
   let lastErr = null;
   for(const url of urls){
@@ -1221,15 +1189,53 @@ async function fetchJsonRace(urls, ms=8000){
   }
   throw lastErr || new Error('Semua sumber data gagal diakses');
 }
-async function fetchKlinesCrypto(symbol, interval, limit=100){
-  try{
-    return await fetchJsonRace([`https://fapi.binance.com/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`]);
-  }catch(e){
-    usingSpotFallback = true;
-    return await fetchJsonRace([`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`]);
-  }
-}
 
+// Per-timeframe interval code on each exchange. Where an exchange has no native candle
+// matching our timeframe (nobody but Binance natively has an 8h candle, for instance),
+// `resample:N` fetches N× as many bars of the nearest smaller native interval and merges
+// them into one bar of our target size — the same trick this dashboard already used for
+// H3 (=3×H1) on Binance.
+const TF_PROVIDER_MAP = {
+  M1:  { binance:{interval:'1m'},             bybit:{interval:'1'},               okx:{interval:'1m'} },
+  M5:  { binance:{interval:'5m'},              bybit:{interval:'5'},               okx:{interval:'5m'} },
+  M15: { binance:{interval:'15m'},             bybit:{interval:'15'},              okx:{interval:'15m'} },
+  M30: { binance:{interval:'30m'},             bybit:{interval:'30'},              okx:{interval:'30m'} },
+  H1:  { binance:{interval:'1h'},              bybit:{interval:'60'},              okx:{interval:'1H'} },
+  H2:  { binance:{interval:'2h'},              bybit:{interval:'120'},             okx:{interval:'2H'} },
+  H3:  { binance:{interval:'1h', resample:3},  bybit:{interval:'60', resample:3},  okx:{interval:'1H', resample:3} },
+  H4:  { binance:{interval:'4h'},              bybit:{interval:'240'},             okx:{interval:'4H'} },
+  H8:  { binance:{interval:'8h'},              bybit:{interval:'240', resample:2}, okx:{interval:'4H', resample:2} },
+  H12: { binance:{interval:'12h'},             bybit:{interval:'720'},             okx:{interval:'12H'} },
+  D1:  { binance:{interval:'1d'},              bybit:{interval:'D'},               okx:{interval:'1D'} },
+  W1:  { binance:{interval:'1w'},              bybit:{interval:'W'},               okx:{interval:'1W'} },
+  MN:  { binance:{interval:'1M'},              bybit:{interval:'M'},               okx:{interval:'1M'} },
+};
+function toOkxInstId(symbol, category){
+  // "BTCUSDT" -> "BTC-USDT" (spot) or "BTC-USDT-SWAP" (USDT-margined perpetual futures)
+  const base = symbol.replace(/USDT$/,'');
+  return category==='futures' ? `${base}-USDT-SWAP` : `${base}-USDT`;
+}
+async function fetchBinanceKlines(symbol, interval, limit, category){
+  const base = category==='futures' ? 'https://fapi.binance.com/fapi/v1/klines' : 'https://api.binance.com/api/v3/klines';
+  const k = await fetchJsonRace([`${base}?symbol=${symbol}&interval=${interval}&limit=${limit}`]);
+  return k.map(c=>({ t:Math.floor(c[0]/1000), o:parseFloat(c[1]), h:parseFloat(c[2]), l:parseFloat(c[3]), c:parseFloat(c[4]), v:parseFloat(c[5]) }));
+}
+async function fetchBybitKlines(symbol, interval, limit, category){
+  const cat = category==='futures' ? 'linear' : 'spot';
+  const j = await fetchJsonRace([`https://api.bybit.com/v5/market/kline?category=${cat}&symbol=${symbol}&interval=${interval}&limit=${limit}`]);
+  if(j.retCode!==0 || !j.result?.list?.length) throw new Error('Bybit: tidak ada data untuk '+symbol);
+  return j.result.list // Bybit returns newest-first — reverse to oldest-first like Binance
+    .map(r=>({ t:Math.floor(+r[0]/1000), o:parseFloat(r[1]), h:parseFloat(r[2]), l:parseFloat(r[3]), c:parseFloat(r[4]), v:parseFloat(r[5]) }))
+    .reverse();
+}
+async function fetchOkxKlines(symbol, interval, limit, category){
+  const instId = toOkxInstId(symbol, category);
+  const j = await fetchJsonRace([`https://www.okx.com/api/v5/market/candles?instId=${instId}&bar=${interval}&limit=${limit}`]);
+  if(j.code!=='0' || !j.data?.length) throw new Error('OKX: tidak ada data untuk '+symbol);
+  return j.data // OKX returns newest-first — reverse to oldest-first like Binance
+    .map(r=>({ t:Math.floor(+r[0]/1000), o:parseFloat(r[1]), h:parseFloat(r[2]), l:parseFloat(r[3]), c:parseFloat(r[4]), v:parseFloat(r[5]) }))
+    .reverse();
+}
 function resampleOHLC(d, n){
   const closes=[],highs=[],lows=[],opens=[],times=[];
   for(let i=0;i+n<=d.closes.length;i+=n){
@@ -1241,17 +1247,44 @@ function resampleOHLC(d, n){
   }
   return {closes,highs,lows,opens,times};
 }
-async function getOHLC(symbol, tf){
-  const limit = tf.resample ? Math.min(500, 100*tf.resample) : 100;
-  const k = await fetchKlinesCrypto(symbol, tf.interval, limit);
+function normalizeRawKlines(rows, resampleFactor){
   const raw = {
-    opens:k.map(c=>parseFloat(c[1])), highs:k.map(c=>parseFloat(c[2])),
-    lows:k.map(c=>parseFloat(c[3])), closes:k.map(c=>parseFloat(c[4])),
-    volumes:k.map(c=>parseFloat(c[5])),
-    times:k.map(c=>Math.floor(c[0]/1000)),
+    opens: rows.map(r=>r.o), highs: rows.map(r=>r.h),
+    lows: rows.map(r=>r.l), closes: rows.map(r=>r.c),
+    volumes: rows.map(r=>r.v), times: rows.map(r=>r.t),
   };
-  return tf.resample ? resampleOHLC(raw, tf.resample) : raw;
+  return resampleFactor>1 ? resampleOHLC(raw, resampleFactor) : raw;
 }
+// Single entry point every chart/signal/indicator call goes through: tries Binance, then
+// Bybit, then OKX (and, for `category:'futures'`, Binance Spot as a last-resort safety
+// net) — returns the SAME shape no matter which one actually answered.
+async function fetchNormalizedKlines(symbol, tfLabel, finalBars, category){
+  const spec = TF_PROVIDER_MAP[tfLabel];
+  if(!spec) throw new Error('Timeframe tidak dikenal: '+tfLabel);
+  const attempts = [
+    { name:'binance', fn:fetchBinanceKlines, cfg:spec.binance, cat:category },
+    { name:'bybit',   fn:fetchBybitKlines,   cfg:spec.bybit,   cat:category },
+    { name:'okx',     fn:fetchOkxKlines,     cfg:spec.okx,     cat:category },
+  ];
+  if(category==='futures'){
+    attempts.push({ name:'binance', fn:fetchBinanceKlines, cfg:spec.binance, cat:'spot', isSpotFallback:true });
+  }
+  let lastErr = null;
+  for(const a of attempts){
+    if(!a.cfg) continue;
+    try{
+      const rf = a.cfg.resample || 1;
+      const rawLimit = Math.min(1000, finalBars*rf);
+      const rows = await a.fn(symbol, a.cfg.interval, rawLimit, a.cat);
+      if(!rows.length) throw new Error(a.name+': candle kosong');
+      activeDataSource = a.name;
+      usingSpotFallback = !!a.isSpotFallback;
+      return normalizeRawKlines(rows, rf);
+    }catch(e){ lastErr = e; }
+  }
+  throw lastErr || new Error('Semua sumber data (Binance/Bybit/OKX) gagal diakses');
+}
+async function getOHLC(symbol, tf){ return await fetchNormalizedKlines(symbol, tf.label, 100, 'futures'); }
 async function getCloses(symbol, tf){ return (await getOHLC(symbol, tf)).closes; }
 
 /* ================= FORMATTING ================= */
@@ -1284,63 +1317,140 @@ async function initCryptoMarket(){
 let refreshTimer = null;
 function scheduleRefresh(){
   if(refreshTimer) clearInterval(refreshTimer);
-  // Crypto real-time prices come from the WebSocket stream (connectCryptoWS) — this REST
-  // poll is just an occasional safety-net resync (e.g. if the socket silently drops).
-  refreshTimer = setInterval(refreshCurrentMarket, 60000);
+  // Crypto real-time prices normally come from the Binance WebSocket stream
+  // (connectCryptoWS) — this REST poll is just an occasional safety-net resync. But when
+  // we're running on Bybit/OKX (no WS hooked up for those yet), this poll IS the only
+  // price-update mechanism, so it runs much more often (10s instead of 60s) to stay snappy.
+  const intervalMs = activeDataSource==='binance' ? 60000 : 10000;
+  refreshTimer = setInterval(refreshCurrentMarket, intervalMs);
 }
 
+// Shows which exchange is actually answering right now — stays silent (normal label) on
+// Binance, but calls out Bybit/OKX/Spot-fallback explicitly so the user isn't left
+// guessing why prices/pairs might look slightly different from Binance's own numbers.
+function sidebarSourceLabel(){
+  if(usingSpotFallback) return t('sidebar_crypto_spot');
+  if(activeDataSource==='bybit') return t('sidebar_crypto')+' (Bybit)';
+  if(activeDataSource==='okx') return t('sidebar_crypto')+' (OKX)';
+  return t('sidebar_crypto');
+}
 async function initCryptoPairs(){
-  document.getElementById('sidebarTitle').textContent = t('sidebar_crypto');
-  const {pairs, tickers} = await fetchAllPerpetualPairs();
+  document.getElementById('sidebarTitle').textContent = t('sidebar_crypto');  const {pairs, tickers} = await fetchAllPerpetualPairs();
   tickerMap = {}; tickers.forEach(t=>tickerMap[t.symbol]=t);
   PAIRS = pairs;
   PAIRS.forEach(c=>pairMetaMap[c.pair]={tv:'BINANCE:'+c.pair+(usingSpotFallback?'':'.P'), name:c.symbol});
   document.getElementById('pairCount').textContent = PAIRS.length + ' ' + t('unit_pair');
-  document.getElementById('sidebarTitle').textContent = usingSpotFallback ? t('sidebar_crypto_spot') : t('sidebar_crypto');
+  document.getElementById('sidebarTitle').textContent = sidebarSourceLabel();
   if(PAIRS.length===0){ document.getElementById('pairList').innerHTML = `<div class="sidebar-loading">${t('no_pairs_match')}</div>`; return; }
   currentPair = PAIRS[0].pair;
   renderPairListCrypto();
   selectPair(currentPair);
 }
-// Pulls EVERY symbol currently tradeable as a USDⓈ-M perpetual contract on Binance
-// Futures (not just a top-N snapshot), ranked by 24h quote volume — futures listings
-// don't carry market-cap data the way spot/CoinGecko does, so volume is the closest
-// proxy for "actively traded / liquid" ranking. Falls back to Binance Spot USDT pairs
-// (same ranking logic) if the Futures API is unreachable from the user's network.
-async function fetchAllPerpetualPairs(){
-  try{
-    const [info, tickers] = await Promise.all([
-      fetchJsonRace(['https://fapi.binance.com/fapi/v1/exchangeInfo']),
-      fetchJsonRace(['https://fapi.binance.com/fapi/v1/ticker/24hr']),
-    ]);
-    const tMap = {}; tickers.forEach(t=>tMap[t.symbol]=t);
-    const perpetuals = info.symbols.filter(s=>s.contractType==='PERPETUAL' && s.status==='TRADING' && s.quoteAsset==='USDT');
-    const pairs = perpetuals
-      .map(s=>({ symbol:s.baseAsset, pair:s.symbol, quoteVolume: parseFloat(tMap[s.symbol]?.quoteVolume || 0) }))
-      .sort((a,b)=>b.quoteVolume-a.quoteVolume)
-      .map((c,i)=>({rank:i+1, symbol:c.symbol, pair:c.pair}));
-    usingSpotFallback = false;
-    return { pairs, tickers };
-  }catch(e){
-    console.warn('Binance Futures tidak terjangkau, beralih ke Binance Spot sebagai fallback', e);
-    usingSpotFallback = true;
-    const [info, tickers] = await Promise.all([
-      fetchJsonRace(['https://api.binance.com/api/v3/exchangeInfo']),
-      fetchJsonRace(['https://api.binance.com/api/v3/ticker/24hr']),
-    ]);
-    const tMap = {}; tickers.forEach(t=>tMap[t.symbol]=t);
-    const spotUsdt = info.symbols.filter(s=>s.status==='TRADING' && s.quoteAsset==='USDT' && s.isSpotTradingAllowed!==false);
-    const pairs = spotUsdt
-      .map(s=>({ symbol:s.baseAsset, pair:s.symbol, quoteVolume: parseFloat(tMap[s.symbol]?.quoteVolume || 0) }))
-      .filter(c=>c.quoteVolume>0)
-      .sort((a,b)=>b.quoteVolume-a.quoteVolume)
-      .map((c,i)=>({rank:i+1, symbol:c.symbol, pair:c.pair}));
-    return { pairs, tickers };
+// Pulls EVERY USDT pair currently tradeable (Futures perpetuals or Spot, depending on
+// `category`), ranked by 24h quote volume — the closest proxy for "actively traded /
+// liquid" since futures listings don't carry market-cap data the way spot/CoinGecko does.
+// Tries Binance -> Bybit -> OKX (and, for Futures, Binance Spot as a last resort) so the
+// pair list keeps working even when one exchange is blocked/throttled on the user's network.
+async function fetchBinanceTickersNormalized(category){
+  const base = category==='futures' ? 'https://fapi.binance.com/fapi/v1' : 'https://api.binance.com/api/v3';
+  const [info, tickers] = await Promise.all([
+    fetchJsonRace([`${base}/exchangeInfo`]),
+    fetchJsonRace([`${base}/ticker/24hr`]),
+  ]);
+  const tMap = {}; tickers.forEach(t=>tMap[t.symbol]=t);
+  const symbols = category==='futures'
+    ? info.symbols.filter(s=>s.contractType==='PERPETUAL' && s.status==='TRADING' && s.quoteAsset==='USDT')
+    : info.symbols.filter(s=>s.status==='TRADING' && s.quoteAsset==='USDT' && s.isSpotTradingAllowed!==false);
+  return symbols
+    .map(s=>({ symbol:s.baseAsset, pair:s.symbol, quoteVolume: parseFloat(tMap[s.symbol]?.quoteVolume || 0) }))
+    .filter(c=>category==='futures' || c.quoteVolume>0);
+}
+async function fetchBybitTickersNormalized(category){
+  const cat = category==='futures' ? 'linear' : 'spot';
+  const j = await fetchJsonRace([`https://api.bybit.com/v5/market/tickers?category=${cat}`]);
+  if(j.retCode!==0 || !j.result?.list) throw new Error('Bybit: daftar pair tidak tersedia');
+  return j.result.list
+    .filter(t=>t.symbol && t.symbol.endsWith('USDT') && parseFloat(t.lastPrice||0)>0)
+    .map(t=>({ symbol:t.symbol.replace('USDT',''), pair:t.symbol, quoteVolume: parseFloat(t.turnover24h||0) }));
+}
+async function fetchOkxTickersNormalized(category){
+  const instType = category==='futures' ? 'SWAP' : 'SPOT';
+  const j = await fetchJsonRace([`https://www.okx.com/api/v5/market/tickers?instType=${instType}`]);
+  if(j.code!=='0' || !j.data) throw new Error('OKX: daftar pair tidak tersedia');
+  const suffix = category==='futures' ? '-USDT-SWAP' : '-USDT';
+  return j.data
+    .filter(t=>t.instId && t.instId.endsWith(suffix) && parseFloat(t.last||0)>0)
+    .map(t=>({ symbol:t.instId.replace(suffix,''), pair:t.instId.replace(suffix,'')+'USDT', quoteVolume: parseFloat(t.volCcy24h||0) }));
+}
+// Normalized 24hr ticker OBJECTS (symbol/lastPrice/priceChangePercent/quoteVolume) used by
+// the live price sidebar, header, top movers, etc. — same 4 fields every exchange gets
+// mapped into so nothing downstream needs to know which exchange the data came from.
+async function fetchBinanceTickerObjs(category){
+  const base = category==='futures' ? 'https://fapi.binance.com/fapi/v1' : 'https://api.binance.com/api/v3';
+  return await fetchJsonRace([`${base}/ticker/24hr`]);
+}
+async function fetchBybitTickerObjs(category){
+  const cat = category==='futures' ? 'linear' : 'spot';
+  const j = await fetchJsonRace([`https://api.bybit.com/v5/market/tickers?category=${cat}`]);
+  if(j.retCode!==0 || !j.result?.list) throw new Error('Bybit: ticker tidak tersedia');
+  return j.result.list.filter(t=>t.symbol?.endsWith('USDT')).map(t=>({
+    symbol: t.symbol, lastPrice: t.lastPrice,
+    priceChangePercent: (parseFloat(t.price24hPcnt||0)*100).toString(),
+    quoteVolume: t.turnover24h || '0',
+  }));
+}
+async function fetchOkxTickerObjs(category){
+  const instType = category==='futures' ? 'SWAP' : 'SPOT';
+  const j = await fetchJsonRace([`https://www.okx.com/api/v5/market/tickers?instType=${instType}`]);
+  if(j.code!=='0' || !j.data) throw new Error('OKX: ticker tidak tersedia');
+  const suffix = category==='futures' ? '-USDT-SWAP' : '-USDT';
+  return j.data.filter(t=>t.instId?.endsWith(suffix)).map(t=>{
+    const open = parseFloat(t.open24h||0), last = parseFloat(t.last||0);
+    const pct = open>0 ? (last-open)/open*100 : 0;
+    return { symbol: t.instId.replace(suffix,'')+'USDT', lastPrice: t.last, priceChangePercent: pct.toString(), quoteVolume: t.volCcy24h || '0' };
+  });
+}
+async function fetchPairsMultiExchange(category){
+  const attempts = [
+    { name:'binance', fn:fetchBinanceTickersNormalized },
+    { name:'bybit',   fn:fetchBybitTickersNormalized },
+    { name:'okx',     fn:fetchOkxTickersNormalized },
+  ];
+  if(category==='futures') attempts.push({ name:'binance', fn:fetchBinanceTickersNormalized, isSpotFallback:true, cat:'spot' });
+  let lastErr = null;
+  for(const a of attempts){
+    try{
+      const raw = await a.fn(a.cat || category);
+      if(!raw.length) throw new Error(a.name+': daftar pair kosong');
+      const pairs = raw.sort((x,y)=>y.quoteVolume-x.quoteVolume).map((c,i)=>({rank:i+1, symbol:c.symbol, pair:c.pair}));
+      activeDataSource = a.name;
+      usingSpotFallback = !!a.isSpotFallback;
+      return { pairs, source:a.name };
+    }catch(e){ lastErr = e; console.warn(`${a.name} tidak terjangkau untuk daftar pair`, e); }
   }
+  throw lastErr || new Error('Semua sumber data (Binance/Bybit/OKX) gagal diakses');
+}
+async function fetchAllPerpetualPairs(){
+  const { pairs } = await fetchPairsMultiExchange('futures');
+  const source = usingSpotFallback ? 'binance' : activeDataSource;
+  const attempts = [
+    { name:'binance', fn:fetchBinanceTickerObjs },
+    { name:'bybit',   fn:fetchBybitTickerObjs },
+    { name:'okx',     fn:fetchOkxTickerObjs },
+  ];
+  let tickers = [];
+  for(const a of attempts){
+    if(a.name!==source) continue;
+    try{ tickers = await a.fn(usingSpotFallback?'spot':'futures'); }catch(e){ tickers = []; }
+    break;
+  }
+  return { pairs, tickers };
 }
 async function fetchAllBinanceTickers(){
-  try{ return await fetchJsonRace(['https://fapi.binance.com/fapi/v1/ticker/24hr']); }
-  catch(e){ usingSpotFallback = true; return await fetchJsonRace(['https://api.binance.com/api/v3/ticker/24hr']); }
+  const source = usingSpotFallback ? 'binance' : activeDataSource;
+  const fns = { binance:fetchBinanceTickerObjs, bybit:fetchBybitTickerObjs, okx:fetchOkxTickerObjs };
+  try{ return await (fns[source]||fetchBinanceTickerObjs)(usingSpotFallback?'spot':'futures'); }
+  catch(e){ return await fetchBinanceTickerObjs('futures').catch(()=>fetchBinanceTickerObjs('spot')); }
 }
 
 
@@ -1352,6 +1462,12 @@ async function fetchAllBinanceTickers(){
    no proxy involved (fapi.binance.com WebSocket is public, no auth/CORS issue). */
 function connectCryptoWS(){
   disconnectCryptoWS();
+  // The realtime !ticker@arr stream is a Binance-only feed. If Binance itself is what's
+  // being blocked/throttled on this network (that's WHY we're on Bybit/OKX data), trying
+  // to open a Binance WebSocket here would just fail and retry forever for nothing — skip
+  // it and lean on the 60s REST poll (refreshCurrentMarket, already Binance→Bybit→OKX
+  // aware) for price updates instead.
+  if(activeDataSource!=='binance') return;
   try{
     // Futures ticker stream needs fstream.binance.com; if we already fell back to Spot
     // (Futures REST unreachable), the matching Spot WS host is stream.binance.com.
@@ -1378,7 +1494,7 @@ function connectCryptoWS(){
     };
     cryptoWS.onclose = ()=>{
       cryptoWS = null;
-      cryptoWSRetryTimer = setTimeout(connectCryptoWS, 3000);
+      if(activeDataSource==='binance') cryptoWSRetryTimer = setTimeout(connectCryptoWS, 3000);
     };
     cryptoWS.onerror = ()=>{ try{ cryptoWS?.close(); }catch(e){} };
   }catch(e){ console.error('WS init gagal, tetap pakai REST polling', e); }
@@ -1445,10 +1561,21 @@ document.getElementById('pairSearch').addEventListener('input', e=>{
 });
 
 /* ================= TRADINGVIEW CHART ================= */
+let tvWidgetInstance = null, tvWidgetReady = false;
 function loadChart(symbol){
-  document.getElementById('tv-chart').innerHTML = "";
   const tv = pairMetaMap[symbol]?.tv || ('BINANCE:'+symbol);
-  new TradingView.widget({
+  // Reuse the SAME TradingView widget instance across pair switches instead of destroying
+  // and rebuilding it every time — this is what lets any drawings/coretan (trendline,
+  // Fibonacci, notes, etc.) survive a pair change instead of being wiped out.
+  if(tvWidgetInstance && tvWidgetReady){
+    try{
+      tvWidgetInstance.chart().setSymbol(tv, ()=>{});
+      return;
+    }catch(e){ /* widget API not available for some reason — fall through and rebuild */ }
+  }
+  document.getElementById('tv-chart').innerHTML = "";
+  tvWidgetReady = false;
+  tvWidgetInstance = new TradingView.widget({
     "autosize": true, "symbol": tv,
     "interval": currentMarket==='crypto' ? "60" : "D",
     "timezone": "Asia/Jakarta", "theme": document.body.classList.contains('light') ? "light" : "dark",
@@ -1467,6 +1594,7 @@ function loadChart(symbol){
     ],
     "container_id": "tv-chart"
   });
+  tvWidgetInstance.onChartReady(()=>{ tvWidgetReady = true; });
 }
 
 /* ================= SIGNAL CHART (own confluence algorithm, buy/sell markers) ================= */
@@ -1812,7 +1940,7 @@ async function computeSetupRecommendation(symbol, rows){
     }
 
     badge.className='setup-badge '+finalDirection;
-    badge.textContent = finalDirection==='long' ? `LONG / BUY (${strength})` : finalDirection==='short' ? `SHORT / SELL (${strength})` : 'NO TRADE — Sinyal Belum Searah';
+    badge.textContent = finalDirection==='long' ? `LONG / BUY (${strength})` : finalDirection==='short' ? `SHORT / SELL (${strength})` : t('setup_no_trade');
     document.getElementById('confidenceValue').textContent = confidencePct+'%';
     const fill = document.getElementById('confidenceFill'); fill.className='confidence-fill '+finalDirection; fill.style.width=confidencePct+'%';
 
@@ -2254,32 +2382,13 @@ function initEconomicCalendar(){
 const SIGNAL_TARGET_PCTS = [0.03, 0.06, 0.12, 0.24]; // TP1..TP4 as % move from entry
 let spotSignalRows = [], futuresSignalRows = [];
 
-// Independent Binance SPOT data fetchers (api.binance.com) — kept separate from the
-// Futures-first fetchKlinesCrypto/fetchAllPerpetualPairs used by the rest of the
-// dashboard, since "Spot Signal" specifically means the real Spot market, not Futures.
+// Spot pair listing + candles — Binance Spot first, then Bybit Spot, then OKX Spot,
+// same fallback chain used everywhere else in this file (see fetchNormalizedKlines).
 async function fetchSpotTopPairs(limit=25){
-  const [info, tickers] = await Promise.all([
-    fetchJsonRace(['https://api.binance.com/api/v3/exchangeInfo']),
-    fetchJsonRace(['https://api.binance.com/api/v3/ticker/24hr']),
-  ]);
-  const tMap = {}; tickers.forEach(t=>tMap[t.symbol]=t);
-  const spotUsdt = info.symbols.filter(s=>s.status==='TRADING' && s.quoteAsset==='USDT' && s.isSpotTradingAllowed!==false);
-  return spotUsdt
-    .map(s=>({ symbol:s.baseAsset, pair:s.symbol, quoteVolume: parseFloat(tMap[s.symbol]?.quoteVolume || 0) }))
-    .filter(c=>c.quoteVolume>0)
-    .sort((a,b)=>b.quoteVolume-a.quoteVolume)
-    .slice(0, limit);
+  const { pairs } = await fetchPairsMultiExchange('spot');
+  return pairs.slice(0, limit).map(c=>({ symbol:c.symbol, pair:c.pair }));
 }
-async function getSpotOHLC(symbol, tf){
-  const limit = tf.resample ? Math.min(500, 100*tf.resample) : 100;
-  const k = await fetchJsonRace([`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${tf.interval}&limit=${limit}`]);
-  const raw = {
-    opens:k.map(c=>parseFloat(c[1])), highs:k.map(c=>parseFloat(c[2])),
-    lows:k.map(c=>parseFloat(c[3])), closes:k.map(c=>parseFloat(c[4])),
-    volumes:k.map(c=>parseFloat(c[5])), times:k.map(c=>Math.floor(c[0]/1000)),
-  };
-  return tf.resample ? resampleOHLC(raw, tf.resample) : raw;
-}
+async function getSpotOHLC(symbol, tf){ return await fetchNormalizedKlines(symbol, tf.label, 100, 'spot'); }
 
 // Walk forward (no lookahead) through the candle history to find the most recent time
 // the bias flipped INTO the bias it currently holds — this is what powers the "Open on
@@ -2323,11 +2432,12 @@ function suggestSafeLeverage(entryPrice, stoplossPrice){
 // Turns a computeSignal() result into a concrete tradeable setup: entry, TP1-4 (fixed
 // 3/6/12/24% moves off entry — a simple geometric risk:reward ladder), a stop loss
 // (placed just beyond the nearest opposite Supply/Demand zone when one exists, ATR-based
-// otherwise), a suggested capital risk % (tighter on higher-ATR/more volatile pairs), a
-// safe suggested leverage sized off the SL distance (futures only — spot is never
-// leveraged), and a secondary entry (nearest Fibonacci level behind price) used as
-// "Entry 2" for futures scale-in.
-function computeSignalSetup(ohlc, sig, direction, market){
+// otherwise), a suggested capital risk % (tighter on higher-ATR/more volatile pairs), and
+// a safe suggested leverage sized off the SL distance (futures only — spot is never
+// leveraged). Only ONE entry price — no more "Entry 2" scale-in level. `ohlc` here is the
+// BASIS candle set (see computeMultiTfBias below) — the direction itself already comes
+// from a multi-timeframe vote, this only prices the entry/SL/TP off real recent structure.
+function computeSignalSetup(ohlc, direction, market){
   const price = ohlc.closes.at(-1);
   const atrVal = atr(ohlc.highs, ohlc.lows, ohlc.closes, 14);
   const atrPct = atrVal ? (atrVal/price*100) : 1.5;
@@ -2342,34 +2452,147 @@ function computeSignalSetup(ohlc, sig, direction, market){
   }
   const targets = SIGNAL_TARGET_PCTS.map(p => direction==='buy' ? price*(1+p) : price*(1-p));
   const capitalPct = atrPct<=3 ? 2 : 1; // lower ATR% (calmer pair) -> can size a bit bigger
-  let entry2 = price;
-  if(sig.fib){
-    const candidates = sig.fib.levels.map(l=>l.price).filter(p => direction==='buy' ? p<price : p>price);
-    if(candidates.length){ entry2 = direction==='buy' ? Math.max(...candidates) : Math.min(...candidates); }
-  }
   const leverageInfo = market==='futures' ? suggestSafeLeverage(price, stoploss) : null;
-  return { price, entry2, stoploss, targets, capitalPct, atrPct, leverageInfo };
+  return { price, stoploss, targets, capitalPct, atrPct, leverageInfo };
 }
 
-// Scans a basket of pairs on H4, keeps only pairs with a non-neutral bias (and, for Spot,
-// only BUY — spot can't short), and builds the full setup for each.
-async function buildSignalRows(pairs, {market, allowShort}){
-  const tf = TFS.find(t=>t.label==='H4') || TFS[TFS.length-1];
-  const rows = [];
-  for(const c of pairs){
+/* ---- PERSISTED SIGNALS (localStorage) ----
+   A signal's entry/stoploss/targets/open-date are computed ONCE when the pair first
+   qualifies, then FROZEN — later price movement never edits them again, it only checks
+   whether that already-fixed price level has since been touched. This is what makes
+   "Open on {date}" and the entry/TP/SL shown on a card permanent instead of drifting
+   every time the page refreshes. */
+function sigStoreKey(market){ return market==='spot' ? 'tiaa_persist_signals_spot' : 'tiaa_persist_signals_futures'; }
+function loadStoredSignals(market){
+  try{ return JSON.parse(localStorage.getItem(sigStoreKey(market))) || {}; }catch(e){ return {}; }
+}
+function saveStoredSignals(market, obj){
+  try{ localStorage.setItem(sigStoreKey(market), JSON.stringify(obj)); }catch(e){ /* storage unavailable (private mode etc.), ignore */ }
+}
+function loadWrLog(){
+  try{ return JSON.parse(localStorage.getItem('tiaa_wr_log')) || []; }catch(e){ return []; }
+}
+function saveWrLog(log){
+  try{ localStorage.setItem('tiaa_wr_log', JSON.stringify(log.slice(-300))); }catch(e){ /* ignore */ }
+}
+// Records a CLOSED signal (target(s) fully hit = win, stoploss hit = loss) into the Win
+// Rate history that powers the "Results" panel — this is the permanent record, separate
+// from the live card list, so it survives even after the card itself is removed.
+function logWrResult(market, r, result, exitPrice){
+  const log = loadWrLog();
+  const pctMove = ((exitPrice-r.entry)/r.entry*100) * (r.bias==='buy'?1:-1);
+  log.push({ market, symbol:r.symbol, bias:r.bias, entry:r.entry, exit:exitPrice, result, pctMove, openTime:r.openTime, closedAt: Math.floor(Date.now()/1000) });
+  saveWrLog(log);
+}
+
+/* ---- MULTI-TIMEFRAME CONFLUENCE (Spot & Futures Signal scanners) ----
+   Spot Signal only looks at the BIG timeframes (H4/H8/H12/D1/W1/MN) since spot is a
+   swing/position style — no point reacting to 1-minute noise. Futures Signal is scalping,
+   so it votes across EVERY timeframe the dashboard has (M1..MN) for a faster, more
+   reactive read. Either way, each timeframe's bias is fetched in PARALLEL (fast) and
+   combined into ONE weighted decision — a signal only opens when there's real agreement
+   across timeframes, not just a single noisy candle. */
+const SPOT_SIGNAL_TFS = ['H4','H8','H12','D1','W1','MN'];
+const FUTURES_SIGNAL_TFS = TFS.map(t=>t.label); // scalping: vote across every available timeframe
+async function computeMultiTfBias(pair, tfLabels, market, basisTfLabel){
+  const tfDefs = tfLabels.map(l=>TFS.find(t=>t.label===l)).filter(Boolean);
+  const results = await Promise.all(tfDefs.map(async tf=>{
     try{
-      const ohlc = market==='spot' ? await getSpotOHLC(c.pair, tf) : await getOHLC(c.pair, tf);
-      if(!ohlc.closes || ohlc.closes.length<40) continue;
-      const sig = computeSignal(ohlc);
-      if(sig.bias==='neutral') continue;
-      if(sig.bias==='sell' && !allowShort) continue;
-      const setup = computeSignalSetup(ohlc, sig, sig.bias, market);
-      const openTime = findBiasStartTime(ohlc, sig.bias);
-      rows.push({ symbol:c.symbol, pair:c.pair, bias:sig.bias, setup, openTime, ohlc });
+      const ohlc = market==='spot' ? await getSpotOHLC(pair, tf) : await getOHLC(pair, tf);
+      if(!ohlc.closes || ohlc.closes.length<40) return {tf:tf.label, sig:null, ohlc:null};
+      return {tf:tf.label, sig:computeSignal(ohlc), ohlc};
+    }catch(e){ return {tf:tf.label, sig:null, ohlc:null}; }
+  }));
+  let weightedScore=0, maxWeight=0, buyCount=0, sellCount=0, validCount=0;
+  results.forEach(r=>{
+    const w = TF_WEIGHT[r.tf]||1; maxWeight+=w;
+    if(!r.sig) return;
+    validCount++;
+    if(r.sig.bias==='buy'){ weightedScore+=w; buyCount++; }
+    else if(r.sig.bias==='sell'){ weightedScore-=w; sellCount++; }
+  });
+  const confidencePct = maxWeight ? Math.round((Math.abs(weightedScore)/maxWeight)*100) : 0;
+  const rawBias = weightedScore>0 ? 'buy' : weightedScore<0 ? 'sell' : 'neutral';
+  // Needs enough timeframes actually online AND a real weighted majority (>=55%) before
+  // it counts as a signal — otherwise it's NEUTRAL (no trade), same threshold the single-
+  // pair "Position Setup Recommendation" card uses.
+  const enoughData = validCount >= Math.ceil(tfDefs.length*0.6);
+  const bias = (rawBias==='neutral' || confidencePct<55 || !enoughData) ? 'neutral' : rawBias;
+  const basis = results.find(r=>r.tf===basisTfLabel && r.ohlc) || results.find(r=>r.ohlc);
+  return { bias, confidencePct, buyCount, sellCount, total:tfDefs.length, ohlc: basis?.ohlc };
+}
+
+// Scans a basket of pairs, votes each pair's direction across multiple timeframes (see
+// computeMultiTfBias), and syncs the result into the persisted signal store. A pair with a
+// fresh qualifying non-neutral bias that ISN'T tracked yet gets a brand-new persisted
+// signal (entry/SL/TP/date fixed from here on). A pair that's ALREADY tracked only gets
+// checked against its own frozen levels: did price touch a target (✓ checkmark; once
+// every target is hit → WIN, logged + removed)? did it hit the Stop Loss (LOSS, logged +
+// removed)? did the multi-timeframe vote flip against the stored direction (INVALID,
+// removed with no win/loss recorded)? The stored entry/stoploss/targets/openTime
+// themselves are NEVER edited by this loop.
+async function scanAndSyncSignals(pairs, {market, allowShort}){
+  const tfLabels = market==='spot' ? SPOT_SIGNAL_TFS : FUTURES_SIGNAL_TFS;
+  const basisTfLabel = market==='spot' ? 'H4' : 'H1'; // smaller TF used only to price entry/SL/TP
+  const stored = loadStoredSignals(market);
+  // Also recheck pairs already being tracked even if they fell out of this run's top-N
+  // volume basket, so an open signal doesn't get "stuck" un-updated.
+  const trackedExtra = Object.values(stored).filter(s=>!pairs.some(p=>p.pair===s.pair));
+  const scanList = pairs.concat(trackedExtra);
+
+  for(const c of scanList){
+    try{
+      const mtf = await computeMultiTfBias(c.pair, tfLabels, market, basisTfLabel);
+      if(!mtf.ohlc || mtf.ohlc.closes.length<40) continue;
+      const existing = stored[c.pair];
+
+      if(existing){
+        const sinceIdx = mtf.ohlc.times.findIndex(tm=>tm>=existing.openTime);
+        const highs = sinceIdx>=0 ? mtf.ohlc.highs.slice(sinceIdx) : mtf.ohlc.highs;
+        const lows = sinceIdx>=0 ? mtf.ohlc.lows.slice(sinceIdx) : mtf.ohlc.lows;
+        const hiSince = Math.max(...highs), loSince = Math.min(...lows);
+        const isBuy = existing.bias==='buy';
+        const slHit = isBuy ? loSince<=existing.stoploss : hiSince>=existing.stoploss;
+
+        if(slHit){
+          logWrResult(market, existing, 'loss', existing.stoploss);
+          delete stored[c.pair];
+          continue;
+        }
+        existing.hit = existing.hit || [false,false,false,false];
+        existing.targets.forEach((tp,idx)=>{
+          const reached = isBuy ? hiSince>=tp : loSince<=tp;
+          if(reached) existing.hit[idx] = true;
+        });
+        if(existing.hit.every(Boolean)){
+          logWrResult(market, existing, 'win', existing.targets[existing.targets.length-1]);
+          delete stored[c.pair];
+          continue;
+        }
+        if(mtf.bias!=='neutral' && mtf.bias!==existing.bias){
+          // Multi-timeframe vote flipped against the open signal — invalidate & remove (not a win/loss).
+          delete stored[c.pair];
+          continue;
+        }
+        stored[c.pair] = existing; // entry/SL/TP/openTime untouched, only hit[] updated
+        continue;
+      }
+
+      if(mtf.bias==='neutral') continue;
+      if(mtf.bias==='sell' && !allowShort) continue;
+      const setup = computeSignalSetup(mtf.ohlc, mtf.bias, market);
+      const openTime = findBiasStartTime(mtf.ohlc, mtf.bias) || mtf.ohlc.times.at(-1);
+      stored[c.pair] = {
+        symbol:c.symbol, pair:c.pair, bias:mtf.bias,
+        entry:setup.price, stoploss:setup.stoploss, targets:setup.targets,
+        capitalPct:setup.capitalPct, atrPct:setup.atrPct, leverageInfo:setup.leverageInfo,
+        openTime, hit:[false,false,false,false],
+        tfAgree: `${mtf.bias==='buy'?mtf.buyCount:mtf.sellCount}/${mtf.total}`, tfConfidence: mtf.confidencePct
+      };
     }catch(e){ /* skip this pair, keep scanning the rest of the basket */ }
   }
-  rows.sort((a,b)=>(b.openTime||0)-(a.openTime||0));
-  return rows;
+  saveStoredSignals(market, stored);
+  return Object.values(stored).sort((a,b)=>(b.openTime||0)-(a.openTime||0));
 }
 
 async function loadSpotSignalPage(){
@@ -2378,7 +2601,7 @@ async function loadSpotSignalPage(){
   note.textContent = t('loading_signals'); note.style.display='block'; list.innerHTML = '';
   try{
     const pairs = await fetchSpotTopPairs(25);
-    spotSignalRows = await buildSignalRows(pairs, {market:'spot', allowShort:false});
+    spotSignalRows = await scanAndSyncSignals(pairs, {market:'spot', allowShort:false});
     renderSignalList('spot', spotSignalRows);
   }catch(e){ console.error(e); note.textContent = t('sig_failed'); }
 }
@@ -2388,7 +2611,7 @@ async function loadFuturesSignalPage(){
   note.textContent = t('loading_signals'); note.style.display='block'; list.innerHTML = '';
   try{
     let pairs = PAIRS.length ? PAIRS.slice(0,25) : (await fetchAllPerpetualPairs()).pairs.slice(0,25);
-    futuresSignalRows = await buildSignalRows(pairs, {market:'futures', allowShort:true});
+    futuresSignalRows = await scanAndSyncSignals(pairs, {market:'futures', allowShort:true});
     renderSignalList('futures', futuresSignalRows);
   }catch(e){ console.error(e); note.textContent = t('sig_failed'); }
 }
@@ -2406,21 +2629,21 @@ function renderSignalCard(r, i, kind){
   const isBuy = r.bias==='buy';
   const openDateStr = r.openTime ? new Date(r.openTime*1000).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'}) : '–';
   const subLabel = kind==='futures' ? (isBuy?'LONG':'SHORT')+' · Open on '+openDateStr : 'Open on '+openDateStr;
-  const targetsHtml = r.setup.targets.map((tp,idx)=>`
-    <div class="sig-target-row">
-      <div class="sig-target-label">Target ${String(idx+1).padStart(2,'0')}</div>
+  const hit = r.hit || [false,false,false,false];
+  const targetsHtml = r.targets.map((tp,idx)=>`
+    <div class="sig-target-row${hit[idx]?' sig-target-hit':''}">
+      <div class="sig-target-label">${hit[idx]?'✓ ':''}Target ${String(idx+1).padStart(2,'0')}</div>
       <div class="sig-target-price mono">${formatPrice(tp)}</div>
       <div class="sig-target-pct">${(SIGNAL_TARGET_PCTS[idx]*100).toFixed(0)}%</div>
     </div>`).join('');
   const entryLinesHtml = kind==='futures' ? `
     <div class="sig-entry-lines">
-      <div>Entry 1: <b class="mono">${formatPrice(r.setup.price)}</b></div>
-      <div>Entry 2: <b class="mono">${formatPrice(r.setup.entry2)}</b></div>
+      <div>Entry: <b class="mono">${formatPrice(r.entry)}</b></div>
     </div>` : '';
-  const lev = r.setup.leverageInfo;
+  const lev = r.leverageInfo;
   const firstPillHtml = kind==='futures'
     ? `<div class="sig-pill leverage">Leverage: ${lev.leverage}x</div>`
-    : `<div class="sig-pill buy">BUY: ${formatPrice(r.setup.price)}</div>`;
+    : `<div class="sig-pill buy">BUY: ${formatPrice(r.entry)}</div>`;
   const leverageNoteHtml = kind==='futures' ? `
     <div class="sig-leverage-note">
       Saran leverage <b>${lev.leverage}x</b> dihitung dari jarak SL (${lev.slDistPct.toFixed(2)}%) supaya SL kena
@@ -2432,18 +2655,18 @@ function renderSignalCard(r, i, kind){
       <div class="sig-icon">${r.symbol.slice(0,1)}</div>
       <div class="sig-card-info">
         <div class="sig-pair-name">${r.symbol} / USDT</div>
-        <div class="sig-open-date">${subLabel}</div>
+        <div class="sig-open-date ${isBuy?'long':'short'}">${subLabel}</div>
       </div>
       <div class="sig-chevron">▾</div>
     </div>
     <div class="sig-pill-row">
       ${firstPillHtml}
-      <div class="sig-pill capital">Capital: ${r.setup.capitalPct}%</div>
+      <div class="sig-pill capital">Capital: ${r.capitalPct}%</div>
     </div>
     <div class="sig-detail">
       ${entryLinesHtml}
       ${targetsHtml}
-      <div class="sig-stoploss"><span>STOPLOSS: ${formatPrice(r.setup.stoploss)}</span></div>
+      <div class="sig-stoploss"><span>STOPLOSS: ${formatPrice(r.stoploss)}</span></div>
       ${leverageNoteHtml}
     </div>
   </div>`;
@@ -2452,25 +2675,22 @@ function toggleSigCard(kind, i){
   document.getElementById(`sigcard-${kind}-${i}`)?.classList.toggle('open');
 }
 
-// "Results" button — quick aggregate readout (win rate / count / avg move) of how the
-// currently-listed signals are doing right now (entry vs latest price), reusing the same
-// backtest-stat card styling as the main dashboard's historical backtest strip.
+// "Results" button — REAL win rate computed from the Win Rate history log (only signals
+// that actually closed by hitting all targets or the stoploss count), not just an
+// unrealized snapshot of currently-open cards.
 function toggleSignalResults(kind){
   const panel = document.getElementById(kind==='spot' ? 'spotResultsPanel' : 'futuresResultsPanel');
-  const rows = kind==='spot' ? spotSignalRows : futuresSignalRows;
   const showing = panel.style.display === 'grid';
   if(showing){ panel.style.display = 'none'; return; }
-  if(!rows.length){
+  const closed = loadWrLog().filter(x=>x.market===kind);
+  if(!closed.length){
     panel.innerHTML = `<div class="backtest-stat" style="grid-column:1/-1;"><div class="bt-label">${t('backtest_label')}</div><div class="bt-value" style="font-size:12px; font-weight:600; color:var(--ink-dim);">${t('backtest_not_enough')}</div></div>`;
     panel.style.display = 'grid'; return;
   }
   let wins=0, losses=0, totalPct=0;
-  rows.forEach(r=>{
-    const last = r.ohlc.closes.at(-1), entry = r.setup.price;
-    const movePct = (last-entry)/entry*100;
-    const favorable = r.bias==='buy' ? movePct>=0 : movePct<=0;
-    if(favorable) wins++; else losses++;
-    totalPct += r.bias==='buy' ? movePct : -movePct;
+  closed.forEach(x=>{
+    if(x.result==='win') wins++; else losses++;
+    totalPct += x.pctMove;
   });
   const total = wins+losses, winRatePct = Math.round((wins/total)*100), avgPct = totalPct/total;
   panel.innerHTML = `
@@ -2668,35 +2888,6 @@ async function loadDashboardOverview(){
 
   // News mini (TradingView widget — reliable, no API key/rate limit)
   initNewsWidget('ovNews', null, 320);
-}
-
-function applySetupToCalculator(){
-  const s = window.__lastSetup;
-  if(!s || s.direction==='none'){ alert(t('no_setup_alert')); return; }
-  setDir(s.direction);
-  document.getElementById('inEntry').value = s.entry;
-  document.getElementById('inSlPct').value = s.slPct.toFixed(2);
-  calcTPSL();
-  document.getElementById('setupCard').scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-/* ================= CALCULATOR ================= */
-function setDir(dir){
-  currentDir = dir;
-  document.getElementById('btnLong').classList.toggle('active', dir==='long');
-  document.getElementById('btnShort').classList.toggle('active', dir==='short');
-}
-function calcTPSL(){
-  const entry = parseFloat(document.getElementById('inEntry').value);
-  const slPct = parseFloat(document.getElementById('inSlPct').value)/100;
-  const ratios = document.getElementById('inRatios').value.split(',').map(s=>parseFloat(s.trim()));
-  const resultGrid = document.getElementById('calcResult'); resultGrid.innerHTML="";
-  if(!entry || isNaN(entry)){ resultGrid.innerHTML = `<div class="result-box"><div class="rl">${t('info')}</div><div class="rv">${t('fill_entry_price')}</div></div>`; return; }
-  const slDist = entry*slPct;
-  const sl = currentDir==='long' ? entry-slDist : entry+slDist;
-  const boxes = [{label:t('entry'), value:formatPrice(entry), cls:""},{label:t('stop_loss'), value:formatPrice(sl), cls:"sl"}];
-  ratios.forEach((r,i)=>{ const tp = currentDir==='long' ? entry+slDist*r : entry-slDist*r; boxes.push({label:`TP${i+1} (1:${r})`, value:formatPrice(tp), cls:"tp"}); });
-  boxes.forEach(b=>{ const box=document.createElement('div'); box.className='result-box '+b.cls; box.innerHTML=`<div class="rl">${b.label}</div><div class="rv mono">${b.value}</div>`; resultGrid.appendChild(box); });
 }
 
 /* ================= INIT ================= */
