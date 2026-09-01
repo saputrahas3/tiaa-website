@@ -262,6 +262,60 @@
   .wr-item.fail{color:var(--ink-dim);}
   .wr-item span{font-weight:700; width:14px; flex-shrink:0;}
 
+  /* ---- Futures/Spot Signal Scanner ---- */
+  .back-link{display:inline-flex; align-items:center; gap:6px; color:var(--ink-dim); font-size:12.5px; cursor:pointer; margin-bottom:2px; user-select:none;}
+  .back-link:hover{color:var(--accent);}
+  .fsig-toolbar{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+  .fsig-title{font-size:18px; font-weight:800; display:flex; align-items:center; gap:8px;}
+  .fsig-count{color:var(--ink-dim); font-size:14px; font-weight:600;}
+  .fsig-results-btn{
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:8px;
+    padding:9px 18px; font-weight:700; font-size:12.5px; cursor:pointer; letter-spacing:0.3px;
+  }
+  .fsig-results-btn:hover{background:var(--accent-deep);}
+  .fsig-results-panel{margin-top:2px;}
+  .fsig-list{display:flex; flex-direction:column; gap:12px;}
+  .fsig-card{background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; transition:border-color .15s;}
+  .fsig-card.open{border-color:var(--accent);}
+  .fsig-head{display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer;}
+  .fsig-avatar{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:14px; flex-shrink:0; background:var(--panel-2); border:1px solid var(--line);
+  }
+  .fsig-avatar.long{color:var(--buy); border-color:var(--buy);}
+  .fsig-avatar.short{color:var(--sell); border-color:var(--sell);}
+  .fsig-title-col{flex:1; min-width:0;}
+  .fsig-pair{font-weight:700; font-size:14.5px; color:var(--accent);}
+  .fsig-sub{font-size:11px; font-weight:600; margin-top:2px;}
+  .fsig-sub.long{color:var(--buy);}
+  .fsig-sub.short{color:var(--sell);}
+  .fsig-chevron{color:var(--ink-dim); font-size:12px; transition:transform .15s; flex-shrink:0;}
+  .fsig-card.open .fsig-chevron{transform:rotate(180deg);}
+  .fsig-badges{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px 14px;}
+  .fsig-badge{
+    text-align:center; padding:9px; border-radius:8px; font-size:12.5px; font-weight:700; letter-spacing:0.2px;
+  }
+  .fsig-badge-lev{background:var(--buy-glow); color:var(--buy);}
+  .fsig-badge-cap{background:var(--accent-glow); color:var(--accent-deep);}
+  body.light .fsig-badge-cap{color:#8a6400;}
+  .fsig-body{border-top:1px solid var(--line); padding:14px 16px; display:flex; flex-direction:column; gap:8px;}
+  .fsig-entry{font-size:12.5px; color:var(--ink-dim); margin-bottom:2px;}
+  .fsig-entry .mono{color:var(--ink); font-weight:600; font-size:13.5px;}
+  .fsig-target{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:600;
+    background:var(--panel-2); border:1px solid var(--line); color:var(--ink-dim);
+  }
+  .fsig-target.hit{background:var(--buy-glow); border-color:var(--buy); color:var(--buy);}
+  .fsig-target-pct{color:var(--accent) !important;}
+  .fsig-target.hit .fsig-target-pct{color:var(--buy) !important;}
+  .fsig-sl{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:700;
+    background:var(--sell-glow); border:1px solid var(--sell); color:var(--sell); margin-top:2px;
+  }
+  .fsig-reason{font-size:10.5px; color:var(--ink-dim); line-height:1.6; margin-top:4px;}
+
   /* ---- News ---- */
   .news-item{display:block; padding:12px 16px; border-bottom:1px solid var(--line); text-decoration:none; color:var(--ink);}
   .news-item:last-child{border-bottom:none;}
@@ -410,6 +464,7 @@
   <div class="nav-item" data-page="dashboard" onclick="switchPage('dashboard')">📊 <span data-i18n="nav_dashboard">Dashboard</span></div>
   <div class="nav-group-label" data-i18n="nav_group_trading">Trading</div>
   <div class="nav-item active" data-page="trading" onclick="switchPage('trading')">📈 <span data-i18n="nav_trading">Trading Signal</span><span class="nav-live">LIVE</span></div>
+  <div class="nav-item" data-page="futures-signal" onclick="switchPage('futures-signal')">⚡ <span data-i18n="nav_futures_signal">Futures Signal</span></div>
   <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
   <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')">🔥 <span data-i18n="nav_heatmap">Market Heatmap</span></div>
   <div class="nav-group-label" data-i18n="nav_group_analysis">Analysis</div>
@@ -563,6 +618,24 @@
 </div>
 </div><!-- /page-trading -->
 
+<!-- ===== Futures / Spot Signal Scanner ===== -->
+<div id="page-futures-signal" class="page">
+<div class="market-tabs" id="fsigMarketTabs">
+  <div class="market-tab" onclick="switchPage('trading')">🪙 Crypto Perpetual Futures</div>
+  <div class="market-tab" id="sigTabSpot" onclick="switchSignalScanner('spot')">🎯 Spot Signal</div>
+  <div class="market-tab active" id="sigTabFutures" onclick="switchSignalScanner('futures')">⚡ Futures Signal</div>
+</div>
+<main>
+  <div class="back-link" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></div>
+  <div class="fsig-toolbar">
+    <div class="fsig-title">⚡ <span id="fsigTitle" data-i18n="futures_signal_title">Futures Signal</span> <span class="fsig-count mono" id="fsigCount">(0)</span></div>
+    <button class="fsig-results-btn" id="fsigResultsBtn" onclick="toggleFsigResults()" data-i18n="results_btn">Results</button>
+  </div>
+  <div id="fsigResultsPanel" class="fsig-results-panel card card-body" style="display:none;"></div>
+  <div id="fsigList" class="fsig-list"><div class="sidebar-loading" data-i18n="loading_signals">Memuat sinyal…</div></div>
+</main>
+</div><!-- /page-futures-signal -->
+
 <!-- ===== Dashboard (overview) ===== -->
 <div id="page-dashboard" class="page">
   <div class="page-inner">
@@ -713,6 +786,11 @@ const I18N = {
     brand_tag: "multi-market signal terminal",
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
     nav_group_trading: "Trading", nav_trading: "Trading Signal",
+    nav_futures_signal: "Futures Signal", back_to_dashboard: "Kembali ke Dashboard",
+    futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
+    fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
+    fsig_total_signal: "Total Sinyal", fsig_avg_confidence: "Rata-rata Confidence",
+    fsig_no_signal: "Belum ada sinyal yang cukup kuat & terkonfirmasi 4H saat ini. Coba pindai ulang beberapa saat lagi.",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
@@ -770,6 +848,11 @@ const I18N = {
     brand_tag: "multi-market signal terminal",
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
     nav_group_trading: "Trading", nav_trading: "Trading Signal",
+    nav_futures_signal: "Futures Signal", back_to_dashboard: "Back to Dashboard",
+    futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
+    fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
+    fsig_total_signal: "Total Signals", fsig_avg_confidence: "Avg. Confidence",
+    fsig_no_signal: "No sufficiently strong, 4H-confirmed signals right now. Try rescanning in a bit.",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
@@ -838,6 +921,10 @@ function applyI18n(){
     if(document.getElementById('page-strength')?.classList.contains('active')) renderCoinStrength();
     if(document.getElementById('page-movers')?.classList.contains('active')) renderTopMovers();
     if(loadedPages.has('feargreed')) loadFearGreedPage();
+    if(document.getElementById('page-futures-signal')?.classList.contains('active')){
+      document.getElementById('fsigTitle').textContent = signalScannerMode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
+      renderSignalList(signalScannerMode);
+    }
   }
 }
 function toggleLang(){
@@ -2160,11 +2247,286 @@ function initEconomicCalendar(){
   container.appendChild(script);
 }
 
+/* ================= FUTURES / SPOT SIGNAL SCANNER ================= *
+ * Scans the most-liquid USDT perpetuals and produces ready-to-trade scalping
+ * setups (LONG/SHORT, Leverage, Capital%, Entry, 4 Targets, Stoploss).
+ *
+ * Algorithm (per pair):
+ *  1. H4 candles = the CONFIRMATION timeframe (per requirement: "confirm with 4H"):
+ *     - EMA50 vs EMA200  -> long-term trend direction / golden-death regime
+ *     - RSI(14)          -> oversold(<30) / overbought(>70)
+ *     - MACD              -> golden cross (buy) / death cross (sell)
+ *     - Bollinger Bands   -> cheap (<20% of band) / expensive (>80% of band) zone
+ *  2. M15 candles = the SCALPING ENTRY TRIGGER timeframe (fast confirmation that
+ *     must agree with the H4 regime before a signal is published):
+ *     - MACD cross, EMA9/21 structure, RSI
+ *  3. Order book depth = Order Book / Volume Profile proxy: sums bid vs ask size
+ *     within ~1% of mid price to see which side (buy wall / sell wall) whales are
+ *     stacking on.
+ *  A signal is only published if total confluence clears a minimum threshold AND
+ *  the H4 regime agrees with the final direction (the "4H confirmation" rule).
+ * ===================================================================== */
+const SIGNAL_SCAN_TOP_N = 30;          // most-liquid pairs scanned per run
+const SIGNAL_ENTRY_INTERVAL = '15m';   // fast scalping entry-trigger timeframe
+const SIGNAL_CONFIRM_INTERVAL = '4h';  // confirmation timeframe (per requirement)
+let signalScannerMode = 'futures';     // 'futures' | 'spot'
+let futuresSignalResults = [];
+let spotSignalResults = [];
+let signalScanRunning = false;
+let signalPriceTimer = null;
+
+async function mapLimit(items, limit, fn){
+  const ret = new Array(items.length);
+  let i = 0;
+  async function worker(){
+    while(i<items.length){
+      const idx = i++;
+      try{ ret[idx] = await fn(items[idx], idx); }catch(e){ ret[idx] = null; }
+    }
+  }
+  await Promise.all(Array.from({length:Math.min(limit, items.length)}, worker));
+  return ret;
+}
+
+// Order Book / Volume Profile proxy — sums resting bid/ask size within ~1% of mid
+// price to approximate where whale buy-walls / sell-walls are sitting.
+async function fetchOrderBookBias(symbol, isFutures){
+  try{
+    const url = isFutures
+      ? `https://fapi.binance.com/fapi/v1/depth?symbol=${symbol}&limit=100`
+      : `https://api.binance.com/api/v3/depth?symbol=${symbol}&limit=100`;
+    const ob = await fetchJsonRace([url], 6000);
+    const bids = (ob.bids||[]).map(b=>({p:parseFloat(b[0]), q:parseFloat(b[1])}));
+    const asks = (ob.asks||[]).map(a=>({p:parseFloat(a[0]), q:parseFloat(a[1])}));
+    if(!bids.length || !asks.length) return {ratio:0.5, bias:'neutral'};
+    const mid = (bids[0].p + asks[0].p) / 2;
+    const band = mid * 0.01;
+    const bidQty = bids.filter(b=>b.p>=mid-band).reduce((s,b)=>s+b.q, 0);
+    const askQty = asks.filter(a=>a.p<=mid+band).reduce((s,a)=>s+a.q, 0);
+    const total = bidQty + askQty;
+    const ratio = total>0 ? bidQty/total : 0.5;
+    const bias = ratio>=0.58 ? 'buy' : ratio<=0.42 ? 'sell' : 'neutral';
+    return {ratio, bias};
+  }catch(e){ return {ratio:0.5, bias:'neutral'}; }
+}
+
+// Core scoring: combines the H4 confirmation timeframe + M15 scalping trigger +
+// order-book wall bias into a single LONG/SHORT setup, or null if not confluent
+// enough / not confirmed by the H4 regime.
+async function computeConfirmedSignal(pairSymbol, isFutures){
+  const h4k = await fetchKlinesCrypto(pairSymbol, SIGNAL_CONFIRM_INTERVAL, 260);
+  const h4closes = h4k.map(c=>parseFloat(c[4])), h4highs = h4k.map(c=>parseFloat(c[2])), h4lows = h4k.map(c=>parseFloat(c[3]));
+  if(h4closes.length < 210) return null; // not enough history for a reliable EMA200
+
+  const h4Ema50 = ema(h4closes,50).at(-1);
+  const h4Ema200 = ema(h4closes,200).at(-1);
+  const h4Rsi = rsi(h4closes,14);
+  const h4Macd = macdFull(h4closes);
+  const h4Bb = bollinger(h4closes,20,2);
+  const h4Atr = atr(h4highs, h4lows, h4closes, 14);
+  const price = h4closes.at(-1);
+  if([h4Ema50,h4Ema200,h4Rsi,h4Atr].some(v=>v==null)) return null;
+
+  const m15k = await fetchKlinesCrypto(pairSymbol, SIGNAL_ENTRY_INTERVAL, 150);
+  const m15closes = m15k.map(c=>parseFloat(c[4]));
+  if(m15closes.length < 30) return null;
+  const m15Ema9 = ema(m15closes,9).at(-1), m15Ema21 = ema(m15closes,21).at(-1);
+  const m15Rsi = rsi(m15closes,14);
+  const m15Macd = macdFull(m15closes);
+
+  const ob = await fetchOrderBookBias(pairSymbol, isFutures);
+
+  let long=0, short=0;
+  // EMA50/EMA200 long-term trend (golden/death regime) + dynamic support/resistance
+  if(h4Ema50>h4Ema200) long+=3; else short+=3;
+  if(price>h4Ema50) long+=1; else short+=1;
+  // RSI(14) oversold / overbought
+  if(h4Rsi<30) long+=1.5; else if(h4Rsi>70) short+=1.5;
+  // MACD golden cross / death cross
+  const h4CrossUp = h4Macd.prev.macd<=h4Macd.prev.signal && h4Macd.last.macd>h4Macd.last.signal;
+  const h4CrossDown = h4Macd.prev.macd>=h4Macd.prev.signal && h4Macd.last.macd<h4Macd.last.signal;
+  if(h4CrossUp) long+=2; else if(h4Macd.last.hist>0) long+=1;
+  if(h4CrossDown) short+=2; else if(h4Macd.last.hist<0) short+=1;
+  // Bollinger Bands cheap/expensive zone
+  if(h4Bb){ if(h4Bb.pctB<0.2) long+=1; else if(h4Bb.pctB>0.8) short+=1; }
+  // M15 scalping entry trigger
+  const m15CrossUp = m15Macd.prev.macd<=m15Macd.prev.signal && m15Macd.last.macd>m15Macd.last.signal;
+  const m15CrossDown = m15Macd.prev.macd>=m15Macd.prev.signal && m15Macd.last.macd<m15Macd.last.signal;
+  if(m15CrossUp) long+=1.5; else if(m15CrossDown) short+=1.5;
+  if(m15Ema9>m15Ema21) long+=0.5; else short+=0.5;
+  if(m15Rsi!=null){ if(m15Rsi<35) long+=0.5; else if(m15Rsi>65) short+=0.5; }
+  // Order Book / Volume Profile buy-wall / sell-wall
+  if(ob.bias==='buy') long+=1.5; else if(ob.bias==='sell') short+=1.5;
+
+  const total = long+short, diff = long-short;
+  if(total<4 || Math.abs(diff)<3) return null; // not confluent enough — skip
+  const direction = diff>0 ? 'LONG' : 'SHORT';
+  const h4Regime = h4Ema50>h4Ema200 ? 'LONG' : 'SHORT';
+  if(h4Regime !== direction) return null; // must be confirmed by the 4H regime
+
+  const confidence = Math.max(40, Math.min(97, Math.round((Math.abs(diff)/12.5)*100)));
+  const atrPct = h4Atr/price*100;
+  let leverage;
+  if(atrPct<1) leverage=10; else if(atrPct<2) leverage=8; else if(atrPct<3.5) leverage=5; else if(atrPct<6) leverage=3; else leverage=2;
+  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
+
+  const dir = direction==='LONG' ? 1 : -1;
+  const entry = price;
+  const sl = entry - dir*1.3*h4Atr;
+  const targets = [0.8,1.6,2.8,4.5].map(m=> entry + dir*m*h4Atr);
+
+  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
+    entry, sl, targets, leverage, capitalPct, atrPct, obBias: ob.bias, rsiH4: h4Rsi,
+    openTime: Date.now() };
+}
+
+async function scanSignals(mode){
+  if(signalScanRunning) return;
+  signalScanRunning = true;
+  const isFutures = mode==='futures';
+  const listEl = document.getElementById('fsigList');
+  listEl.innerHTML = `<div class="sidebar-loading">${t('loading_market_data')}…</div>`;
+  try{
+    const {pairs} = await fetchAllPerpetualPairs();
+    const universe = pairs.slice(0, SIGNAL_SCAN_TOP_N).map(p=>p.pair);
+    let done = 0;
+    const results = await mapLimit(universe, 6, async(sym)=>{
+      const r = await computeConfirmedSignal(sym, isFutures);
+      done++;
+      if(listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${universe.length})</div>`;
+      // Spot can only ever BUY (no shorting on spot) — drop SHORT-direction results there.
+      if(r && !isFutures && r.direction==='SHORT') return null;
+      return r;
+    });
+    const signals = results.filter(Boolean).sort((a,b)=>b.confidence-a.confidence);
+    if(mode==='futures') futuresSignalResults = signals; else spotSignalResults = signals;
+    await refreshSignalTickers(false);
+    renderSignalList(mode);
+    startSignalPriceLoop();
+  }catch(e){
+    console.error(e);
+    listEl.innerHTML = `<div class="sidebar-loading">
+        ${t('failed_load_market')}<br>
+        <button class="retry-btn" onclick="scanSignals('${mode}')">↻ ${t('retry')}</button>
+      </div>`;
+  }
+  signalScanRunning = false;
+}
+
+function switchSignalScanner(mode){
+  signalScannerMode = mode;
+  document.getElementById('sigTabSpot')?.classList.toggle('active', mode==='spot');
+  document.getElementById('sigTabFutures')?.classList.toggle('active', mode==='futures');
+  document.getElementById('fsigTitle').textContent = mode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
+  document.getElementById('fsigResultsPanel').style.display = 'none';
+  const cache = mode==='futures' ? futuresSignalResults : spotSignalResults;
+  if(cache.length){ renderSignalList(mode); startSignalPriceLoop(); }
+  else { scanSignals(mode); }
+}
+
+// Pulls fresh 24h tickers so target/stoploss checkmarks reflect the live price —
+// reuses the same ticker map the rest of the dashboard uses.
+async function refreshSignalTickers(rerender=true){
+  try{
+    const tickers = await fetchAllBinanceTickers();
+    tickers.forEach(tk=>{ tickerMap[tk.symbol] = tk; });
+  }catch(e){ /* keep last known prices on failure */ }
+  if(rerender) renderSignalList(signalScannerMode);
+}
+function startSignalPriceLoop(){
+  if(signalPriceTimer) clearInterval(signalPriceTimer);
+  signalPriceTimer = setInterval(()=>refreshSignalTickers(true), 30000);
+}
+
+function pctFrom(entry, val){ return (val-entry)/entry*100; }
+
+function renderSignalList(mode){
+  if(mode!==signalScannerMode) return;
+  const signals = mode==='futures' ? futuresSignalResults : spotSignalResults;
+  const countEl = document.getElementById('fsigCount');
+  if(countEl) countEl.textContent = `(${signals.length})`;
+  const listEl = document.getElementById('fsigList');
+  if(!listEl) return;
+  if(!signals.length){
+    listEl.innerHTML = `<div class="sidebar-loading">${t('fsig_no_signal')}<br>
+        <button class="retry-btn" onclick="scanSignals('${mode}')">↻ ${t('retry')}</button></div>`;
+    return;
+  }
+  const openCards = new Set([...listEl.querySelectorAll('.fsig-card.open')].map(c=>c.id));
+  listEl.innerHTML = signals.map((s,i)=>renderSignalCard(s,i,mode, openCards.has('fsigCard'+i))).join('');
+}
+
+function renderSignalCard(s, i, mode, wasOpen){
+  const dirClass = s.direction==='LONG' ? 'long' : 'short';
+  const dateStr = new Date(s.openTime).toLocaleDateString('en-GB');
+  const live = tickerMap[s.pair] ? parseFloat(tickerMap[s.pair].lastPrice) : s.entry;
+  const dir = s.direction==='LONG' ? 1 : -1;
+  const targetsHtml = s.targets.map((tp,idx)=>{
+    const hit = dir>0 ? live>=tp : live<=tp;
+    const pct = Math.abs(pctFrom(s.entry, tp));
+    return `<div class="fsig-target ${hit?'hit':''}">
+        <span>${hit?'✓ ':''}${t('fsig_target')} ${String(idx+1).padStart(2,'0')}</span>
+        <span class="mono">${formatPrice(tp)}</span>
+        <span class="mono fsig-target-pct">${pct.toFixed(0)}%</span>
+      </div>`;
+  }).join('');
+  const slPct = Math.abs(pctFrom(s.entry, s.sl));
+  const levBadge = mode==='futures'
+    ? `<div class="fsig-badge fsig-badge-lev">${t('fsig_leverage')}: ${s.leverage}x</div>`
+    : `<div class="fsig-badge fsig-badge-lev" style="background:var(--panel-2); color:var(--ink-dim);">Spot</div>`;
+  return `<div class="fsig-card${wasOpen?' open':''}" id="fsigCard${i}">
+    <div class="fsig-head" onclick="toggleFsigCard(${i})">
+      <div class="fsig-avatar ${dirClass}">${s.symbol.slice(0,1)}</div>
+      <div class="fsig-title-col">
+        <div class="fsig-pair">${s.symbol} / USDT</div>
+        <div class="fsig-sub ${dirClass}">${s.direction} · ${t('fsig_open_on')} ${dateStr}</div>
+      </div>
+      <div class="fsig-chevron">▾</div>
+    </div>
+    <div class="fsig-badges">
+      ${levBadge}
+      <div class="fsig-badge fsig-badge-cap">${t('fsig_capital')}: ${s.capitalPct}%</div>
+    </div>
+    <div class="fsig-body" id="fsigBody${i}" style="display:${wasOpen?'flex':'none'};">
+      <div class="fsig-entry">${t('entry')}: <span class="mono">${formatPrice(s.entry)}</span></div>
+      ${targetsHtml}
+      <div class="fsig-sl"><span>STOPLOSS</span><span class="mono">${formatPrice(s.sl)} (-${slPct.toFixed(1)}%)</span></div>
+      <div class="fsig-reason">RSI H4 ${s.rsiH4.toFixed(0)} · ATR ${s.atrPct.toFixed(2)}% · Order Book: ${s.obBias.toUpperCase()} · Confidence ${s.confidence}%</div>
+    </div>
+  </div>`;
+}
+
+function toggleFsigCard(i){
+  const body = document.getElementById('fsigBody'+i);
+  const card = document.getElementById('fsigCard'+i);
+  const open = body.style.display!=='none';
+  body.style.display = open ? 'none' : 'flex';
+  card.classList.toggle('open', !open);
+}
+
+function toggleFsigResults(){
+  const panel = document.getElementById('fsigResultsPanel');
+  const visible = panel.style.display!=='none';
+  if(visible){ panel.style.display='none'; return; }
+  const signals = signalScannerMode==='futures' ? futuresSignalResults : spotSignalResults;
+  const longs = signals.filter(s=>s.direction==='LONG').length;
+  const shorts = signals.filter(s=>s.direction==='SHORT').length;
+  const avgConf = signals.length ? Math.round(signals.reduce((a,s)=>a+s.confidence,0)/signals.length) : 0;
+  panel.innerHTML = `<div class="backtest-strip">
+      <div class="backtest-stat"><div class="bt-label">${t('fsig_total_signal')}</div><div class="bt-value">${signals.length}</div></div>
+      <div class="backtest-stat"><div class="bt-label">LONG</div><div class="bt-value up">${longs}</div></div>
+      <div class="backtest-stat"><div class="bt-label">SHORT</div><div class="bt-value down">${shorts}</div></div>
+      <div class="backtest-stat"><div class="bt-label">${t('fsig_avg_confidence')}</div><div class="bt-value">${avgConf}%</div></div>
+    </div>`;
+  panel.style.display = 'block';
+}
+
 /* ================= NAVIGATION DRAWER / MULTI-PAGE ================= */
 function openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); }
 function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); }
 const PAGE_LOADERS = {
   dashboard: ()=>loadDashboardOverview(),
+  'futures-signal': ()=>switchSignalScanner('futures'),
   livechart: ()=>loadLiveChartPro(),
   heatmap: ()=>loadHeatmap(),
   screener: ()=>loadScreener(),
