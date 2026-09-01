@@ -1354,7 +1354,6 @@ async function initCryptoMarket(){
   document.getElementById('hSub').style.display = 'none';
   const list = document.getElementById('pairList');
   list.innerHTML = `<div class="sidebar-loading">${t('loading_market_data')} crypto…</div>`;
-  document.getElementById('setupCard').style.opacity = '0.5';
   try{
     await initCryptoPairs();
   }catch(e){
@@ -1365,7 +1364,6 @@ async function initCryptoMarket(){
         <button class="retry-btn" onclick="initCryptoMarket()">↻ ${t('retry')}</button>
       </div>`;
   }
-  document.getElementById('setupCard').style.opacity = '1';
   connectCryptoWS();
   scheduleRefresh();
 }
@@ -3117,7 +3115,6 @@ function applySetupToCalculator(){
   document.getElementById('inEntry').value = s.entry;
   document.getElementById('inSlPct').value = s.slPct.toFixed(2);
   calcTPSL();
-  document.getElementById('setupCard').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 /* ================= CALCULATOR ================= */
