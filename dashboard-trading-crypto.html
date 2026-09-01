@@ -324,6 +324,19 @@
     padding:9px 14px; font-weight:700; font-size:12.5px; cursor:pointer;
   }
   .fsig-rescan-btn:hover{background:var(--accent-glow);}
+  .fsig-style-tabs{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;}
+  .fsig-style-tab{
+    flex:1; min-width:120px; text-align:center; padding:10px 10px; border-radius:10px; cursor:pointer;
+    background:var(--panel); border:1.5px solid var(--line); font-size:12px; font-weight:800; color:var(--ink-dim);
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .fsig-style-tab:hover{color:var(--ink);}
+  .fsig-style-tab.active{color:var(--accent); border-color:var(--accent); background:var(--accent-glow);}
+  .fsig-style-desc{font-size:11px; color:var(--ink-dim); line-height:1.5; padding:2px 2px 0;}
+  .fsig-style-badge{
+    display:inline-block; padding:3px 9px; border-radius:6px; font-size:10px; font-weight:800;
+    letter-spacing:0.3px; background:var(--panel-2); color:var(--accent-deep); border:1px solid var(--line); margin-right:6px;
+  }
 
   /* ---- News ---- */
   .news-item{display:block; padding:12px 16px; border-bottom:1px solid var(--line); text-decoration:none; color:var(--ink);}
@@ -636,6 +649,12 @@
 </div>
 <main>
   <div class="back-link" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></div>
+  <div class="fsig-style-tabs" id="fsigStyleTabs" style="display:flex;">
+    <div class="fsig-style-tab active" data-style="scalping" onclick="switchSignalStyle('scalping')"><span data-i18n="fsig_style_scalping">⚡ Scalping</span></div>
+    <div class="fsig-style-tab" data-style="daytrading" onclick="switchSignalStyle('daytrading')"><span data-i18n="fsig_style_daytrading">☀️ Day Trading</span></div>
+    <div class="fsig-style-tab" data-style="swing" onclick="switchSignalStyle('swing')"><span data-i18n="fsig_style_swing">🌙 Swing Trading</span></div>
+  </div>
+  <div class="fsig-style-desc" id="fsigStyleDesc" data-i18n="fsig_style_scalping_desc"></div>
   <div class="fsig-toolbar">
     <div class="fsig-title">⚡ <span id="fsigTitle" data-i18n="futures_signal_title">Futures Signal</span> <span class="fsig-count mono" id="fsigCount">(0)</span></div>
     <div style="display:flex; gap:8px;">
@@ -806,6 +825,10 @@ const I18N = {
     fsig_no_signal: "Belum ada sinyal yang cukup kuat & terkonfirmasi 4H saat ini. Coba pindai ulang beberapa saat lagi.",
     rescan_btn: "↻ Pindai Ulang",
     fsig_disclaimer: "Bukan merupakan suatu ajakan membeli atau menjual suatu instrumen investasi. Keputusan sepenuhnya ada di tangan Anda sendiri.",
+    fsig_style_scalping: "⚡ Scalping", fsig_style_daytrading: "☀️ Day Trading", fsig_style_swing: "🌙 Swing Trading",
+    fsig_style_scalping_desc: "Timeframe 1m/5m · Stoch RSI + EMA Ribbon 5/8/13/21 · holding 5–15 menit",
+    fsig_style_daytrading_desc: "Timeframe 15m (entry) + 1H (tren) · VWAP + RSI + Volume · holding 4–12 jam",
+    fsig_style_swing_desc: "Timeframe 4H · Bollinger Bands + MACD Histogram · holding 1–3 hari",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
@@ -870,6 +893,10 @@ const I18N = {
     fsig_no_signal: "No sufficiently strong, 4H-confirmed signals right now. Try rescanning in a bit.",
     rescan_btn: "↻ Rescan",
     fsig_disclaimer: "This is not an invitation to buy or sell any investment instrument. The decision is entirely yours.",
+    fsig_style_scalping: "⚡ Scalping", fsig_style_daytrading: "☀️ Day Trading", fsig_style_swing: "🌙 Swing Trading",
+    fsig_style_scalping_desc: "1m/5m timeframe · Stoch RSI + EMA Ribbon 5/8/13/21 · 5–15 min holding",
+    fsig_style_daytrading_desc: "15m (entry) + 1H (trend) timeframe · VWAP + RSI + Volume · 4–12h holding",
+    fsig_style_swing_desc: "4H timeframe · Bollinger Bands + MACD Histogram · 1–3 day holding",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
@@ -940,6 +967,8 @@ function applyI18n(){
     if(loadedPages.has('feargreed')) loadFearGreedPage();
     if(document.getElementById('page-futures-signal')?.classList.contains('active')){
       document.getElementById('fsigTitle').textContent = signalScannerMode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
+      const descEl = document.getElementById('fsigStyleDesc');
+      if(descEl && descEl.dataset.i18n) descEl.textContent = t(descEl.dataset.i18n);
       renderSignalList(signalScannerMode);
     }
   }
@@ -1084,6 +1113,63 @@ function stochastic(highs, lows, closes, kPeriod=14, dPeriod=3){
   const crossUp = kPrev!=null && dPrev!=null && kPrev<=dPrev && k>d;
   const crossDown = kPrev!=null && dPrev!=null && kPrev>=dPrev && k<d;
   return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20 };
+}
+// Stochastic RSI — applies the classic %K/%D stochastic formula on top of the RSI
+// series itself (instead of price), which makes it react far faster to short-term
+// momentum swings than a plain RSI. Used for the Scalping strategy where entries/exits
+// happen within minutes and a slower oscillator would arrive too late.
+function stochasticRSI(closes, rsiPeriod=14, stochPeriod=14, kSmooth=3, dSmooth=3){
+  const rsiArr = rsi14Series(closes, rsiPeriod).filter(v=>v!=null);
+  if(rsiArr.length < stochPeriod+kSmooth+dSmooth) return null;
+  const kRaw=[];
+  for(let i=stochPeriod-1;i<rsiArr.length;i++){
+    const slice=rsiArr.slice(i-stochPeriod+1,i+1);
+    const hh=Math.max(...slice), ll=Math.min(...slice);
+    kRaw.push(hh>ll ? (rsiArr[i]-ll)/(hh-ll)*100 : 50);
+  }
+  if(kRaw.length<kSmooth) return null;
+  const kSmoothed=[];
+  for(let i=kSmooth-1;i<kRaw.length;i++) kSmoothed.push(kRaw.slice(i-kSmooth+1,i+1).reduce((s,v)=>s+v,0)/kSmooth);
+  if(kSmoothed.length<dSmooth+1) return null;
+  const dVals=[];
+  for(let i=dSmooth-1;i<kSmoothed.length;i++) dVals.push(kSmoothed.slice(i-dSmooth+1,i+1).reduce((s,v)=>s+v,0)/dSmooth);
+  const k=kSmoothed.at(-1), d=dVals.at(-1), kPrev=kSmoothed.at(-2), dPrev=dVals.at(-2);
+  const crossUp = kPrev!=null && dPrev!=null && kPrev<=dPrev && k>d;
+  const crossDown = kPrev!=null && dPrev!=null && kPrev>=dPrev && k<d;
+  return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20 };
+}
+// EMA Ribbon (default 5/8/13/21) — a stack of fast EMAs used as a single "is momentum
+// compressed or expanding" gauge for scalping: bullish when stacked fast>...>slow and
+// the spread between them is widening (fresh directional push), bearish on the mirror.
+function emaRibbon(closes, periods=[5,8,13,21]){
+  if(closes.length < Math.max(...periods)+6) return null;
+  const arrs = {}; periods.forEach(p=>{ arrs[p]=ema(closes,p); });
+  const values = {}; periods.forEach(p=>{ values[p]=arrs[p].at(-1); });
+  const bullish = values[periods[0]]>values[periods[1]] && values[periods[1]]>values[periods[2]] && values[periods[2]]>values[periods[3]];
+  const bearish = values[periods[0]]<values[periods[1]] && values[periods[1]]<values[periods[2]] && values[periods[2]]<values[periods[3]];
+  const price = closes.at(-1);
+  const spreadAt = (idx)=>{
+    const vals = periods.map(p=>arrs[p][idx]);
+    return (Math.max(...vals)-Math.min(...vals)) / closes[idx];
+  };
+  const lastIdx = closes.length-1;
+  const backIdx = Math.max(0, lastIdx-5);
+  const spreadNow = spreadAt(lastIdx), spreadBack = spreadAt(backIdx);
+  const expanding = spreadNow > spreadBack*1.15;
+  return { values, bullish, bearish, expanding };
+}
+// Rolling VWAP (Volume-Weighted Average Price) over the last `period` candles — a 24h
+// rolling window when fed 24 x 1H candles approximates the intraday session VWAP that
+// day-traders watch, without needing an exact UTC-midnight session reset.
+function vwapRolling(highs, lows, closes, volumes, period=24){
+  const n = closes.length;
+  const p = Math.min(period, n);
+  let pv=0, vol=0;
+  for(let i=n-p;i<n;i++){
+    const typical=(highs[i]+lows[i]+closes[i])/3;
+    pv += typical*volumes[i]; vol += volumes[i];
+  }
+  return vol>0 ? pv/vol : closes.at(-1);
 }
 // Classic Support/Resistance: cluster pivot highs/lows (>=2 touches within a tight
 // tolerance) into horizontal levels — distinct from the ATR-impulse Supply/Demand
@@ -2287,7 +2373,11 @@ const SIGNAL_SCAN_TOP_N = 30;          // most-liquid pairs scanned per run
 const SIGNAL_ENTRY_INTERVAL = '15m';   // fast scalping entry-trigger timeframe
 const SIGNAL_CONFIRM_INTERVAL = '4h';  // confirmation timeframe (per requirement)
 let signalScannerMode = 'futures';     // 'futures' | 'spot'
-let futuresSignalResults = [];
+// Futures Signal is branched into 3 independent trading-style scanners, each with its
+// own timeframe, indicator combo and (per requirement) its own separate signal list —
+// switching style never mixes results between Scalping / Day Trading / Swing Trading.
+let signalScannerStyle = 'scalping';   // 'scalping' | 'daytrading' | 'swing' (futures only)
+let futuresSignalResultsByStyle = { scalping: [], daytrading: [], swing: [] };
 let spotSignalResults = [];
 let signalScanRunning = false;
 let signalPriceTimer = null;
@@ -2332,15 +2422,24 @@ async function fetchOrderBookBias(symbol, isFutures){
 // enough / not confirmed by the H4 regime.
 // Signals are LOCKED once created — entry/SL/targets/open-date are persisted in
 // localStorage and never recalculated on later scans/reloads, per requirement.
-const SIGNAL_STORE_KEY = 'tiaa_futures_signals_v1';
 const SIGNAL_STORE_KEY_SPOT = 'tiaa_spot_signals_v1';
-function storeKeyFor(mode){ return mode==='futures' ? SIGNAL_STORE_KEY : SIGNAL_STORE_KEY_SPOT; }
-function loadStoredSignals(mode){
-  try{ return JSON.parse(localStorage.getItem(storeKeyFor(mode)) || '{}'); }
+const SIGNAL_STORE_KEYS_FUTURES = {
+  scalping: 'tiaa_futures_signals_scalping_v1',
+  daytrading: 'tiaa_futures_signals_daytrading_v1',
+  swing: 'tiaa_futures_signals_swing_v1',
+};
+// `style` is only meaningful when mode==='futures' — each style gets its own storage
+// key so Scalping / Day Trading / Swing Trading signals are locked & tracked separately.
+function storeKeyFor(mode, style){
+  if(mode==='spot') return SIGNAL_STORE_KEY_SPOT;
+  return SIGNAL_STORE_KEYS_FUTURES[style] || SIGNAL_STORE_KEYS_FUTURES.scalping;
+}
+function loadStoredSignals(mode, style){
+  try{ return JSON.parse(localStorage.getItem(storeKeyFor(mode, style)) || '{}'); }
   catch(e){ return {}; }
 }
-function saveStoredSignals(mode, obj){
-  try{ localStorage.setItem(storeKeyFor(mode), JSON.stringify(obj)); }catch(e){}
+function saveStoredSignals(mode, style, obj){
+  try{ localStorage.setItem(storeKeyFor(mode, style), JSON.stringify(obj)); }catch(e){}
 }
 
 async function computeConfirmedSignal(pairSymbol, isFutures){
@@ -2430,9 +2529,183 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
   const sl = entry - dir*1.3*h4Atr;
   const targets = [0.8,1.6,2.8,4.5].map(m=> entry + dir*m*h4Atr);
 
+  const trendLabel = structureTrend==='bullish' ? 'Uptrend (HH/HL)' : structureTrend==='bearish' ? 'Downtrend (LH/LL)' : 'Netral';
+  const reason = `Trend: ${trendLabel} · RSI H4 ${h4Rsi.toFixed(0)} · ATR ${atrPct.toFixed(2)}% · Order Book: ${ob.bias.toUpperCase()} · Confidence ${confidence}%`;
+
   return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
     entry, sl, targets, leverage, capitalPct, atrPct, obBias: ob.bias, rsiH4: h4Rsi,
-    structureTrend, openTime: Date.now() };
+    structureTrend, timeframe:'H4 + M15', reason, openTime: Date.now() };
+}
+
+/* ================= FUTURES SIGNAL — BRANCHED STRATEGIES ================= */
+// Three fully independent scanners for the Futures Signal page, per the user's
+// requirement: Scalping (1m/5m, Stoch RSI + EMA Ribbon), Day Trading (15m entry / 1H
+// trend, VWAP + RSI + Volume) and Swing Trading (4H, Bollinger Bands + MACD Histogram).
+// Each keeps its own locked signal list — switching style never mixes results.
+
+// ---- 1) SCALPING (menit) — Stochastic RSI + EMA Ribbon (EMA 5/8/13/21) on M5 ----
+async function computeScalpingSignal(pairSymbol){
+  const k5 = await fetchKlinesCrypto(pairSymbol, '5m', 150);
+  const closes=k5.map(c=>parseFloat(c[4])), highs=k5.map(c=>parseFloat(c[2])), lows=k5.map(c=>parseFloat(c[3]));
+  if(closes.length<40) return null;
+  const price = closes.at(-1);
+  const ribbon = emaRibbon(closes, [5,8,13,21]);
+  const srsi = stochasticRSI(closes, 14, 14, 3, 3);
+  const atrVal = atr(highs, lows, closes, 14);
+  if(!ribbon || !srsi || atrVal==null) return null;
+
+  let long=0, short=0; const reasons=[];
+  if(ribbon.bullish){ long+=2; reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun naik (tren naik kuat)'); }
+  else if(ribbon.bearish){ short+=2; reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun turun (tren turun kuat)'); }
+  if(ribbon.expanding && ribbon.bullish){ long+=1; reasons.push('Ribbon mulai membuka lebar ke atas (momentum menguat)'); }
+  if(ribbon.expanding && ribbon.bearish){ short+=1; reasons.push('Ribbon mulai membuka lebar ke bawah (momentum melemah)'); }
+  if(srsi.crossUp && srsi.k<40){ long+=2.5; reasons.push(`Stoch RSI cross up dari oversold (K ${srsi.k.toFixed(0)})`); }
+  if(srsi.crossDown && srsi.k>60){ short+=2.5; reasons.push(`Stoch RSI cross down dari overbought (K ${srsi.k.toFixed(0)})`); }
+  if(srsi.oversold) long+=0.5;
+  if(srsi.overbought) short+=0.5;
+  if(price>ribbon.values[5]) long+=0.5; else if(price<ribbon.values[5]) short+=0.5;
+
+  const total=long+short, diff=long-short;
+  if(total<3 || Math.abs(diff)<2) return null;
+  const direction = diff>0 ? 'LONG' : 'SHORT';
+  if(ribbon.bullish && direction==='SHORT') return null;
+  if(ribbon.bearish && direction==='LONG') return null;
+
+  const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
+  const atrPct = atrVal/price*100;
+  // Scalping SL is required to sit strictly beyond EMA21 (a small ATR buffer keeps it
+  // from sitting exactly on the line, which would get stopped out by noise).
+  const dir = direction==='LONG' ? 1 : -1;
+  const entry = price;
+  const sl = direction==='LONG' ? ribbon.values[21] - 0.15*atrVal : ribbon.values[21] + 0.15*atrVal;
+  // Targets are intentionally tight (small ATR multiples) — scalping exits are meant to
+  // land within minutes (Stoch RSI hits 80/20, or price breaks back through EMA5).
+  const targets = [0.5,1.0,1.6,2.2].map(m=> entry + dir*m*atrVal);
+  let leverage; if(atrPct<0.5) leverage=15; else if(atrPct<1) leverage=10; else if(atrPct<2) leverage=6; else if(atrPct<3.5) leverage=4; else leverage=2;
+  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
+  const reason = `${reasons.join(' · ')} · ATR ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
+
+  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
+    entry, sl, targets, leverage, capitalPct, atrPct, style:'scalping', timeframe:'M5', reason, openTime: Date.now() };
+}
+
+// ---- 2) DAY TRADING (4–12 jam) — VWAP + RSI Standar + Volume, M15 entry / H1 trend ----
+async function computeDayTradingSignal(pairSymbol){
+  const k1h = await fetchKlinesCrypto(pairSymbol, '1h', 60);
+  const h1closes=k1h.map(c=>parseFloat(c[4])), h1highs=k1h.map(c=>parseFloat(c[2])), h1lows=k1h.map(c=>parseFloat(c[3])), h1vol=k1h.map(c=>parseFloat(c[5]));
+  if(h1closes.length<26) return null;
+  const vwap1h = vwapRolling(h1highs, h1lows, h1closes, h1vol, 24); // ~24h rolling VWAP
+  const price = h1closes.at(-1);
+  const aboveVwap = price>vwap1h;
+  const atr1h = atr(h1highs, h1lows, h1closes, 14);
+  if(atr1h==null) return null;
+
+  const k15 = await fetchKlinesCrypto(pairSymbol, '15m', 100);
+  const m15closes=k15.map(c=>parseFloat(c[4])), m15highs=k15.map(c=>parseFloat(c[2])), m15lows=k15.map(c=>parseFloat(c[3])), m15vol=k15.map(c=>parseFloat(c[5]));
+  if(m15closes.length<30) return null;
+  const price15 = m15closes.at(-1);
+  const rsi15 = rsi(m15closes, 14);
+  const volRatio = volumeRatio(m15vol, 20);
+  const sr = findSupportResistance(m15highs, m15lows, m15closes);
+  const nearVwap = Math.abs(price15-vwap1h)/price15 < 0.01;
+  const nearSupport = sr.nearestSupport && Math.abs(price15-sr.nearestSupport.price)/price15 < 0.006;
+  const nearResistance = sr.nearestResistance && Math.abs(price15-sr.nearestResistance.price)/price15 < 0.006;
+
+  let long=0, short=0; const reasons=[];
+  if(aboveVwap){ long+=2; reasons.push('Harga H1 di atas VWAP ~24h (bias bullish harian)'); }
+  else { short+=2; reasons.push('Harga H1 di bawah VWAP ~24h (bias bearish harian)'); }
+  if(aboveVwap && (nearVwap||nearSupport) && rsi15!=null && rsi15>=30 && rsi15<=40){ long+=2.5; reasons.push(`Koreksi M15 ke VWAP/Support, RSI ${rsi15.toFixed(0)} (30–40)`); }
+  if(!aboveVwap && (nearVwap||nearResistance) && rsi15!=null && rsi15>=60 && rsi15<=70){ short+=2.5; reasons.push(`Koreksi M15 ke VWAP/Resistance, RSI ${rsi15.toFixed(0)} (60–70)`); }
+  if(volRatio!=null && volRatio>1.15){
+    if(aboveVwap) long+=1; else short+=1;
+    reasons.push(`Volume pembelian membesar (${volRatio.toFixed(1)}x rata-rata)`);
+  }
+
+  const total=long+short, diff=long-short;
+  if(total<3.5 || Math.abs(diff)<2.5) return null;
+  const direction = diff>0 ? 'LONG' : 'SHORT';
+  if(aboveVwap && direction==='SHORT') return null;
+  if(!aboveVwap && direction==='LONG') return null;
+
+  const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
+  const atrPct = atr1h/price*100;
+  const dir = direction==='LONG' ? 1 : -1;
+  const entry = price15;
+  // SL sits just beyond the VWAP line — if price breaks VWAP against the position with
+  // volume, the daily trend has flipped and the setup is invalidated.
+  const sl = direction==='LONG' ? vwap1h - 0.3*atr1h : vwap1h + 0.3*atr1h;
+  const resistanceTp = direction==='LONG' ? sr.nearestResistance?.price : sr.nearestSupport?.price;
+  const targets = [1.2,2.2,3.5,5].map((m,idx)=>{
+    const atrTarget = entry + dir*m*atr1h;
+    // First target prefers the nearest horizontal resistance/support if it's beyond entry.
+    if(idx===0 && resistanceTp && (dir>0 ? resistanceTp>entry : resistanceTp<entry)) return resistanceTp;
+    return atrTarget;
+  });
+  let leverage; if(atrPct<1) leverage=8; else if(atrPct<2) leverage=6; else if(atrPct<3.5) leverage=4; else leverage=2;
+  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
+  const reason = `${reasons.join(' · ')} · ATR H1 ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
+
+  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
+    entry, sl, targets, leverage, capitalPct, atrPct, style:'daytrading', timeframe:'M15 + H1', reason, openTime: Date.now() };
+}
+
+// ---- 3) SWING TRADING (1–3 hari) — Bollinger Bands + MACD Histogram on H4 ----
+async function computeSwingSignal(pairSymbol){
+  const k4h = await fetchKlinesCrypto(pairSymbol, '4h', 150);
+  const closes=k4h.map(c=>parseFloat(c[4])), highs=k4h.map(c=>parseFloat(c[2])), lows=k4h.map(c=>parseFloat(c[3]));
+  if(closes.length<35) return null;
+  const bb = bollinger(closes, 20, 2);
+  const m = macdFull(closes);
+  const atrVal = atr(highs, lows, closes, 14);
+  if(!bb || atrVal==null) return null;
+  const price = closes.at(-1);
+
+  let long=0, short=0; const reasons=[];
+  const touchLower = price<=bb.lower*1.003;
+  const touchUpper = price>=bb.upper*0.997;
+  if(touchLower){ long+=2; reasons.push('Harga menyentuh/menembus Lower Bollinger Band'); }
+  if(touchUpper){ short+=2; reasons.push('Harga menyentuh/menembus Upper Bollinger Band'); }
+  const histNow=m.last.hist, histPrev=m.prev.hist;
+  const fadingDown = histNow<0 && Math.abs(histNow)<Math.abs(histPrev);
+  const fadingUp = histNow>0 && Math.abs(histNow)<Math.abs(histPrev);
+  if(fadingDown){ long+=1; reasons.push('MACD Histogram merah mulai memudar (tekanan jual habis)'); }
+  if(fadingUp){ short+=1; reasons.push('MACD Histogram hijau mulai memudar (tekanan beli habis)'); }
+  const crossUp = m.prev.macd<=m.prev.signal && m.last.macd>m.last.signal;
+  const crossDown = m.prev.macd>=m.prev.signal && m.last.macd<m.last.signal;
+  if(crossUp){ long+=2.5; reasons.push('Golden Cross MACD terkonfirmasi'); }
+  if(crossDown){ short+=2.5; reasons.push('Death Cross MACD terkonfirmasi'); }
+
+  const total=long+short, diff=long-short;
+  if(total<3 || Math.abs(diff)<2) return null;
+  const direction = diff>0 ? 'LONG' : 'SHORT';
+  if(touchLower && direction==='SHORT') return null;
+  if(touchUpper && direction==='LONG') return null;
+
+  const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6.5)*100)));
+  const atrPct = atrVal/price*100;
+  const dir = direction==='LONG' ? 1 : -1;
+  const entry = price;
+  // SL sits below/above the most recent swing low/high, per the swing-trading rule.
+  const swingLow = Math.min(...lows.slice(-8));
+  const swingHigh = Math.max(...highs.slice(-8));
+  const sl = direction==='LONG' ? swingLow - 0.3*atrVal : swingHigh + 0.3*atrVal;
+  // Primary exit is the opposite Bollinger Band; extra extension targets beyond it are
+  // offered for those who want to trail rather than exit all at once.
+  const targets = direction==='LONG'
+    ? [bb.basis, bb.upper, bb.upper+0.6*atrVal, bb.upper+1.2*atrVal]
+    : [bb.basis, bb.lower, bb.lower-0.6*atrVal, bb.lower-1.2*atrVal];
+  let leverage; if(atrPct<1.5) leverage=5; else if(atrPct<3) leverage=3; else leverage=2;
+  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
+  const reason = `${reasons.join(' · ')} · ATR H4 ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
+
+  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
+    entry, sl, targets, leverage, capitalPct, atrPct, style:'swing', timeframe:'H4', reason, openTime: Date.now() };
+}
+
+async function computeStyleSignal(pairSymbol, style){
+  if(style==='daytrading') return computeDayTradingSignal(pairSymbol);
+  if(style==='swing') return computeSwingSignal(pairSymbol);
+  return computeScalpingSignal(pairSymbol);
 }
 
 // Scans the universe for pairs WITHOUT an already-locked active signal, and locks in
@@ -2443,8 +2716,9 @@ async function scanSignals(mode){
   if(signalScanRunning) return;
   signalScanRunning = true;
   const isFutures = mode==='futures';
+  const style = isFutures ? signalScannerStyle : null;
   const listEl = document.getElementById('fsigList');
-  const store = loadStoredSignals(mode);
+  const store = loadStoredSignals(mode, style);
   const hasExisting = Object.values(store).some(s=>s.status==='active');
   if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_market_data')}…</div>`;
   try{
@@ -2453,17 +2727,17 @@ async function scanSignals(mode){
     const toScan = universe.filter(sym=> !store[sym] || store[sym].status!=='active');
     let done = 0;
     await mapLimit(toScan, 6, async(sym)=>{
-      const r = await computeConfirmedSignal(sym, isFutures);
+      const r = isFutures ? await computeStyleSignal(sym, style) : await computeConfirmedSignal(sym, isFutures);
       done++;
       if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${toScan.length})</div>`;
       // Spot can only ever BUY (no shorting on spot) — drop SHORT-direction results there.
       if(r && !isFutures && r.direction==='SHORT') return;
       if(r) store[sym] = { ...r, status:'active' }; // LOCKED here — never overwritten again
     });
-    saveStoredSignals(mode, store);
-    applyStoreToState(mode, store);
+    saveStoredSignals(mode, style, store);
+    applyStoreToState(mode, style, store);
     await refreshSignalTickers(false);
-    checkSignalClosures(mode);
+    checkSignalClosures(mode, style);
     renderSignalList(mode);
     startSignalPriceLoop();
   }catch(e){
@@ -2476,16 +2750,16 @@ async function scanSignals(mode){
   signalScanRunning = false;
 }
 
-function applyStoreToState(mode, store){
+function applyStoreToState(mode, style, store){
   const active = Object.values(store).filter(s=>s.status==='active').sort((a,b)=>b.confidence-a.confidence);
-  if(mode==='futures') futuresSignalResults = active; else spotSignalResults = active;
+  if(mode==='futures') futuresSignalResultsByStyle[style] = active; else spotSignalResults = active;
 }
 
 // Once a locked signal's live price crosses its stoploss or final target, close it out
 // so the pair frees up for a fresh signal on the next scan. Everything about the closed
 // signal (entry/SL/TP/date) still never changes retroactively — only its status flips.
-function checkSignalClosures(mode){
-  const store = loadStoredSignals(mode);
+function checkSignalClosures(mode, style){
+  const store = loadStoredSignals(mode, style);
   let changed = false;
   Object.keys(store).forEach(sym=>{
     const s = store[sym];
@@ -2502,8 +2776,8 @@ function checkSignalClosures(mode){
       else if(live<=finalTp){ s.status='tp_hit'; changed=true; }
     }
   });
-  if(changed) saveStoredSignals(mode, store);
-  applyStoreToState(mode, store);
+  if(changed) saveStoredSignals(mode, style, store);
+  applyStoreToState(mode, style, store);
 }
 
 function switchSignalScanner(mode){
@@ -2512,10 +2786,33 @@ function switchSignalScanner(mode){
   document.getElementById('sigTabFutures')?.classList.toggle('active', mode==='futures');
   document.getElementById('fsigTitle').textContent = mode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
   document.getElementById('fsigResultsPanel').style.display = 'none';
-  applyStoreToState(mode, loadStoredSignals(mode));
+  // The Scalping/Day Trading/Swing Trading branch tabs only apply to Futures Signal —
+  // Spot Signal keeps its original single-list behaviour.
+  const styleTabs = document.getElementById('fsigStyleTabs');
+  const styleDesc = document.getElementById('fsigStyleDesc');
+  if(styleTabs) styleTabs.style.display = mode==='futures' ? 'flex' : 'none';
+  if(styleDesc) styleDesc.style.display = mode==='futures' ? 'block' : 'none';
+  const style = mode==='futures' ? signalScannerStyle : null;
+  applyStoreToState(mode, style, loadStoredSignals(mode, style));
   renderSignalList(mode);
   startSignalPriceLoop();
   scanSignals(mode); // fills in any newly-forming signals; already-locked ones are untouched
+}
+
+// Switches which of the 3 Futures Signal strategies (Scalping / Day Trading / Swing
+// Trading) is showing. Each keeps a fully separate, independently-locked signal list.
+function switchSignalStyle(style){
+  if(signalScannerStyle===style && signalScannerMode==='futures') { /* still refresh below */ }
+  signalScannerStyle = style;
+  document.querySelectorAll('.fsig-style-tab').forEach(el=> el.classList.toggle('active', el.dataset.style===style));
+  const descKey = style==='daytrading' ? 'fsig_style_daytrading_desc' : style==='swing' ? 'fsig_style_swing_desc' : 'fsig_style_scalping_desc';
+  const descEl = document.getElementById('fsigStyleDesc');
+  if(descEl){ descEl.dataset.i18n = descKey; descEl.textContent = t(descKey); }
+  document.getElementById('fsigResultsPanel').style.display = 'none';
+  applyStoreToState('futures', style, loadStoredSignals('futures', style));
+  renderSignalList('futures');
+  startSignalPriceLoop();
+  scanSignals('futures');
 }
 
 // Pulls fresh 24h tickers so target/stoploss checkmarks reflect the live price —
@@ -2525,7 +2822,7 @@ async function refreshSignalTickers(rerender=true){
     const tickers = await fetchAllBinanceTickers();
     tickers.forEach(tk=>{ tickerMap[tk.symbol] = tk; });
   }catch(e){ /* keep last known prices on failure */ }
-  checkSignalClosures(signalScannerMode);
+  checkSignalClosures(signalScannerMode, signalScannerMode==='futures' ? signalScannerStyle : null);
   if(rerender) renderSignalList(signalScannerMode);
 }
 function startSignalPriceLoop(){
@@ -2537,7 +2834,7 @@ function pctFrom(entry, val){ return (val-entry)/entry*100; }
 
 function renderSignalList(mode){
   if(mode!==signalScannerMode) return;
-  const signals = mode==='futures' ? futuresSignalResults : spotSignalResults;
+  const signals = mode==='futures' ? (futuresSignalResultsByStyle[signalScannerStyle]||[]) : spotSignalResults;
   const countEl = document.getElementById('fsigCount');
   if(countEl) countEl.textContent = `(${signals.length})`;
   const listEl = document.getElementById('fsigList');
@@ -2551,6 +2848,7 @@ function renderSignalList(mode){
   listEl.innerHTML = signals.map((s,i)=>renderSignalCard(s,i,mode, openCards.has('fsigCard'+i))).join('');
 }
 
+const FSIG_STYLE_LABEL = { scalping:'Scalping', daytrading:'Day Trading', swing:'Swing Trading' };
 function renderSignalCard(s, i, mode, wasOpen){
   const dirClass = s.direction==='LONG' ? 'long' : 'short';
   // Tanggal/bulan/tahun sinyal dibuat — dikunci sejak pertama kali terdeteksi, tidak berubah lagi.
@@ -2570,7 +2868,9 @@ function renderSignalCard(s, i, mode, wasOpen){
   const levBadge = mode==='futures'
     ? `<div class="fsig-badge fsig-badge-lev">${t('fsig_leverage')}: ${s.leverage}x</div>`
     : `<div class="fsig-badge fsig-badge-lev" style="background:var(--panel-2); color:var(--ink-dim);">Spot</div>`;
-  const trendLabel = s.structureTrend==='bullish' ? 'Uptrend (HH/HL)' : s.structureTrend==='bearish' ? 'Downtrend (LH/LL)' : 'Netral';
+  const styleBadge = (mode==='futures' && s.style)
+    ? `<span class="fsig-style-badge">${FSIG_STYLE_LABEL[s.style]||s.style} · ${s.timeframe||''}</span>` : '';
+  const reasonText = s.reason || `Confidence ${s.confidence}%`;
   return `<div class="fsig-card${wasOpen?' open':''}" id="fsigCard${i}">
     <div class="fsig-head" onclick="toggleFsigCard(${i})">
       <div class="fsig-avatar ${dirClass}">${s.symbol.slice(0,1)}</div>
@@ -2585,10 +2885,11 @@ function renderSignalCard(s, i, mode, wasOpen){
       <div class="fsig-badge fsig-badge-cap">${t('fsig_capital')}: ${s.capitalPct}%</div>
     </div>
     <div class="fsig-body" id="fsigBody${i}" style="display:${wasOpen?'flex':'none'};">
+      ${styleBadge ? `<div>${styleBadge}</div>` : ''}
       <div class="fsig-entry">${t('entry')}: <span class="mono">${formatPrice(s.entry)}</span></div>
       ${targetsHtml}
       <div class="fsig-sl"><span>STOPLOSS</span><span class="mono">${formatPrice(s.sl)} (-${slPct.toFixed(1)}%)</span></div>
-      <div class="fsig-reason">Trend: ${trendLabel} · RSI H4 ${s.rsiH4.toFixed(0)} · ATR ${s.atrPct.toFixed(2)}% · Order Book: ${s.obBias.toUpperCase()} · Confidence ${s.confidence}%</div>
+      <div class="fsig-reason">${reasonText}</div>
     </div>
   </div>`;
 }
@@ -2605,7 +2906,7 @@ function toggleFsigResults(){
   const panel = document.getElementById('fsigResultsPanel');
   const visible = panel.style.display!=='none';
   if(visible){ panel.style.display='none'; return; }
-  const signals = signalScannerMode==='futures' ? futuresSignalResults : spotSignalResults;
+  const signals = signalScannerMode==='futures' ? (futuresSignalResultsByStyle[signalScannerStyle]||[]) : spotSignalResults;
   const longs = signals.filter(s=>s.direction==='LONG').length;
   const shorts = signals.filter(s=>s.direction==='SHORT').length;
   const avgConf = signals.length ? Math.round(signals.reduce((a,s)=>a+s.confidence,0)/signals.length) : 0;
