@@ -551,20 +551,6 @@
       <div class="card-body" id="tfDetail"></div>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span data-i18n="card_winrate">Win Rate Score</span><span style="font-size:10px;">Checklist kesiapan open posisi</span></div>
-      <div class="card-body">
-        <div class="wr-header">
-          <div class="wr-score mono" id="winrateScore">–/10</div>
-          <div class="confidence-wrap">
-            <div class="confidence-label"><span data-i18n="setup_readiness">Kesiapan Setup</span></div>
-            <div class="confidence-bar"><div class="confidence-fill none" id="winrateFill" style="width:0%;"></div></div>
-          </div>
-        </div>
-        <div class="wr-checklist" id="winrateChecklist"></div>
-      </div>
-    </div>
-
     <div class="card" id="foilsCard" style="display:none;">
       <div class="card-title"><span>FOILS + Fear &amp; Greed</span><span style="font-size:10px;">Funding · Open Interest · Long/Short · Sentimen</span></div>
       <div class="card-body">
@@ -614,11 +600,6 @@
         <button class="calc-btn" onclick="calcTPSL()" data-i18n="btn_calc">Hitung Entry / TP / SL</button>
         <div class="result-grid" id="calcResult"></div>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><span data-i18n="card_entry_why">Kenapa Sinyal Ini Layak Dipertimbangkan?</span></div>
-      <div class="card-body" id="entryWhyBody"><div class="ind-note" data-i18n="waiting_analysis">Menunggu hasil analisis…</div></div>
     </div>
   </main>
 </div>
@@ -2187,6 +2168,7 @@ function computeWinRateScore(){
   const scoreEl = document.getElementById('winrateScore');
   const listEl = document.getElementById('winrateChecklist');
   const fillEl = document.getElementById('winrateFill');
+  if(!scoreEl || !listEl || !fillEl) return;
   if(!s || s.direction==='none'){
     scoreEl.textContent = '–/10';
     fillEl.style.width = '0%'; fillEl.className = 'confidence-fill none';
