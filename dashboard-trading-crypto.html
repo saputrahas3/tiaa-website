@@ -33,18 +33,18 @@
     /* ---- LIGHT THEME — Binance-style, same yellow accent on white ---- */
     --bg:#ffffff;
     --panel:#ffffff;
-    --panel-2:#f5f5f5;
-    --line:#eaecef;
-    --ink:#1e2329;
-    --ink-dim:#707a8a;
-    --accent:#f0b90b;
-    --accent-deep:#d9a406;
-    --accent-ink:#202020;
-    --accent-glow:rgba(240,185,11,0.16);
-    --buy:#03a66d;
-    --sell:#cf304a;
-    --buy-glow:rgba(3,166,109,0.10);
-    --sell-glow:rgba(207,48,74,0.09);
+    --panel-2:#f1f2f4;
+    --line:#d8dce1;
+    --ink:#14161a;
+    --ink-dim:#5b6472;
+    --accent:#dba100;
+    --accent-deep:#b58500;
+    --accent-ink:#171717;
+    --accent-glow:rgba(219,161,0,0.30);
+    --buy:#02975f;
+    --sell:#c8123a;
+    --buy-glow:rgba(2,151,95,0.22);
+    --sell-glow:rgba(200,18,58,0.20);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -280,41 +280,50 @@
   .fsig-head{display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer;}
   .fsig-avatar{
     width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:14px; flex-shrink:0; background:var(--panel-2); border:1px solid var(--line);
+    font-weight:800; font-size:14px; flex-shrink:0; background:var(--panel-2); border:2px solid var(--line);
   }
-  .fsig-avatar.long{color:var(--buy); border-color:var(--buy);}
-  .fsig-avatar.short{color:var(--sell); border-color:var(--sell);}
+  .fsig-avatar.long{color:#fff; background:var(--buy); border-color:var(--buy);}
+  .fsig-avatar.short{color:#fff; background:var(--sell); border-color:var(--sell);}
   .fsig-title-col{flex:1; min-width:0;}
-  .fsig-pair{font-weight:700; font-size:14.5px; color:var(--accent);}
-  .fsig-sub{font-size:11px; font-weight:600; margin-top:2px;}
+  .fsig-pair{font-weight:800; font-size:14.5px; color:var(--accent-deep);}
+  .fsig-sub{font-size:11px; font-weight:800; margin-top:2px;}
   .fsig-sub.long{color:var(--buy);}
   .fsig-sub.short{color:var(--sell);}
   .fsig-chevron{color:var(--ink-dim); font-size:12px; transition:transform .15s; flex-shrink:0;}
   .fsig-card.open .fsig-chevron{transform:rotate(180deg);}
   .fsig-badges{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px 14px;}
   .fsig-badge{
-    text-align:center; padding:9px; border-radius:8px; font-size:12.5px; font-weight:700; letter-spacing:0.2px;
+    text-align:center; padding:9px; border-radius:8px; font-size:12.5px; font-weight:800; letter-spacing:0.2px;
   }
-  .fsig-badge-lev{background:var(--buy-glow); color:var(--buy);}
-  .fsig-badge-cap{background:var(--accent-glow); color:var(--accent-deep);}
-  body.light .fsig-badge-cap{color:#8a6400;}
+  .fsig-badge-lev{background:var(--buy); color:#fff;}
+  .fsig-badge-cap{background:var(--accent); color:var(--accent-ink);}
   .fsig-body{border-top:1px solid var(--line); padding:14px 16px; display:flex; flex-direction:column; gap:8px;}
   .fsig-entry{font-size:12.5px; color:var(--ink-dim); margin-bottom:2px;}
-  .fsig-entry .mono{color:var(--ink); font-weight:600; font-size:13.5px;}
+  .fsig-entry .mono{color:var(--ink); font-weight:700; font-size:13.5px;}
   .fsig-target{
     display:flex; align-items:center; justify-content:space-between; gap:8px;
-    padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:600;
-    background:var(--panel-2); border:1px solid var(--line); color:var(--ink-dim);
+    padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:700;
+    background:var(--panel-2); border:1.5px solid var(--line); color:var(--ink-dim);
   }
-  .fsig-target.hit{background:var(--buy-glow); border-color:var(--buy); color:var(--buy);}
-  .fsig-target-pct{color:var(--accent) !important;}
-  .fsig-target.hit .fsig-target-pct{color:var(--buy) !important;}
+  .fsig-target.hit{background:var(--buy); border-color:var(--buy); color:#fff;}
+  .fsig-target-pct{color:var(--accent-deep) !important; font-weight:800;}
+  .fsig-target.hit .fsig-target-pct{color:#fff !important;}
   .fsig-sl{
     display:flex; align-items:center; justify-content:space-between; gap:8px;
-    padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:700;
-    background:var(--sell-glow); border:1px solid var(--sell); color:var(--sell); margin-top:2px;
+    padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:800;
+    background:var(--sell); border:1.5px solid var(--sell); color:#fff; margin-top:2px;
   }
   .fsig-reason{font-size:10.5px; color:var(--ink-dim); line-height:1.6; margin-top:4px;}
+  .fsig-status-closed{opacity:0.55;}
+  .fsig-disclaimer{
+    background:var(--accent); border:1.5px solid var(--accent-deep); color:var(--accent-ink);
+    border-radius:10px; padding:13px 15px; font-size:12px; line-height:1.65; font-weight:700;
+  }
+  .fsig-rescan-btn{
+    background:transparent; color:var(--accent); border:1.5px solid var(--accent); border-radius:8px;
+    padding:9px 14px; font-weight:700; font-size:12.5px; cursor:pointer;
+  }
+  .fsig-rescan-btn:hover{background:var(--accent-glow);}
 
   /* ---- News ---- */
   .news-item{display:block; padding:12px 16px; border-bottom:1px solid var(--line); text-decoration:none; color:var(--ink);}
@@ -629,10 +638,14 @@
   <div class="back-link" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></div>
   <div class="fsig-toolbar">
     <div class="fsig-title">⚡ <span id="fsigTitle" data-i18n="futures_signal_title">Futures Signal</span> <span class="fsig-count mono" id="fsigCount">(0)</span></div>
-    <button class="fsig-results-btn" id="fsigResultsBtn" onclick="toggleFsigResults()" data-i18n="results_btn">Results</button>
+    <div style="display:flex; gap:8px;">
+      <button class="fsig-rescan-btn" onclick="scanSignals(signalScannerMode)" data-i18n="rescan_btn">↻ Pindai Ulang</button>
+      <button class="fsig-results-btn" id="fsigResultsBtn" onclick="toggleFsigResults()" data-i18n="results_btn">Results</button>
+    </div>
   </div>
   <div id="fsigResultsPanel" class="fsig-results-panel card card-body" style="display:none;"></div>
   <div id="fsigList" class="fsig-list"><div class="sidebar-loading" data-i18n="loading_signals">Memuat sinyal…</div></div>
+  <div class="fsig-disclaimer">⚠️ <span data-i18n="fsig_disclaimer">Bukan merupakan suatu ajakan membeli atau menjual suatu instrumen investasi. Keputusan sepenuhnya ada di tangan Anda sendiri.</span></div>
 </main>
 </div><!-- /page-futures-signal -->
 
@@ -791,6 +804,8 @@ const I18N = {
     fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
     fsig_total_signal: "Total Sinyal", fsig_avg_confidence: "Rata-rata Confidence",
     fsig_no_signal: "Belum ada sinyal yang cukup kuat & terkonfirmasi 4H saat ini. Coba pindai ulang beberapa saat lagi.",
+    rescan_btn: "↻ Pindai Ulang",
+    fsig_disclaimer: "Bukan merupakan suatu ajakan membeli atau menjual suatu instrumen investasi. Keputusan sepenuhnya ada di tangan Anda sendiri.",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
@@ -853,6 +868,8 @@ const I18N = {
     fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
     fsig_total_signal: "Total Signals", fsig_avg_confidence: "Avg. Confidence",
     fsig_no_signal: "No sufficiently strong, 4H-confirmed signals right now. Try rescanning in a bit.",
+    rescan_btn: "↻ Rescan",
+    fsig_disclaimer: "This is not an invitation to buy or sell any investment instrument. The decision is entirely yours.",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
@@ -2313,6 +2330,19 @@ async function fetchOrderBookBias(symbol, isFutures){
 // Core scoring: combines the H4 confirmation timeframe + M15 scalping trigger +
 // order-book wall bias into a single LONG/SHORT setup, or null if not confluent
 // enough / not confirmed by the H4 regime.
+// Signals are LOCKED once created — entry/SL/targets/open-date are persisted in
+// localStorage and never recalculated on later scans/reloads, per requirement.
+const SIGNAL_STORE_KEY = 'tiaa_futures_signals_v1';
+const SIGNAL_STORE_KEY_SPOT = 'tiaa_spot_signals_v1';
+function storeKeyFor(mode){ return mode==='futures' ? SIGNAL_STORE_KEY : SIGNAL_STORE_KEY_SPOT; }
+function loadStoredSignals(mode){
+  try{ return JSON.parse(localStorage.getItem(storeKeyFor(mode)) || '{}'); }
+  catch(e){ return {}; }
+}
+function saveStoredSignals(mode, obj){
+  try{ localStorage.setItem(storeKeyFor(mode), JSON.stringify(obj)); }catch(e){}
+}
+
 async function computeConfirmedSignal(pairSymbol, isFutures){
   const h4k = await fetchKlinesCrypto(pairSymbol, SIGNAL_CONFIRM_INTERVAL, 260);
   const h4closes = h4k.map(c=>parseFloat(c[4])), h4highs = h4k.map(c=>parseFloat(c[2])), h4lows = h4k.map(c=>parseFloat(c[3]));
@@ -2336,9 +2366,25 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
 
   const ob = await fetchOrderBookBias(pairSymbol, isFutures);
 
+  // Struktur pasar (Smart Money Concept): HH+HL = uptrend, LH+LL = downtrend — dihitung
+  // murni dari price action koin ini sendiri (bukan dari BTC), jadi tiap koin bisa punya
+  // arah sinyal yang berbeda tergantung polanya masing-masing.
+  const patterns = detectPatterns(h4highs, h4lows, h4closes);
+  const structureTrend = patterns[0]?.dir || 'neutral'; // 'bullish' | 'bearish' | 'neutral'
+  // Smart Money Concept: fresh demand/supply zone (base sebuah impulsive move) dekat harga
+  const sd = findSupplyDemandZones(h4highs, h4lows, h4closes, h4Atr);
+  const inFreshDemand = sd.demandZones.some(z=>!z.tested && price>=z.low && price<=z.high*1.01);
+  const inFreshSupply = sd.supplyZones.some(z=>!z.tested && price<=z.high && price>=z.low*0.99);
+  // Support & Resistance klasik (cluster pivot dengan banyak sentuhan)
+  const sr = findSupportResistance(h4highs, h4lows, h4closes);
+  const nearSupport = sr.nearestSupport && Math.abs(price-sr.nearestSupport.price)/price<0.006;
+  const nearResistance = sr.nearestResistance && Math.abs(price-sr.nearestResistance.price)/price<0.006;
+
   let long=0, short=0;
-  // EMA50/EMA200 long-term trend (golden/death regime) + dynamic support/resistance
-  if(h4Ema50>h4Ema200) long+=3; else short+=3;
+  // Arah tren utama & struktur pasar (SMC) — bobot terbesar karena ini penentu arah LONG/SHORT
+  if(structureTrend==='bullish') long+=3; else if(structureTrend==='bearish') short+=3;
+  // EMA50/EMA200 (arah tren jangka panjang / dynamic S&R)
+  if(h4Ema50>h4Ema200) long+=2; else short+=2;
   if(price>h4Ema50) long+=1; else short+=1;
   // RSI(14) oversold / overbought
   if(h4Rsi<30) long+=1.5; else if(h4Rsi>70) short+=1.5;
@@ -2349,6 +2395,12 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
   if(h4CrossDown) short+=2; else if(h4Macd.last.hist<0) short+=1;
   // Bollinger Bands cheap/expensive zone
   if(h4Bb){ if(h4Bb.pctB<0.2) long+=1; else if(h4Bb.pctB>0.8) short+=1; }
+  // Smart Money Concept: fresh demand/supply zone
+  if(inFreshDemand) long+=1.5;
+  if(inFreshSupply) short+=1.5;
+  // Support & Resistance proximity
+  if(nearSupport) long+=1;
+  if(nearResistance) short+=1;
   // M15 scalping entry trigger
   const m15CrossUp = m15Macd.prev.macd<=m15Macd.prev.signal && m15Macd.last.macd>m15Macd.last.signal;
   const m15CrossDown = m15Macd.prev.macd>=m15Macd.prev.signal && m15Macd.last.macd<m15Macd.last.signal;
@@ -2363,8 +2415,11 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
   const direction = diff>0 ? 'LONG' : 'SHORT';
   const h4Regime = h4Ema50>h4Ema200 ? 'LONG' : 'SHORT';
   if(h4Regime !== direction) return null; // must be confirmed by the 4H regime
+  // Arah sinyal wajib selaras dengan struktur tren koin itu sendiri (naik->long, turun->short)
+  if(structureTrend==='bullish' && direction==='SHORT') return null;
+  if(structureTrend==='bearish' && direction==='LONG') return null;
 
-  const confidence = Math.max(40, Math.min(97, Math.round((Math.abs(diff)/12.5)*100)));
+  const confidence = Math.max(40, Math.min(97, Math.round((Math.abs(diff)/15.5)*100)));
   const atrPct = h4Atr/price*100;
   let leverage;
   if(atrPct<1) leverage=10; else if(atrPct<2) leverage=8; else if(atrPct<3.5) leverage=5; else if(atrPct<6) leverage=3; else leverage=2;
@@ -2377,40 +2432,78 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
 
   return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
     entry, sl, targets, leverage, capitalPct, atrPct, obBias: ob.bias, rsiH4: h4Rsi,
-    openTime: Date.now() };
+    structureTrend, openTime: Date.now() };
 }
 
+// Scans the universe for pairs WITHOUT an already-locked active signal, and locks in
+// any new confluent setup found. Pairs that already have an active signal are skipped
+// entirely (their entry/SL/TP/date must never change once set) — we only refresh their
+// live price (via refreshSignalTickers) to check if SL/TP has since been hit.
 async function scanSignals(mode){
   if(signalScanRunning) return;
   signalScanRunning = true;
   const isFutures = mode==='futures';
   const listEl = document.getElementById('fsigList');
-  listEl.innerHTML = `<div class="sidebar-loading">${t('loading_market_data')}…</div>`;
+  const store = loadStoredSignals(mode);
+  const hasExisting = Object.values(store).some(s=>s.status==='active');
+  if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_market_data')}…</div>`;
   try{
     const {pairs} = await fetchAllPerpetualPairs();
     const universe = pairs.slice(0, SIGNAL_SCAN_TOP_N).map(p=>p.pair);
+    const toScan = universe.filter(sym=> !store[sym] || store[sym].status!=='active');
     let done = 0;
-    const results = await mapLimit(universe, 6, async(sym)=>{
+    await mapLimit(toScan, 6, async(sym)=>{
       const r = await computeConfirmedSignal(sym, isFutures);
       done++;
-      if(listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${universe.length})</div>`;
+      if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${toScan.length})</div>`;
       // Spot can only ever BUY (no shorting on spot) — drop SHORT-direction results there.
-      if(r && !isFutures && r.direction==='SHORT') return null;
-      return r;
+      if(r && !isFutures && r.direction==='SHORT') return;
+      if(r) store[sym] = { ...r, status:'active' }; // LOCKED here — never overwritten again
     });
-    const signals = results.filter(Boolean).sort((a,b)=>b.confidence-a.confidence);
-    if(mode==='futures') futuresSignalResults = signals; else spotSignalResults = signals;
+    saveStoredSignals(mode, store);
+    applyStoreToState(mode, store);
     await refreshSignalTickers(false);
+    checkSignalClosures(mode);
     renderSignalList(mode);
     startSignalPriceLoop();
   }catch(e){
     console.error(e);
-    listEl.innerHTML = `<div class="sidebar-loading">
+    if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">
         ${t('failed_load_market')}<br>
         <button class="retry-btn" onclick="scanSignals('${mode}')">↻ ${t('retry')}</button>
       </div>`;
   }
   signalScanRunning = false;
+}
+
+function applyStoreToState(mode, store){
+  const active = Object.values(store).filter(s=>s.status==='active').sort((a,b)=>b.confidence-a.confidence);
+  if(mode==='futures') futuresSignalResults = active; else spotSignalResults = active;
+}
+
+// Once a locked signal's live price crosses its stoploss or final target, close it out
+// so the pair frees up for a fresh signal on the next scan. Everything about the closed
+// signal (entry/SL/TP/date) still never changes retroactively — only its status flips.
+function checkSignalClosures(mode){
+  const store = loadStoredSignals(mode);
+  let changed = false;
+  Object.keys(store).forEach(sym=>{
+    const s = store[sym];
+    if(s.status!=='active') return;
+    const live = tickerMap[s.pair] ? parseFloat(tickerMap[s.pair].lastPrice) : null;
+    if(live==null) return;
+    const dir = s.direction==='LONG' ? 1 : -1;
+    const finalTp = s.targets[s.targets.length-1];
+    if(dir>0){
+      if(live<=s.sl){ s.status='sl_hit'; changed=true; }
+      else if(live>=finalTp){ s.status='tp_hit'; changed=true; }
+    } else {
+      if(live>=s.sl){ s.status='sl_hit'; changed=true; }
+      else if(live<=finalTp){ s.status='tp_hit'; changed=true; }
+    }
+  });
+  if(changed) saveStoredSignals(mode, store);
+  applyStoreToState(mode, store);
 }
 
 function switchSignalScanner(mode){
@@ -2419,9 +2512,10 @@ function switchSignalScanner(mode){
   document.getElementById('sigTabFutures')?.classList.toggle('active', mode==='futures');
   document.getElementById('fsigTitle').textContent = mode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
   document.getElementById('fsigResultsPanel').style.display = 'none';
-  const cache = mode==='futures' ? futuresSignalResults : spotSignalResults;
-  if(cache.length){ renderSignalList(mode); startSignalPriceLoop(); }
-  else { scanSignals(mode); }
+  applyStoreToState(mode, loadStoredSignals(mode));
+  renderSignalList(mode);
+  startSignalPriceLoop();
+  scanSignals(mode); // fills in any newly-forming signals; already-locked ones are untouched
 }
 
 // Pulls fresh 24h tickers so target/stoploss checkmarks reflect the live price —
@@ -2431,6 +2525,7 @@ async function refreshSignalTickers(rerender=true){
     const tickers = await fetchAllBinanceTickers();
     tickers.forEach(tk=>{ tickerMap[tk.symbol] = tk; });
   }catch(e){ /* keep last known prices on failure */ }
+  checkSignalClosures(signalScannerMode);
   if(rerender) renderSignalList(signalScannerMode);
 }
 function startSignalPriceLoop(){
@@ -2458,6 +2553,7 @@ function renderSignalList(mode){
 
 function renderSignalCard(s, i, mode, wasOpen){
   const dirClass = s.direction==='LONG' ? 'long' : 'short';
+  // Tanggal/bulan/tahun sinyal dibuat — dikunci sejak pertama kali terdeteksi, tidak berubah lagi.
   const dateStr = new Date(s.openTime).toLocaleDateString('en-GB');
   const live = tickerMap[s.pair] ? parseFloat(tickerMap[s.pair].lastPrice) : s.entry;
   const dir = s.direction==='LONG' ? 1 : -1;
@@ -2474,6 +2570,7 @@ function renderSignalCard(s, i, mode, wasOpen){
   const levBadge = mode==='futures'
     ? `<div class="fsig-badge fsig-badge-lev">${t('fsig_leverage')}: ${s.leverage}x</div>`
     : `<div class="fsig-badge fsig-badge-lev" style="background:var(--panel-2); color:var(--ink-dim);">Spot</div>`;
+  const trendLabel = s.structureTrend==='bullish' ? 'Uptrend (HH/HL)' : s.structureTrend==='bearish' ? 'Downtrend (LH/LL)' : 'Netral';
   return `<div class="fsig-card${wasOpen?' open':''}" id="fsigCard${i}">
     <div class="fsig-head" onclick="toggleFsigCard(${i})">
       <div class="fsig-avatar ${dirClass}">${s.symbol.slice(0,1)}</div>
@@ -2491,7 +2588,7 @@ function renderSignalCard(s, i, mode, wasOpen){
       <div class="fsig-entry">${t('entry')}: <span class="mono">${formatPrice(s.entry)}</span></div>
       ${targetsHtml}
       <div class="fsig-sl"><span>STOPLOSS</span><span class="mono">${formatPrice(s.sl)} (-${slPct.toFixed(1)}%)</span></div>
-      <div class="fsig-reason">RSI H4 ${s.rsiH4.toFixed(0)} · ATR ${s.atrPct.toFixed(2)}% · Order Book: ${s.obBias.toUpperCase()} · Confidence ${s.confidence}%</div>
+      <div class="fsig-reason">Trend: ${trendLabel} · RSI H4 ${s.rsiH4.toFixed(0)} · ATR ${s.atrPct.toFixed(2)}% · Order Book: ${s.obBias.toUpperCase()} · Confidence ${s.confidence}%</div>
     </div>
   </div>`;
 }
