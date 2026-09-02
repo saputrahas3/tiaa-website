@@ -1100,7 +1100,15 @@ function stochasticRSI(closes, rsiPeriod=14, stochPeriod=14, kSmooth=3, dSmooth=
   const k=kSmoothed.at(-1), d=dVals.at(-1), kPrev=kSmoothed.at(-2), dPrev=dVals.at(-2);
   const crossUp = kPrev!=null && dPrev!=null && kPrev<=dPrev && k>d;
   const crossDown = kPrev!=null && dPrev!=null && kPrev>=dPrev && k<d;
-  return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20 };
+  // "Recently" oversold/overbought — checked over the few bars leading up to the
+  // current cross, so an entry can require the sequence "dipped below 20, THEN
+  // crossed up" (not just "k happens to read <40 right now").
+  const lookback = kSmoothed.slice(-5,-1);
+  const recentLow = lookback.length ? Math.min(...lookback) : k;
+  const recentHigh = lookback.length ? Math.max(...lookback) : k;
+  const wasOversold = recentLow<20;
+  const wasOverbought = recentHigh>80;
+  return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20, wasOversold, wasOverbought, recentLow, recentHigh };
 }
 // EMA Ribbon (default 5/8/13/21) — a stack of fast EMAs used as a single "is momentum
 // compressed or expanding" gauge for scalping: bullish when stacked fast>...>slow and
@@ -2488,7 +2496,7 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
   if(structureTrend==='bearish' && direction==='LONG') return null;
 
   const confidence = Math.max(40, Math.min(97, Math.round((Math.abs(diff)/15.5)*100)));
-  if(confidence<60) return null; // minimum conviction required to lock in a signal
+  if(confidence<65) return null; // minimum conviction required to lock in a signal
   const atrPct = h4Atr/price*100;
   let leverage;
   if(atrPct<1) leverage=10; else if(atrPct<2) leverage=8; else if(atrPct<3.5) leverage=5; else if(atrPct<6) leverage=3; else leverage=2;
@@ -2514,6 +2522,14 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
 // Each keeps its own locked signal list — switching style never mixes results.
 
 // ---- 1) SCALPING (menit) — Stochastic RSI + EMA Ribbon (EMA 5/8/13/21) on M5 ----
+// Strictly follows the given playbook:
+//  Entry LONG : EMA Ribbon rapi tersusun naik & mulai membuka lebar (uptrend kuat) +
+//               Stoch RSI sempat oversold (<20) lalu cross up.
+//  Entry SHORT: mirror — ribbon turun & melebar ke bawah + Stoch RSI sempat overbought
+//               (>80) lalu cross down.
+//  Exit (TP)  : Stoch RSI menyentuh 80/20, atau harga menembus balik EMA5 — didekati
+//               di sini lewat tangga target ATR + SL below/above EMA5 (lihat status).
+//  SL         : wajib ketat di bawah/atas EMA21.
 async function computeScalpingSignal(pairSymbol){
   const k5 = await fetchKlinesCrypto(pairSymbol, '5m', 150);
   const closes=k5.map(c=>parseFloat(c[4])), highs=k5.map(c=>parseFloat(c[2])), lows=k5.map(c=>parseFloat(c[3]));
@@ -2524,33 +2540,39 @@ async function computeScalpingSignal(pairSymbol){
   const atrVal = atr(highs, lows, closes, 14);
   if(!ribbon || !srsi || atrVal==null) return null;
 
-  let long=0, short=0; const reasons=[];
-  if(ribbon.bullish){ long+=2; reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun naik (tren naik kuat)'); }
-  else if(ribbon.bearish){ short+=2; reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun turun (tren turun kuat)'); }
-  if(ribbon.expanding && ribbon.bullish){ long+=1; reasons.push('Ribbon mulai membuka lebar ke atas (momentum menguat)'); }
-  if(ribbon.expanding && ribbon.bearish){ short+=1; reasons.push('Ribbon mulai membuka lebar ke bawah (momentum melemah)'); }
-  if(srsi.crossUp && srsi.k<40){ long+=2.5; reasons.push(`Stoch RSI cross up dari oversold (K ${srsi.k.toFixed(0)})`); }
-  if(srsi.crossDown && srsi.k>60){ short+=2.5; reasons.push(`Stoch RSI cross down dari overbought (K ${srsi.k.toFixed(0)})`); }
-  if(srsi.oversold) long+=0.5;
-  if(srsi.overbought) short+=0.5;
-  if(price>ribbon.values[5]) long+=0.5; else if(price<ribbon.values[5]) short+=0.5;
+  const reasons=[];
+  const longTrigger = ribbon.bullish && ribbon.expanding && srsi.crossUp && srsi.wasOversold;
+  const shortTrigger = ribbon.bearish && ribbon.expanding && srsi.crossDown && srsi.wasOverbought;
+  if(!longTrigger && !shortTrigger) return null; // must satisfy the full playbook, not a partial score
+  const direction = longTrigger ? 'LONG' : 'SHORT';
 
-  const total=long+short, diff=long-short;
-  if(total<3 || Math.abs(diff)<2) return null;
-  const direction = diff>0 ? 'LONG' : 'SHORT';
-  if(ribbon.bullish && direction==='SHORT') return null;
-  if(ribbon.bearish && direction==='LONG') return null;
+  if(direction==='LONG'){
+    reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun naik dan mulai membuka lebar (tren naik kuat)');
+    reasons.push(`Stoch RSI sempat oversold (low ${srsi.recentLow.toFixed(0)}) lalu cross up (K ${srsi.k.toFixed(0)})`);
+  } else {
+    reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun turun dan mulai membuka lebar (tren turun kuat)');
+    reasons.push(`Stoch RSI sempat overbought (high ${srsi.recentHigh.toFixed(0)}) lalu cross down (K ${srsi.k.toFixed(0)})`);
+  }
 
-  const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
-  if(confidence<60) return null; // minimum conviction required to lock in a signal
+  // Confidence: locked at a 65% floor once the full playbook fires, then scaled up by
+  // how strong the trigger is — a deeper oversold/overbought dip and a wider-expanding
+  // ribbon both mean more conviction, capped at 95%.
+  const depthExtreme = direction==='LONG' ? (20-srsi.recentLow) : (srsi.recentHigh-80);
+  const depthBonus = Math.max(0, Math.min(15, depthExtreme/20*15));
+  const ribbonSpreadNow = Math.abs(ribbon.values[5]-ribbon.values[21])/price*100;
+  const spreadBonus = Math.max(0, Math.min(10, ribbonSpreadNow*4));
+  const priceBeyondEma5 = direction==='LONG' ? price>ribbon.values[5] : price<ribbon.values[5];
+  const confirmBonus = priceBeyondEma5 ? 5 : 0;
+  const confidence = Math.max(65, Math.min(95, Math.round(65+depthBonus+spreadBonus+confirmBonus)));
+
   const atrPct = atrVal/price*100;
-  // Scalping SL is required to sit strictly beyond EMA21 (a small ATR buffer keeps it
-  // from sitting exactly on the line, which would get stopped out by noise).
+  // SL wajib ketat di bawah/atas EMA21 (small ATR buffer keeps it from sitting exactly
+  // on the line, which would get stopped out by noise).
   const dir = direction==='LONG' ? 1 : -1;
   const entry = price;
   const sl = direction==='LONG' ? ribbon.values[21] - 0.15*atrVal : ribbon.values[21] + 0.15*atrVal;
-  // Targets are intentionally tight (small ATR multiples) — scalping exits are meant to
-  // land within minutes (Stoch RSI hits 80/20, or price breaks back through EMA5).
+  // Targets approximate the "Stoch RSI 80/20 atau tembus balik EMA5" exit rule as an
+  // ATR ladder — scalping exits are meant to land within minutes.
   const targets = [0.5,1.0,1.6,2.2].map(m=> entry + dir*m*atrVal);
   let leverage; if(atrPct<0.5) leverage=15; else if(atrPct<1) leverage=10; else if(atrPct<2) leverage=6; else if(atrPct<3.5) leverage=4; else leverage=2;
   const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
@@ -2561,6 +2583,12 @@ async function computeScalpingSignal(pairSymbol){
 }
 
 // ---- 2) DAY TRADING (4–12 jam) — VWAP + RSI Standar + Volume, M15 entry / H1 trend ----
+// Strictly follows the given playbook:
+//  1H  : harga di atas/bawah VWAP ~24h = konfirmasi bias bullish/bearish harian.
+//  M15 : harga koreksi mendekati VWAP atau support/resistance horizontal terdekat,
+//        RSI M15 di area 30–40 (LONG) atau 60–70 (SHORT), volume mulai membesar.
+//  Exit: target di resistance/support terdekat atau RSI M15 menyentuh 70/30.
+//  SL  : sedikit di bawah/atas VWAP — kalau VWAP jebol dengan volume besar, keluar.
 async function computeDayTradingSignal(pairSymbol){
   const k1h = await fetchKlinesCrypto(pairSymbol, '1h', 60);
   const h1closes=k1h.map(c=>parseFloat(c[4])), h1highs=k1h.map(c=>parseFloat(c[2])), h1lows=k1h.map(c=>parseFloat(c[3])), h1vol=k1h.map(c=>parseFloat(c[5]));
@@ -2581,34 +2609,32 @@ async function computeDayTradingSignal(pairSymbol){
   const nearVwap = Math.abs(price15-vwap1h)/price15 < 0.015;
   const nearSupport = sr.nearestSupport && Math.abs(price15-sr.nearestSupport.price)/price15 < 0.01;
   const nearResistance = sr.nearestResistance && Math.abs(price15-sr.nearestResistance.price)/price15 < 0.01;
+  const pulledBack = nearVwap || nearSupport || nearResistance;
+  const volumeUp = volRatio!=null && volRatio>1.1;
+  const rsiLongZone = rsi15!=null && rsi15>=30 && rsi15<=40;
+  const rsiShortZone = rsi15!=null && rsi15>=60 && rsi15<=70;
 
-  // Each condition now contributes its own weight independently (instead of requiring
-  // several narrow conditions to all line up on the exact same candle) — this keeps the
-  // strategy's logic (VWAP bias + RSI pullback + volume) while actually being able to
-  // fire on real market data instead of staying empty almost all the time.
-  let long=0, short=0; const reasons=[];
-  if(aboveVwap){ long+=2; reasons.push('Harga H1 di atas VWAP ~24h (bias bullish harian)'); }
-  else { short+=2; reasons.push('Harga H1 di bawah VWAP ~24h (bias bearish harian)'); }
-  if(rsi15!=null){
-    if(rsi15<=45){ long+=2; reasons.push(`RSI M15 ${rsi15.toFixed(0)} — area koreksi/oversold, berpotensi memantul`); }
-    else if(rsi15>=55){ short+=2; reasons.push(`RSI M15 ${rsi15.toFixed(0)} — area koreksi/overbought, berpotensi turun`); }
-  }
-  if(nearVwap){ if(aboveVwap) long+=1; else short+=1; reasons.push('Harga M15 sedang berada di dekat garis VWAP'); }
-  if(nearSupport){ long+=1; reasons.push('Harga M15 dekat level Support'); }
-  if(nearResistance){ short+=1; reasons.push('Harga M15 dekat level Resistance'); }
-  if(volRatio!=null && volRatio>1.1){
-    if(aboveVwap) long+=1; else short+=1;
-    reasons.push(`Volume M15 di atas rata-rata (${volRatio.toFixed(1)}x)`);
-  }
+  const longTrigger = aboveVwap && pulledBack && rsiLongZone && volumeUp;
+  const shortTrigger = !aboveVwap && pulledBack && rsiShortZone && volumeUp;
+  if(!longTrigger && !shortTrigger) return null; // must satisfy the full playbook, not a partial score
+  const direction = longTrigger ? 'LONG' : 'SHORT';
 
-  const total=long+short, diff=long-short;
-  if(total<3 || Math.abs(diff)<2) return null;
-  const direction = diff>0 ? 'LONG' : 'SHORT';
-  if(aboveVwap && direction==='SHORT') return null;
-  if(!aboveVwap && direction==='LONG') return null;
+  const reasons=[];
+  reasons.push(aboveVwap ? 'Harga H1 di atas VWAP ~24h (konfirmasi bias bullish harian)' : 'Harga H1 di bawah VWAP ~24h (konfirmasi bias bearish harian)');
+  if(nearVwap) reasons.push('Harga M15 koreksi mendekati garis VWAP');
+  if(nearSupport) reasons.push('Harga M15 koreksi mendekati level Support horizontal');
+  if(nearResistance) reasons.push('Harga M15 koreksi mendekati level Resistance horizontal');
+  reasons.push(`RSI M15 ${rsi15.toFixed(0)} — persis di area ${direction==='LONG'?'30–40':'60–70'} yang disyaratkan`);
+  reasons.push(`Volume M15 mulai membesar (${volRatio.toFixed(1)}x rata-rata)`);
 
-  const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
-  if(confidence<60) return null; // minimum conviction required to lock in a signal
+  // Confidence: locked at a 65% floor once the full playbook fires, then scaled up by
+  // how centered the RSI pullback is and how strong the volume push is.
+  const rsiCenter = direction==='LONG' ? 35 : 65;
+  const rsiPrecision = Math.max(0, 10 - Math.abs(rsi15-rsiCenter)*2); // up to +10
+  const volBonus = Math.max(0, Math.min(15, (volRatio-1.1)*20));
+  const pullbackBonus = (nearVwap?4:0) + (nearSupport||nearResistance?6:0);
+  const confidence = Math.max(65, Math.min(95, Math.round(65+rsiPrecision+volBonus+pullbackBonus)));
+
   const atrPct = atr1h/price*100;
   const dir = direction==='LONG' ? 1 : -1;
   const entry = price15;
@@ -2631,6 +2657,12 @@ async function computeDayTradingSignal(pairSymbol){
 }
 
 // ---- 3) SWING TRADING (1–3 hari) — Bollinger Bands + MACD Histogram on H4 ----
+// Strictly follows the given playbook:
+//  Entry LONG : harga menyentuh/menembus Lower Band + histogram merah mulai memudar
+//               + Golden Cross MACD terkonfirmasi.
+//  Entry SHORT: mirror — Upper Band + histogram hijau memudar + Death Cross.
+//  Exit (TP)  : biarkan mengalir sampai menyentuh Band seberang (1–3 hari).
+//  SL         : di bawah/atas swing low/high candlestick terakhir sebelum entry.
 async function computeSwingSignal(pairSymbol){
   const k4h = await fetchKlinesCrypto(pairSymbol, '4h', 150);
   const closes=k4h.map(c=>parseFloat(c[4])), highs=k4h.map(c=>parseFloat(c[2])), lows=k4h.map(c=>parseFloat(c[3]));
@@ -2641,44 +2673,43 @@ async function computeSwingSignal(pairSymbol){
   if(!bb || atrVal==null) return null;
   const price = closes.at(-1);
 
-  // Primary trigger is now the price's position *within* the bands (bb.pctB) rather
-  // than requiring an exact touch of the band line — being in the cheap/expensive third
-  // of the band is what the "menyentuh Lower/Upper Band" rule is really after, and an
-  // exact-touch requirement was rarely true at the moment of any given scan. An actual
-  // touch/break still adds bonus weight and shows up in the reason text.
-  let long=0, short=0; const reasons=[];
   const touchLower = price<=bb.lower*1.003;
   const touchUpper = price>=bb.upper*0.997;
-  if(bb.pctB<=0.35){ long+=2; reasons.push(`Harga di area bawah Bollinger Band (%B ${bb.pctB.toFixed(2)})`); }
-  else if(bb.pctB>=0.65){ short+=2; reasons.push(`Harga di area atas Bollinger Band (%B ${bb.pctB.toFixed(2)})`); }
-  if(touchLower){ long+=1; reasons.push('Harga menyentuh/menembus Lower Bollinger Band'); }
-  if(touchUpper){ short+=1; reasons.push('Harga menyentuh/menembus Upper Bollinger Band'); }
   const histNow=m.last.hist, histPrev=m.prev.hist;
   const fadingDown = histNow<0 && Math.abs(histNow)<Math.abs(histPrev);
   const fadingUp = histNow>0 && Math.abs(histNow)<Math.abs(histPrev);
-  if(fadingDown){ long+=1; reasons.push('MACD Histogram merah mulai memudar (tekanan jual habis)'); }
-  if(fadingUp){ short+=1; reasons.push('MACD Histogram hijau mulai memudar (tekanan beli habis)'); }
-  if(histNow>0){ long+=0.5; } else if(histNow<0){ short+=0.5; }
   const crossUp = m.prev.macd<=m.prev.signal && m.last.macd>m.last.signal;
   const crossDown = m.prev.macd>=m.prev.signal && m.last.macd<m.last.signal;
-  if(crossUp){ long+=2; reasons.push('Golden Cross MACD terkonfirmasi'); }
-  if(crossDown){ short+=2; reasons.push('Death Cross MACD terkonfirmasi'); }
 
-  const total=long+short, diff=long-short;
-  if(total<2.5 || Math.abs(diff)<1.5) return null;
-  const direction = diff>0 ? 'LONG' : 'SHORT';
-  if(bb.pctB<=0.35 && direction==='SHORT') return null;
-  if(bb.pctB>=0.65 && direction==='LONG') return null;
+  const longTrigger = touchLower && fadingDown && crossUp;
+  const shortTrigger = touchUpper && fadingUp && crossDown;
+  if(!longTrigger && !shortTrigger) return null; // must satisfy the full playbook, not a partial score
+  const direction = longTrigger ? 'LONG' : 'SHORT';
 
-  const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
-  if(confidence<60) return null; // minimum conviction required to lock in a signal
+  const reasons=[];
+  reasons.push(direction==='LONG'
+    ? `Harga menyentuh/menembus Lower Bollinger Band (%B ${bb.pctB.toFixed(2)})`
+    : `Harga menyentuh/menembus Upper Bollinger Band (%B ${bb.pctB.toFixed(2)})`);
+  reasons.push(direction==='LONG' ? 'MACD Histogram merah mulai memudar (tekanan jual habis)' : 'MACD Histogram hijau mulai memudar (tekanan beli habis)');
+  reasons.push(direction==='LONG' ? 'Golden Cross MACD terkonfirmasi' : 'Death Cross MACD terkonfirmasi');
+
+  // Confidence: locked at a 65% floor once the full playbook fires, then scaled up by
+  // how deep the band touch was and how strongly the histogram is fading.
+  const bandDepth = direction==='LONG' ? Math.max(0,(bb.lower*1.003-price)/bb.lower*100) : Math.max(0,(price-bb.upper*0.997)/bb.upper*100);
+  const bandBonus = Math.max(0, Math.min(12, bandDepth*30));
+  const fadeRatio = histPrev!==0 ? 1-Math.abs(histNow)/Math.abs(histPrev) : 0;
+  const fadeBonus = Math.max(0, Math.min(13, fadeRatio*20));
+  const confidence = Math.max(65, Math.min(95, Math.round(65+bandBonus+fadeBonus)));
+
   const atrPct = atrVal/price*100;
   const dir = direction==='LONG' ? 1 : -1;
   const entry = price;
-  // SL sits below/above the most recent swing low/high, per the swing-trading rule.
-  const swingLow = Math.min(...lows.slice(-8));
-  const swingHigh = Math.max(...highs.slice(-8));
-  const sl = direction==='LONG' ? swingLow - 0.3*atrVal : swingHigh + 0.3*atrVal;
+  // SL: di bawah/atas swing low/high (candlestick pivot terakhir) sebelum entry — jatuh
+  // balik ke min/max mentah dari beberapa candle terakhir kalau belum ada pivot valid.
+  const {pivotHighs, pivotLows} = findPivots(highs, lows, 2);
+  const lastPivotLow = pivotLows.length ? pivotLows[pivotLows.length-1].price : Math.min(...lows.slice(-8));
+  const lastPivotHigh = pivotHighs.length ? pivotHighs[pivotHighs.length-1].price : Math.max(...highs.slice(-8));
+  const sl = direction==='LONG' ? lastPivotLow - 0.3*atrVal : lastPivotHigh + 0.3*atrVal;
   // Primary exit is the opposite Bollinger Band; extra extension targets beyond it are
   // offered for those who want to trail rather than exit all at once.
   const targets = direction==='LONG'
