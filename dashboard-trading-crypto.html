@@ -2345,7 +2345,15 @@ function initEconomicCalendar(){
  *  A signal is only published if total confluence clears a minimum threshold AND
  *  the H4 regime agrees with the final direction (the "4H confirmation" rule).
  * ===================================================================== */
-const SIGNAL_SCAN_TOP_N = 30;          // most-liquid pairs scanned per run
+// Screening: previously only the 30 most-liquid pairs were scanned, which — combined
+// with strict multi-condition entry rules that must all line up at once — meant good
+// setups were being missed simply because most of the market was never even checked.
+// Scanning far more of the ~500+ available USDT perpetuals gives the strict rules a
+// much bigger pool to actually find a genuine match in every day. The cutoff is still
+// sorted by 24h volume (see fetchAllPerpetualPairs), so it doubles as a liquidity
+// screen too — a technically "perfect" setup on an illiquid pair with no real order
+// flow behind it isn't a signal worth trading anyway.
+const SIGNAL_SCAN_TOP_N = 250;         // most-liquid pairs scanned per run
 const SIGNAL_ENTRY_INTERVAL = '15m';   // fast scalping entry-trigger timeframe
 const SIGNAL_CONFIRM_INTERVAL = '4h';  // confirmation timeframe (per requirement)
 let signalScannerMode = 'futures';     // 'futures' | 'spot'
@@ -2747,7 +2755,7 @@ async function scanSignals(mode){
     const universe = pairs.slice(0, SIGNAL_SCAN_TOP_N).map(p=>p.pair);
     const toScan = universe.filter(sym=> !store[sym] || store[sym].status!=='active');
     let done = 0;
-    await mapLimit(toScan, 6, async(sym)=>{
+    await mapLimit(toScan, 10, async(sym)=>{
       const r = isFutures ? await computeStyleSignal(sym, style) : await computeConfirmedSignal(sym, isFutures);
       done++;
       if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${toScan.length})</div>`;
