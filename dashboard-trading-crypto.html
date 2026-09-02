@@ -2349,6 +2349,7 @@ let futuresSignalResultsByStyle = { scalping: [], daytrading: [], swing: [] };
 let spotSignalResults = [];
 let signalScanRunning = false;
 let signalPriceTimer = null;
+let signalRescanTimer = null;
 
 async function mapLimit(items, limit, fn){
   const ret = new Array(items.length);
@@ -2487,6 +2488,7 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
   if(structureTrend==='bearish' && direction==='LONG') return null;
 
   const confidence = Math.max(40, Math.min(97, Math.round((Math.abs(diff)/15.5)*100)));
+  if(confidence<60) return null; // minimum conviction required to lock in a signal
   const atrPct = h4Atr/price*100;
   let leverage;
   if(atrPct<1) leverage=10; else if(atrPct<2) leverage=8; else if(atrPct<3.5) leverage=5; else if(atrPct<6) leverage=3; else leverage=2;
@@ -2540,6 +2542,7 @@ async function computeScalpingSignal(pairSymbol){
   if(ribbon.bearish && direction==='LONG') return null;
 
   const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
+  if(confidence<60) return null; // minimum conviction required to lock in a signal
   const atrPct = atrVal/price*100;
   // Scalping SL is required to sit strictly beyond EMA21 (a small ATR buffer keeps it
   // from sitting exactly on the line, which would get stopped out by noise).
@@ -2605,6 +2608,7 @@ async function computeDayTradingSignal(pairSymbol){
   if(!aboveVwap && direction==='LONG') return null;
 
   const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
+  if(confidence<60) return null; // minimum conviction required to lock in a signal
   const atrPct = atr1h/price*100;
   const dir = direction==='LONG' ? 1 : -1;
   const entry = price15;
@@ -2667,6 +2671,7 @@ async function computeSwingSignal(pairSymbol){
   if(bb.pctB>=0.65 && direction==='LONG') return null;
 
   const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
+  if(confidence<60) return null; // minimum conviction required to lock in a signal
   const atrPct = atrVal/price*100;
   const dir = direction==='LONG' ? 1 : -1;
   const entry = price;
@@ -2717,7 +2722,7 @@ async function scanSignals(mode){
       if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${toScan.length})</div>`;
       // Spot can only ever BUY (no shorting on spot) — drop SHORT-direction results there.
       if(r && !isFutures && r.direction==='SHORT') return;
-      if(r) store[sym] = { ...r, status:'active' }; // LOCKED here — never overwritten again
+      if(r) store[sym] = { ...r, status:'active', tpHit:new Array(r.targets.length).fill(false), mfe:r.entry }; // LOCKED here — never overwritten again
     });
     saveStoredSignals(mode, style, store);
     applyStoreToState(mode, style, store);
@@ -2740,9 +2745,12 @@ function applyStoreToState(mode, style, store){
   if(mode==='futures') futuresSignalResultsByStyle[style] = active; else spotSignalResults = active;
 }
 
-// Once a locked signal's live price crosses its stoploss or final target, close it out
-// so the pair frees up for a fresh signal on the next scan. Everything about the closed
-// signal (entry/SL/TP/date) still never changes retroactively — only its status flips.
+// Once a locked signal's live price crosses its stoploss, or the move fully reverses
+// against the position, the setup is invalid — it's deleted immediately so the pair
+// frees up for a fresh signal. Hitting a take-profit level is permanently remembered
+// (tpHit stays true forever, even if price later pulls back) so its checkmark never
+// disappears. Only the final target closes the trade out entirely. Entry/SL/targets/
+// openTime themselves are NEVER modified here — only status/tpHit/mfe are touched.
 function checkSignalClosures(mode, style){
   const store = loadStoredSignals(mode, style);
   let changed = false;
@@ -2753,13 +2761,34 @@ function checkSignalClosures(mode, style){
     if(live==null) return;
     const dir = s.direction==='LONG' ? 1 : -1;
     const finalTp = s.targets[s.targets.length-1];
-    if(dir>0){
-      if(live<=s.sl){ s.status='sl_hit'; changed=true; }
-      else if(live>=finalTp){ s.status='tp_hit'; changed=true; }
-    } else {
-      if(live>=s.sl){ s.status='sl_hit'; changed=true; }
-      else if(live<=finalTp){ s.status='tp_hit'; changed=true; }
-    }
+
+    // 1) Stoploss hit -> invalid, delete immediately.
+    const slHit = dir>0 ? live<=s.sl : live>=s.sl;
+    if(slHit){ delete store[sym]; changed=true; return; }
+
+    // 2) Track max favorable excursion (best price reached in the signal's favor).
+    if(s.mfe==null) s.mfe = s.entry;
+    s.mfe = dir>0 ? Math.max(s.mfe, live) : Math.min(s.mfe, live);
+
+    // 3) Reversal: price had genuinely moved in the signal's favor (past 30% of the
+    //    distance to TP1) but has since fully reversed back through entry — the setup
+    //    that justified the signal no longer holds, so it's invalid and gets deleted.
+    const firstTpDist = Math.abs(s.targets[0]-s.entry);
+    const favorableMove = Math.abs(s.mfe-s.entry);
+    const wentFavorable = favorableMove >= 0.3*firstTpDist;
+    const backThroughEntry = dir>0 ? live<=s.entry : live>=s.entry;
+    if(wentFavorable && backThroughEntry){ delete store[sym]; changed=true; return; }
+
+    // 4) Take-profit checkmarks — set once, never unset.
+    if(!Array.isArray(s.tpHit) || s.tpHit.length!==s.targets.length) s.tpHit = new Array(s.targets.length).fill(false);
+    s.targets.forEach((tp,idx)=>{
+      const hit = dir>0 ? live>=tp : live<=tp;
+      if(hit && !s.tpHit[idx]){ s.tpHit[idx]=true; changed=true; }
+    });
+
+    // 5) Final target hit -> trade fully closed, frees the pair for a new signal.
+    const finalHit = dir>0 ? live>=finalTp : live<=finalTp;
+    if(finalHit){ s.status='tp_hit'; changed=true; }
   });
   if(changed) saveStoredSignals(mode, style, store);
   applyStoreToState(mode, style, store);
@@ -2813,6 +2842,12 @@ async function refreshSignalTickers(rerender=true){
 function startSignalPriceLoop(){
   if(signalPriceTimer) clearInterval(signalPriceTimer);
   signalPriceTimer = setInterval(()=>refreshSignalTickers(true), 30000);
+  // Full rescan every few minutes: picks up brand-new confluent signals as they form,
+  // and (via checkSignalClosures inside scanSignals) prunes out any signal that has
+  // since hit its stoploss or reversed — so the list stays live/real-time all day
+  // without needing the user to switch tabs.
+  if(signalRescanTimer) clearInterval(signalRescanTimer);
+  signalRescanTimer = setInterval(()=>scanSignals(signalScannerMode), 5*60000);
 }
 
 function pctFrom(entry, val){ return (val-entry)/entry*100; }
@@ -2836,12 +2871,13 @@ function renderSignalList(mode){
 const FSIG_STYLE_LABEL = { scalping:'Scalping', daytrading:'Day Trading', swing:'Swing Trading' };
 function renderSignalCard(s, i, mode, wasOpen){
   const dirClass = s.direction==='LONG' ? 'long' : 'short';
-  // Tanggal/bulan/tahun sinyal dibuat — dikunci sejak pertama kali terdeteksi, tidak berubah lagi.
+  // Tanggal & jam sinyal dibuat — dikunci sejak pertama kali terdeteksi, tidak berubah lagi.
   const dateStr = new Date(s.openTime).toLocaleDateString('en-GB');
+  const timeStr = new Date(s.openTime).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
   const live = tickerMap[s.pair] ? parseFloat(tickerMap[s.pair].lastPrice) : s.entry;
   const dir = s.direction==='LONG' ? 1 : -1;
   const targetsHtml = s.targets.map((tp,idx)=>{
-    const hit = dir>0 ? live>=tp : live<=tp;
+    const hit = Array.isArray(s.tpHit) ? !!s.tpHit[idx] : (dir>0 ? live>=tp : live<=tp);
     const pct = Math.abs(pctFrom(s.entry, tp));
     return `<div class="fsig-target ${hit?'hit':''}">
         <span>${hit?'✓ ':''}${t('fsig_target')} ${String(idx+1).padStart(2,'0')}</span>
@@ -2861,7 +2897,7 @@ function renderSignalCard(s, i, mode, wasOpen){
       <div class="fsig-avatar ${dirClass}">${s.symbol.slice(0,1)}</div>
       <div class="fsig-title-col">
         <div class="fsig-pair">${s.symbol} / USDT</div>
-        <div class="fsig-sub ${dirClass}">${s.direction} · ${t('fsig_open_on')} ${dateStr}</div>
+        <div class="fsig-sub ${dirClass}">${s.direction} · ${t('fsig_open_on')} ${dateStr} ${timeStr}</div>
       </div>
       <div class="fsig-chevron">▾</div>
     </div>
