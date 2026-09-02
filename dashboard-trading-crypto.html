@@ -1040,9 +1040,25 @@ function macdFull(values, fast=12, slow=26, signalP=9){
   const macdLine=emaFast.map((v,i)=>v-emaSlow[i]);
   const signalLine=ema(macdLine,signalP);
   const hist=macdLine.map((v,i)=>v-signalLine[i]);
+  // Sequence-aware cross detection: the real-world setup is "price touches band, THEN
+  // histogram fades, THEN cross confirms" over several candles — not all on one candle.
+  // recentCrossUp/Down scans the last `lookback` bars for a cross, with barsAgo telling
+  // the caller how fresh it was, instead of only recognizing a cross on the very latest bar.
+  const lookback = 4;
+  let recentCrossUp=false, recentCrossDown=false, crossBarsAgo=null;
+  for(let i=0;i<lookback;i++){
+    const idx = macdLine.length-1-i;
+    const pIdx = idx-1;
+    if(pIdx<0) break;
+    const up = macdLine[pIdx]<=signalLine[pIdx] && macdLine[idx]>signalLine[idx];
+    const down = macdLine[pIdx]>=signalLine[pIdx] && macdLine[idx]<signalLine[idx];
+    if(up && !recentCrossUp && !recentCrossDown){ recentCrossUp=true; crossBarsAgo=i; }
+    if(down && !recentCrossUp && !recentCrossDown){ recentCrossDown=true; crossBarsAgo=i; }
+  }
   return { macdLine, signalLine, hist,
     last:{macd:macdLine.at(-1), signal:signalLine.at(-1), hist:hist.at(-1)},
-    prev:{macd:macdLine.at(-2), signal:signalLine.at(-2), hist:hist.at(-2)} };
+    prev:{macd:macdLine.at(-2), signal:signalLine.at(-2), hist:hist.at(-2)},
+    recentCrossUp, recentCrossDown, crossBarsAgo };
 }
 // Bollinger Bands (SMA basis + N std-dev envelope) — standard 20-period / 2 std-dev.
 function bollinger(closes, period=20, mult=2){
@@ -1101,14 +1117,28 @@ function stochasticRSI(closes, rsiPeriod=14, stochPeriod=14, kSmooth=3, dSmooth=
   const crossUp = kPrev!=null && dPrev!=null && kPrev<=dPrev && k>d;
   const crossDown = kPrev!=null && dPrev!=null && kPrev>=dPrev && k<d;
   // "Recently" oversold/overbought — checked over the few bars leading up to the
-  // current cross, so an entry can require the sequence "dipped below 20, THEN
-  // crossed up" (not just "k happens to read <40 right now").
-  const lookback = kSmoothed.slice(-5,-1);
+  // current cross (wide enough to cover a cross that happened up to a couple of bars
+  // ago too), so an entry can require the sequence "dipped below 20, THEN crossed up"
+  // (not just "k happens to read <40 right now").
+  const lookback = kSmoothed.slice(-8,-1);
   const recentLow = lookback.length ? Math.min(...lookback) : k;
   const recentHigh = lookback.length ? Math.max(...lookback) : k;
   const wasOversold = recentLow<20;
   const wasOverbought = recentHigh>80;
-  return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20, wasOversold, wasOverbought, recentLow, recentHigh };
+  // Sequence-aware cross: same rationale as MACD above — allow the K/D cross itself to
+  // have happened a couple of bars ago (not strictly the very last bar) so a scan that
+  // lands slightly after the actual cross still recognizes the setup.
+  let recentCrossUp=false, recentCrossDown=false, crossBarsAgo=null;
+  const crossLookback = 3;
+  for(let i=0;i<crossLookback;i++){
+    const idx = kSmoothed.length-1-i, pIdx = idx-1;
+    if(pIdx<0 || dVals[idx]==null || dVals[pIdx]==null) break;
+    const up = kSmoothed[pIdx]<=dVals[pIdx] && kSmoothed[idx]>dVals[idx];
+    const down = kSmoothed[pIdx]>=dVals[pIdx] && kSmoothed[idx]<dVals[idx];
+    if(up && !recentCrossUp && !recentCrossDown){ recentCrossUp=true; crossBarsAgo=i; }
+    if(down && !recentCrossUp && !recentCrossDown){ recentCrossDown=true; crossBarsAgo=i; }
+  }
+  return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20, wasOversold, wasOverbought, recentLow, recentHigh, recentCrossUp, recentCrossDown, crossBarsAgo };
 }
 // EMA Ribbon (default 5/8/13/21) — a stack of fast EMAs used as a single "is momentum
 // compressed or expanding" gauge for scalping: bullish when stacked fast>...>slow and
@@ -2549,8 +2579,8 @@ async function computeScalpingSignal(pairSymbol){
   if(!ribbon || !srsi || atrVal==null) return null;
 
   const reasons=[];
-  const longTrigger = ribbon.bullish && ribbon.expanding && srsi.crossUp && srsi.wasOversold;
-  const shortTrigger = ribbon.bearish && ribbon.expanding && srsi.crossDown && srsi.wasOverbought;
+  const longTrigger = ribbon.bullish && ribbon.expanding && srsi.recentCrossUp && srsi.wasOversold;
+  const shortTrigger = ribbon.bearish && ribbon.expanding && srsi.recentCrossDown && srsi.wasOverbought;
   if(!longTrigger && !shortTrigger) return null; // must satisfy the full playbook, not a partial score
   const direction = longTrigger ? 'LONG' : 'SHORT';
 
@@ -2681,13 +2711,13 @@ async function computeSwingSignal(pairSymbol){
   if(!bb || atrVal==null) return null;
   const price = closes.at(-1);
 
-  const touchLower = price<=bb.lower*1.003;
-  const touchUpper = price>=bb.upper*0.997;
+  const touchLower = lows.slice(-5).some(low=> low<=bb.lower*1.003);
+  const touchUpper = highs.slice(-5).some(high=> high>=bb.upper*0.997);
   const histNow=m.last.hist, histPrev=m.prev.hist;
   const fadingDown = histNow<0 && Math.abs(histNow)<Math.abs(histPrev);
   const fadingUp = histNow>0 && Math.abs(histNow)<Math.abs(histPrev);
-  const crossUp = m.prev.macd<=m.prev.signal && m.last.macd>m.last.signal;
-  const crossDown = m.prev.macd>=m.prev.signal && m.last.macd<m.last.signal;
+  const crossUp = m.recentCrossUp;
+  const crossDown = m.recentCrossDown;
 
   const longTrigger = touchLower && fadingDown && crossUp;
   const shortTrigger = touchUpper && fadingUp && crossDown;
@@ -2703,8 +2733,10 @@ async function computeSwingSignal(pairSymbol){
 
   // Confidence: locked at a 65% floor once the full playbook fires, then scaled up by
   // how deep the band touch was and how strongly the histogram is fading.
-  const bandDepth = direction==='LONG' ? Math.max(0,(bb.lower*1.003-price)/bb.lower*100) : Math.max(0,(price-bb.upper*0.997)/bb.upper*100);
-  const bandBonus = Math.max(0, Math.min(12, bandDepth*30));
+  const deepestTouch = direction==='LONG'
+    ? Math.max(0, (bb.lower*1.003-Math.min(...lows.slice(-5)))/bb.lower*100)
+    : Math.max(0, (Math.max(...highs.slice(-5))-bb.upper*0.997)/bb.upper*100);
+  const bandBonus = Math.max(0, Math.min(12, deepestTouch*30));
   const fadeRatio = histPrev!==0 ? 1-Math.abs(histNow)/Math.abs(histPrev) : 0;
   const fadeBonus = Math.max(0, Math.min(13, fadeRatio*20));
   const confidence = Math.max(65, Math.min(95, Math.round(65+bandBonus+fadeBonus)));
