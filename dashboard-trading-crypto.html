@@ -10,14 +10,14 @@
 <script src="auth.js"></script>
 <style>
   :root{
-    --radius:6px;
+    --radius:10px;
   }
   body{
     /* ---- DARK THEME (default) — Binance-style charcoal + yellow ---- */
     --bg:#0b0e11;
     --panel:#181a20;
     --panel-2:#1e2329;
-    --line:#333b44;
+    --line:#2b3139;
     --ink:#eaecef;
     --ink-dim:#848e9c;
     --accent:#f0b90b;
@@ -33,18 +33,18 @@
     /* ---- LIGHT THEME — Binance-style, same yellow accent on white ---- */
     --bg:#ffffff;
     --panel:#ffffff;
-    --panel-2:#f1f2f4;
-    --line:#c4c9d0;
-    --ink:#14161a;
-    --ink-dim:#5b6472;
-    --accent:#dba100;
-    --accent-deep:#b58500;
-    --accent-ink:#171717;
-    --accent-glow:rgba(219,161,0,0.30);
-    --buy:#02975f;
-    --sell:#c8123a;
-    --buy-glow:rgba(2,151,95,0.22);
-    --sell-glow:rgba(200,18,58,0.20);
+    --panel-2:#f5f5f5;
+    --line:#eaecef;
+    --ink:#1e2329;
+    --ink-dim:#707a8a;
+    --accent:#f0b90b;
+    --accent-deep:#d9a406;
+    --accent-ink:#202020;
+    --accent-glow:rgba(240,185,11,0.16);
+    --buy:#03a66d;
+    --sell:#cf304a;
+    --buy-glow:rgba(3,166,109,0.10);
+    --sell-glow:rgba(207,48,74,0.09);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -75,7 +75,7 @@
   .status{font-size:11px; color:var(--ink-dim); display:flex; align-items:center; gap:6px;}
   .status .led{width:6px; height:6px; border-radius:50%; background:var(--buy);}
   .theme-toggle{
-    background:var(--panel-2); border:1.5px solid var(--line); border-radius:20px;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:20px;
     width:40px; height:24px; position:relative; cursor:pointer; flex-shrink:0;
   }
   .theme-toggle .knob{
@@ -84,7 +84,7 @@
   }
   body.light .theme-toggle .knob{left:18px;}
   .lang-toggle{
-    background:var(--panel-2); border:1.5px solid var(--line); border-radius:20px;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:20px;
     padding:4px 10px; font-size:11px; font-weight:700; letter-spacing:0.5px; color:var(--ink);
     cursor:pointer; user-select:none; transition:border-color .15s, color .15s; flex-shrink:0;
   }
@@ -116,7 +116,7 @@
   }
   .market-tab{
     display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:20px;
-    background:var(--panel-2); border:1.5px solid var(--line); color:var(--ink-dim);
+    background:var(--panel-2); border:1px solid var(--line); color:var(--ink-dim);
     font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; transition:all .15s;
   }
   .market-tab:hover{color:var(--ink);}
@@ -152,7 +152,7 @@
   }
   .retry-btn:hover{background:var(--accent-deep);}
   .backtest-strip{display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:8px; margin-top:12px;}
-  .backtest-stat{background:var(--panel-2); border:1.5px solid var(--line); border-radius:8px; padding:10px 12px; text-align:center;}
+  .backtest-stat{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:10px 12px; text-align:center;}
   .backtest-stat .bt-label{font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;}
   .backtest-stat .bt-value{font-size:18px; font-weight:800; font-family:'JetBrains Mono',monospace;}
   .backtest-stat .bt-value.up{color:var(--buy);}
@@ -168,7 +168,7 @@
   .chg.down{background:var(--sell-glow); color:var(--sell);}
   .pair-sub{width:100%; font-size:11px; color:var(--ink-dim);}
 
-  .card{background:var(--panel); border:1.5px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
   .card-title{
     font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--ink-dim);
     padding:12px 16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;
@@ -179,7 +179,7 @@
 
   /* ---- Indicators ---- */
   .ind-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px;}
-  .ind-box{background:var(--panel-2); border:1.5px solid var(--line); border-radius:8px; padding:12px;}
+  .ind-box{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px;}
   .ind-label{font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:1px;}
   .ind-value{font-size:19px; font-weight:600; margin-top:4px;}
   .ind-note{font-size:10px; margin-top:4px;}
@@ -202,17 +202,17 @@
   }
   .setup-badge.long{background:var(--buy-glow); color:var(--buy); border:1px solid var(--buy);}
   .setup-badge.short{background:var(--sell-glow); color:var(--sell); border:1px solid var(--sell);}
-  .setup-badge.none{background:rgba(132,142,156,0.12); color:var(--ink-dim); border:1.5px solid var(--line);}
+  .setup-badge.none{background:rgba(132,142,156,0.12); color:var(--ink-dim); border:1px solid var(--line);}
   .confidence-wrap{flex:1; min-width:180px;}
   .confidence-label{display:flex; justify-content:space-between; font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;}
-  .confidence-bar{height:7px; border-radius:4px; background:var(--panel-2); overflow:hidden; border:1.5px solid var(--line);}
+  .confidence-bar{height:7px; border-radius:4px; background:var(--panel-2); overflow:hidden; border:1px solid var(--line);}
   .confidence-fill{height:100%; border-radius:4px; transition:width .4s;}
   .confidence-fill.long{background:var(--buy);}
   .confidence-fill.short{background:var(--sell);}
   .confidence-fill.none{background:var(--ink-dim);}
   .setup-metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:10px; margin-bottom:16px;}
   .setup-analysis{
-    background:var(--panel-2); border:1.5px solid var(--line); border-radius:8px; padding:14px 16px;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:14px 16px;
     font-size:13px; line-height:1.7; color:var(--ink);
   }
   .setup-analysis .caution{color:var(--sell); font-weight:600;}
@@ -228,11 +228,11 @@
   .field{display:flex; flex-direction:column; gap:6px;}
   .field label{font-size:11px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:1px;}
   .field input, .field select{
-    background:var(--panel-2); border:1.5px solid var(--line); border-radius:6px;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:6px;
     padding:9px 10px; color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:13px;
   }
   .field input:focus, .field select:focus{outline:none; border-color:var(--accent);}
-  .dir-toggle{display:flex; border-radius:6px; overflow:hidden; border:1.5px solid var(--line);}
+  .dir-toggle{display:flex; border-radius:6px; overflow:hidden; border:1px solid var(--line);}
   .dir-toggle button{flex:1; padding:9px; background:var(--panel-2); color:var(--ink-dim); border:none; cursor:pointer; font-weight:600; font-size:12px;}
   .dir-toggle button.active.long{background:var(--buy-glow); color:var(--buy);}
   .dir-toggle button.active.short{background:var(--sell-glow); color:var(--sell);}
@@ -242,7 +242,7 @@
   }
   .calc-btn:hover{background:var(--accent-deep);}
   .result-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:10px; margin-top:14px;}
-  .result-box{background:var(--panel-2); border:1.5px solid var(--line); border-radius:8px; padding:10px 12px;}
+  .result-box{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:10px 12px;}
   .result-box .rl{font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:1px;}
   .result-box .rv{font-size:15px; font-weight:600; margin-top:3px;}
   .result-box.sl .rv{color:var(--sell);}
@@ -250,7 +250,7 @@
 
   footer{padding:18px; text-align:center; font-size:11px; color:var(--ink-dim); line-height:1.6;}
   .search-box{padding:0 16px 12px;}
-  .search-box input{width:100%; background:var(--panel-2); border:1.5px solid var(--line); border-radius:6px; padding:8px 10px; color:var(--ink); font-size:12px;}
+  .search-box input{width:100%; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:8px 10px; color:var(--ink); font-size:12px;}
   .search-box input:focus{outline:none; border-color:var(--accent);}
 
   /* ---- Win Rate Score ---- */
@@ -261,82 +261,6 @@
   .wr-item.pass{color:var(--buy);}
   .wr-item.fail{color:var(--ink-dim);}
   .wr-item span{font-weight:700; width:14px; flex-shrink:0;}
-
-  /* ---- Futures/Spot Signal Scanner ---- */
-  .back-link{display:inline-flex; align-items:center; gap:6px; color:var(--ink-dim); font-size:12.5px; cursor:pointer; margin-bottom:2px; user-select:none;}
-  .back-link:hover{color:var(--accent);}
-  .fsig-toolbar{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
-  .fsig-title{font-size:18px; font-weight:800; display:flex; align-items:center; gap:8px;}
-  .fsig-count{color:var(--ink-dim); font-size:14px; font-weight:600;}
-  .fsig-results-btn{
-    background:var(--accent); color:var(--accent-ink); border:none; border-radius:8px;
-    padding:9px 18px; font-weight:700; font-size:12.5px; cursor:pointer; letter-spacing:0.3px;
-  }
-  .fsig-results-btn:hover{background:var(--accent-deep);}
-  .fsig-results-panel{margin-top:2px;}
-  .fsig-list{display:flex; flex-direction:column; gap:12px;}
-  .fsig-card{background:var(--panel); border:1.5px solid var(--line); border-radius:12px; overflow:hidden; transition:border-color .15s;}
-  .fsig-card.open{border-color:var(--accent);}
-  .fsig-head{display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer;}
-  .fsig-avatar{
-    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-size:14px; flex-shrink:0; background:var(--panel-2); border:2px solid var(--line);
-  }
-  .fsig-avatar.long{color:#fff; background:var(--buy); border-color:var(--buy);}
-  .fsig-avatar.short{color:#fff; background:var(--sell); border-color:var(--sell);}
-  .fsig-title-col{flex:1; min-width:0;}
-  .fsig-pair{font-weight:800; font-size:14.5px; color:var(--accent-deep);}
-  .fsig-sub{font-size:11px; font-weight:800; margin-top:2px;}
-  .fsig-sub.long{color:var(--buy);}
-  .fsig-sub.short{color:var(--sell);}
-  .fsig-chevron{color:var(--ink-dim); font-size:12px; transition:transform .15s; flex-shrink:0;}
-  .fsig-card.open .fsig-chevron{transform:rotate(180deg);}
-  .fsig-badges{display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px 14px;}
-  .fsig-badge{
-    text-align:center; padding:9px; border-radius:8px; font-size:12.5px; font-weight:800; letter-spacing:0.2px;
-  }
-  .fsig-badge-lev{background:var(--buy); color:#fff;}
-  .fsig-badge-cap{background:var(--accent); color:var(--accent-ink);}
-  .fsig-body{border-top:1px solid var(--line); padding:14px 16px; display:flex; flex-direction:column; gap:8px;}
-  .fsig-entry{font-size:12.5px; color:var(--ink-dim); margin-bottom:2px;}
-  .fsig-entry .mono{color:var(--ink); font-weight:700; font-size:13.5px;}
-  .fsig-target{
-    display:flex; align-items:center; justify-content:space-between; gap:8px;
-    padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:700;
-    background:var(--panel-2); border:2px solid var(--line); color:var(--ink-dim);
-  }
-  .fsig-target.hit{background:var(--buy); border-color:var(--buy); color:#fff;}
-  .fsig-target-pct{color:var(--accent-deep) !important; font-weight:800;}
-  .fsig-target.hit .fsig-target-pct{color:#fff !important;}
-  .fsig-sl{
-    display:flex; align-items:center; justify-content:space-between; gap:8px;
-    padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:800;
-    background:var(--sell); border:1.5px solid var(--sell); color:#fff; margin-top:2px;
-  }
-  .fsig-reason{font-size:10.5px; color:var(--ink-dim); line-height:1.6; margin-top:4px;}
-  .fsig-status-closed{opacity:0.55;}
-  .fsig-disclaimer{
-    background:var(--accent); border:1.5px solid var(--accent-deep); color:var(--accent-ink);
-    border-radius:10px; padding:13px 15px; font-size:12px; line-height:1.65; font-weight:700;
-  }
-  .fsig-rescan-btn{
-    background:transparent; color:var(--accent); border:1.5px solid var(--accent); border-radius:8px;
-    padding:9px 14px; font-weight:700; font-size:12.5px; cursor:pointer;
-  }
-  .fsig-rescan-btn:hover{background:var(--accent-glow);}
-  .fsig-style-tabs{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;}
-  .fsig-style-tab{
-    flex:1; min-width:120px; text-align:center; padding:10px 10px; border-radius:10px; cursor:pointer;
-    background:var(--panel); border:2px solid var(--line); font-size:12px; font-weight:800; color:var(--ink-dim);
-    transition:border-color .15s, color .15s, background .15s;
-  }
-  .fsig-style-tab:hover{color:var(--ink);}
-  .fsig-style-tab.active{color:var(--accent); border-color:var(--accent); background:var(--accent-glow);}
-  .fsig-style-desc{font-size:11px; color:var(--ink-dim); line-height:1.5; padding:2px 2px 0;}
-  .fsig-style-badge{
-    display:inline-block; padding:3px 9px; border-radius:6px; font-size:10px; font-weight:800;
-    letter-spacing:0.3px; background:var(--panel-2); color:var(--accent-deep); border:1.5px solid var(--line); margin-right:6px;
-  }
 
   /* ---- News ---- */
   .news-item{display:block; padding:12px 16px; border-bottom:1px solid var(--line); text-decoration:none; color:var(--ink);}
@@ -394,7 +318,7 @@
   .fng-label{font-size:14px; font-weight:600; margin-top:2px;}
 
   /* ---- Supply/Demand, Fibonacci, Pattern cards ---- */
-  .zone-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; border-radius:8px; margin-bottom:8px; border:1.5px solid var(--line);}
+  .zone-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; border-radius:8px; margin-bottom:8px; border:1px solid var(--line);}
   .zone-row.demand{background:var(--buy-glow); border-color:rgba(14,203,129,0.3);}
   .zone-row.supply{background:var(--sell-glow); border-color:rgba(246,70,93,0.3);}
   .zone-tag{font-size:10px; font-weight:800; letter-spacing:0.5px; text-transform:uppercase; padding:2px 8px; border-radius:4px;}
@@ -406,7 +330,7 @@
   .fib-bar-wrap{flex:1; height:6px; background:var(--panel-2); border-radius:3px; position:relative;}
   .fib-price{width:110px; text-align:right; font-size:12px; flex-shrink:0;}
   .fib-marker{position:absolute; top:-5px; width:2px; height:16px; background:var(--ink);}
-  .pattern-badge{display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-size:12.5px; font-weight:600; margin:0 8px 8px 0; border:1.5px solid var(--line);}
+  .pattern-badge{display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:8px; font-size:12.5px; font-weight:600; margin:0 8px 8px 0; border:1px solid var(--line);}
   .pattern-badge.bullish{background:var(--buy-glow); color:var(--buy);}
   .pattern-badge.bearish{background:var(--sell-glow); color:var(--sell);}
   .pattern-badge.neutral{background:rgba(132,142,156,0.12); color:var(--ink-dim);}
@@ -415,7 +339,7 @@
   .entry-why-badge.short{background:var(--sell-glow); color:var(--sell);}
   .entry-why-list{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px;}
   .entry-why-list li{
-    background:var(--panel-2); border:1.5px solid var(--line); border-radius:9px; padding:12px 15px;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:12px 15px;
     font-size:12.5px; line-height:1.6; color:var(--ink);
   }
 </style>
@@ -483,19 +407,18 @@
     <button class="drawer-close" onclick="closeDrawer()">✕</button>
   </div>
   <div class="nav-group-label" data-i18n="nav_group_overview">Overview</div>
-  <div class="nav-item" data-page="dashboard" onclick="switchPage('dashboard')"><span data-i18n="nav_dashboard">Dashboard</span></div>
+  <div class="nav-item" data-page="dashboard" onclick="switchPage('dashboard')">📊 <span data-i18n="nav_dashboard">Dashboard</span></div>
   <div class="nav-group-label" data-i18n="nav_group_trading">Trading</div>
-  <div class="nav-item active" data-page="trading" onclick="switchPage('trading')"><span data-i18n="nav_trading">Trading Signal</span><span class="nav-live">LIVE</span></div>
-  <div class="nav-item" data-page="futures-signal" onclick="switchPage('futures-signal')"><span data-i18n="nav_futures_signal">Futures Signal</span></div>
+  <div class="nav-item active" data-page="trading" onclick="switchPage('trading')">📈 <span data-i18n="nav_trading">Trading Signal</span><span class="nav-live">LIVE</span></div>
   <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
-  <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')"><span data-i18n="nav_heatmap">Market Heatmap</span></div>
+  <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')">🔥 <span data-i18n="nav_heatmap">Market Heatmap</span></div>
   <div class="nav-group-label" data-i18n="nav_group_analysis">Analysis</div>
   <div class="nav-item" data-page="screener" onclick="switchPage('screener')">🔍 <span data-i18n="nav_screener">Screener</span></div>
   <div class="nav-item" data-page="strength" onclick="switchPage('strength')">💪 <span data-i18n="nav_strength">Coin Strength</span></div>
   <div class="nav-group-label" data-i18n="nav_group_intel">Market Intel</div>
   <div class="nav-item" data-page="econ" onclick="switchPage('econ')">📅 <span data-i18n="nav_econ">Econ Calendar</span></div>
   <div class="nav-item" data-page="feargreed" onclick="switchPage('feargreed')">😨 <span data-i18n="nav_feargreed">Fear &amp; Greed</span></div>
-  <div class="nav-item" data-page="movers" onclick="switchPage('movers')"><span data-i18n="nav_movers">Top Movers</span></div>
+  <div class="nav-item" data-page="movers" onclick="switchPage('movers')">🚀 <span data-i18n="nav_movers">Top Movers</span></div>
   <div class="nav-item" data-page="news" onclick="switchPage('news')">📰 <span data-i18n="nav_news">News Feed</span></div>
   <a class="nav-item" id="waNavItem" href="https://wa.me/6285821934478" target="_blank" rel="noopener">💬 <span data-i18n="nav_wa">Bantuan via WhatsApp</span></a>
   <div class="nav-group-label">Akun</div>
@@ -505,7 +428,7 @@
 
 <div id="page-trading" class="page active">
 <div class="market-tabs" id="marketTabs">
-  <div class="market-tab active" data-market="crypto">Crypto Perpetual Futures</div>
+  <div class="market-tab active" data-market="crypto">🪙 Crypto Perpetual Futures</div>
 </div>
 
 <div class="layout">
@@ -536,7 +459,7 @@
     </div>
 
     <div class="card">
-      <div class="card-title"><span data-i18n="card_signals">Sinyal Multi-Timeframe</span><span style="font-size:10px;">Trend + MACD + Bollinger/RSI + Stochastic + Fibonacci + S/R</span></div>
+      <div class="card-title"><span data-i18n="card_signals">Sinyal Multi-Timeframe</span><span id="signalsUpdated" class="mono" style="font-size:10px;">–</span></div>
       <div class="card-body" style="padding:0;">
         <table>
           <thead><tr><th data-i18n="th_timeframe">Timeframe</th><th>RSI(14)</th><th>EMA9 / EMA21</th><th>BB %B</th><th data-i18n="th_signal">Sinyal</th></tr></thead>
@@ -546,9 +469,39 @@
     </div>
 
     <div class="card">
-      <div class="card-title"><span data-i18n="card_setup_per_tf">Sinyal & Setup per Timeframe</span><span style="font-size:10px;">M15 · M30 · H1 · H4 · D1 — real-time</span></div>
+      <div class="card-title"><span data-i18n="card_setup_per_tf">Sinyal & Setup per Timeframe</span><span id="tfDetailUpdated" class="mono" style="font-size:10px;">–</span></div>
       <div class="tf-tabs" id="tfTabs"></div>
       <div class="card-body" id="tfDetail"></div>
+    </div>
+
+    <div class="card" id="setupCard">
+      <div class="card-title"><span data-i18n="card_setup_reco">Rekomendasi Setup Posisi</span><span id="setupUpdated" class="mono" style="font-size:10px;">–</span></div>
+      <div class="card-body">
+        <div class="setup-top">
+          <div class="setup-badge none" id="setupBadge" data-i18n="loading">Memuat…</div>
+          <div class="confidence-wrap">
+            <div class="confidence-label"><span>Confluence Score</span><span id="confidenceValue" class="mono">–</span></div>
+            <div class="confidence-bar"><div class="confidence-fill none" id="confidenceFill" style="width:0%;"></div></div>
+          </div>
+        </div>
+        <div class="setup-metrics" id="setupMetrics"></div>
+        <div class="setup-analysis" id="setupAnalysis" data-i18n="analyzing_tf">Menganalisis konfluensi timeframe…</div>
+        <button class="setup-apply-btn" onclick="applySetupToCalculator()" data-i18n="btn_apply_calc">Terapkan ke Kalkulator ↓</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="card_winrate">Win Rate Score</span><span style="font-size:10px;">Checklist kesiapan open posisi</span></div>
+      <div class="card-body">
+        <div class="wr-header">
+          <div class="wr-score mono" id="winrateScore">–/10</div>
+          <div class="confidence-wrap">
+            <div class="confidence-label"><span data-i18n="setup_readiness">Kesiapan Setup</span></div>
+            <div class="confidence-bar"><div class="confidence-fill none" id="winrateFill" style="width:0%;"></div></div>
+          </div>
+        </div>
+        <div class="wr-checklist" id="winrateChecklist"></div>
+      </div>
     </div>
 
     <div class="card" id="foilsCard" style="display:none;">
@@ -601,36 +554,14 @@
         <div class="result-grid" id="calcResult"></div>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-title"><span data-i18n="card_entry_why">Kenapa Sinyal Ini Layak Dipertimbangkan?</span></div>
+      <div class="card-body" id="entryWhyBody"><div class="ind-note" data-i18n="waiting_analysis">Menunggu hasil analisis…</div></div>
+    </div>
   </main>
 </div>
 </div><!-- /page-trading -->
-
-<!-- ===== Futures / Spot Signal Scanner ===== -->
-<div id="page-futures-signal" class="page">
-<div class="market-tabs" id="fsigMarketTabs">
-  <div class="market-tab" onclick="switchPage('trading')">Crypto Perpetual Futures</div>
-  <div class="market-tab active" id="sigTabFutures" onclick="switchSignalScanner('futures')">Futures Signal</div>
-</div>
-<main>
-  <div class="back-link" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></div>
-  <div class="fsig-style-tabs" id="fsigStyleTabs" style="display:flex;">
-    <div class="fsig-style-tab active" data-style="scalping" onclick="switchSignalStyle('scalping')"><span data-i18n="fsig_style_scalping">Scalping</span></div>
-    <div class="fsig-style-tab" data-style="daytrading" onclick="switchSignalStyle('daytrading')"><span data-i18n="fsig_style_daytrading">Day Trading</span></div>
-    <div class="fsig-style-tab" data-style="swing" onclick="switchSignalStyle('swing')"><span data-i18n="fsig_style_swing">Swing Trading</span></div>
-  </div>
-  <div class="fsig-style-desc" id="fsigStyleDesc" data-i18n="fsig_style_scalping_desc"></div>
-  <div class="fsig-toolbar">
-    <div class="fsig-title"><span id="fsigTitle" data-i18n="futures_signal_title">Futures Signal</span> <span class="fsig-count mono" id="fsigCount">(0)</span></div>
-    <div style="display:flex; gap:8px;">
-      <button class="fsig-rescan-btn" onclick="scanSignals(signalScannerMode)" data-i18n="rescan_btn">↻ Pindai Ulang</button>
-      <button class="fsig-results-btn" id="fsigResultsBtn" onclick="toggleFsigResults()" data-i18n="results_btn">Results</button>
-    </div>
-  </div>
-  <div id="fsigResultsPanel" class="fsig-results-panel card card-body" style="display:none;"></div>
-  <div id="fsigList" class="fsig-list"><div class="sidebar-loading" data-i18n="loading_signals">Memuat sinyal…</div></div>
-  <div class="fsig-disclaimer">⚠️ <span data-i18n="fsig_disclaimer">Bukan merupakan suatu ajakan membeli atau menjual suatu instrumen investasi. Keputusan sepenuhnya ada di tangan Anda sendiri.</span></div>
-</main>
-</div><!-- /page-futures-signal -->
 
 <!-- ===== Dashboard (overview) ===== -->
 <div id="page-dashboard" class="page">
@@ -737,11 +668,11 @@
   <div class="page-inner">
     <div class="ov-grid" style="grid-template-columns:1fr 1fr;">
       <div class="card">
-        <div class="card-title"><span data-i18n="top_gainers_24h">Top Gainers (24h)</span></div>
+        <div class="card-title"><span data-i18n="top_gainers_24h">🚀 Top Gainers (24h)</span></div>
         <div class="card-body" id="moversGainers" style="padding:0;"><div class="sidebar-loading" data-i18n="open_crypto_tab_short">Buka tab Crypto dulu di Trading Signal.</div></div>
       </div>
       <div class="card">
-        <div class="card-title"><span data-i18n="top_losers_24h">Top Losers (24h)</span></div>
+        <div class="card-title"><span data-i18n="top_losers_24h">📉 Top Losers (24h)</span></div>
         <div class="card-body" id="moversLosers" style="padding:0;"><div class="sidebar-loading" data-i18n="open_crypto_tab_short">Buka tab Crypto dulu di Trading Signal.</div></div>
       </div>
     </div>
@@ -782,17 +713,6 @@ const I18N = {
     brand_tag: "multi-market signal terminal",
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
     nav_group_trading: "Trading", nav_trading: "Trading Signal",
-    nav_futures_signal: "Futures Signal", back_to_dashboard: "Kembali ke Dashboard",
-    futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
-    fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
-    fsig_total_signal: "Total Sinyal", fsig_avg_confidence: "Rata-rata Confidence",
-    fsig_no_signal: "Belum ada sinyal yang cukup kuat & terkonfirmasi 4H saat ini. Coba pindai ulang beberapa saat lagi.",
-    rescan_btn: "↻ Pindai Ulang",
-    fsig_disclaimer: "Bukan merupakan suatu ajakan membeli atau menjual suatu instrumen investasi. Keputusan sepenuhnya ada di tangan Anda sendiri.",
-    fsig_style_scalping: "Scalping", fsig_style_daytrading: "Day Trading", fsig_style_swing: "Swing Trading",
-    fsig_style_scalping_desc: "Timeframe 1m/5m · Stoch RSI + EMA Ribbon 5/8/13/21 · holding 5–15 menit",
-    fsig_style_daytrading_desc: "Timeframe 15m (entry) + 1H (tren) · VWAP + RSI + Volume · holding 4–12 jam",
-    fsig_style_swing_desc: "Timeframe 4H · Bollinger Bands + MACD Histogram · holding 1–3 hari",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
@@ -823,7 +743,7 @@ const I18N = {
     card_strength: "Coin Strength Meter", card_strength_sub: "Ranking perubahan 24h — real-time via WebSocket",
     open_crypto_tab: "Buka tab Crypto dulu di Trading Signal untuk data real-time.",
     open_crypto_tab_short: "Buka tab Crypto dulu di Trading Signal.",
-    top_gainers_24h: "Top Gainers (24h)", top_losers_24h: "Top Losers (24h)",
+    top_gainers_24h: "🚀 Top Gainers (24h)", top_losers_24h: "📉 Top Losers (24h)",
     footer_text: "TIAA · Multi-Market Signal Terminal", wa_float_label: "Chat Admin WA",
     loading: "Memuat…", loading_analysis: "Memuat analisis…", loading_index: "Memuat indeks…",
     loading_news: "Memuat berita…", loading_signals: "Memuat sinyal…", loading_derivatives: "Memuat data derivatif…",
@@ -850,17 +770,6 @@ const I18N = {
     brand_tag: "multi-market signal terminal",
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
     nav_group_trading: "Trading", nav_trading: "Trading Signal",
-    nav_futures_signal: "Futures Signal", back_to_dashboard: "Back to Dashboard",
-    futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
-    fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
-    fsig_total_signal: "Total Signals", fsig_avg_confidence: "Avg. Confidence",
-    fsig_no_signal: "No sufficiently strong, 4H-confirmed signals right now. Try rescanning in a bit.",
-    rescan_btn: "↻ Rescan",
-    fsig_disclaimer: "This is not an invitation to buy or sell any investment instrument. The decision is entirely yours.",
-    fsig_style_scalping: "Scalping", fsig_style_daytrading: "Day Trading", fsig_style_swing: "Swing Trading",
-    fsig_style_scalping_desc: "1m/5m timeframe · Stoch RSI + EMA Ribbon 5/8/13/21 · 5–15 min holding",
-    fsig_style_daytrading_desc: "15m (entry) + 1H (trend) timeframe · VWAP + RSI + Volume · 4–12h holding",
-    fsig_style_swing_desc: "4H timeframe · Bollinger Bands + MACD Histogram · 1–3 day holding",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
@@ -891,7 +800,7 @@ const I18N = {
     card_strength: "Coin Strength Meter", card_strength_sub: "24h change ranking — real-time via WebSocket",
     open_crypto_tab: "Open the Crypto tab in Trading Signal first for real-time data.",
     open_crypto_tab_short: "Open the Crypto tab in Trading Signal first.",
-    top_gainers_24h: "Top Gainers (24h)", top_losers_24h: "Top Losers (24h)",
+    top_gainers_24h: "🚀 Top Gainers (24h)", top_losers_24h: "📉 Top Losers (24h)",
     footer_text: "TIAA · Multi-Market Signal Terminal", wa_float_label: "Chat WA Support",
     loading: "Loading…", loading_analysis: "Loading analysis…", loading_index: "Loading index…",
     loading_news: "Loading news…", loading_signals: "Loading signals…", loading_derivatives: "Loading derivatives data…",
@@ -929,12 +838,6 @@ function applyI18n(){
     if(document.getElementById('page-strength')?.classList.contains('active')) renderCoinStrength();
     if(document.getElementById('page-movers')?.classList.contains('active')) renderTopMovers();
     if(loadedPages.has('feargreed')) loadFearGreedPage();
-    if(document.getElementById('page-futures-signal')?.classList.contains('active')){
-      document.getElementById('fsigTitle').textContent = signalScannerMode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
-      const descEl = document.getElementById('fsigStyleDesc');
-      if(descEl && descEl.dataset.i18n) descEl.textContent = t(descEl.dataset.i18n);
-      renderSignalList(signalScannerMode);
-    }
   }
 }
 function toggleLang(){
@@ -1040,25 +943,9 @@ function macdFull(values, fast=12, slow=26, signalP=9){
   const macdLine=emaFast.map((v,i)=>v-emaSlow[i]);
   const signalLine=ema(macdLine,signalP);
   const hist=macdLine.map((v,i)=>v-signalLine[i]);
-  // Sequence-aware cross detection: the real-world setup is "price touches band, THEN
-  // histogram fades, THEN cross confirms" over several candles — not all on one candle.
-  // recentCrossUp/Down scans the last `lookback` bars for a cross, with barsAgo telling
-  // the caller how fresh it was, instead of only recognizing a cross on the very latest bar.
-  const lookback = 4;
-  let recentCrossUp=false, recentCrossDown=false, crossBarsAgo=null;
-  for(let i=0;i<lookback;i++){
-    const idx = macdLine.length-1-i;
-    const pIdx = idx-1;
-    if(pIdx<0) break;
-    const up = macdLine[pIdx]<=signalLine[pIdx] && macdLine[idx]>signalLine[idx];
-    const down = macdLine[pIdx]>=signalLine[pIdx] && macdLine[idx]<signalLine[idx];
-    if(up && !recentCrossUp && !recentCrossDown){ recentCrossUp=true; crossBarsAgo=i; }
-    if(down && !recentCrossUp && !recentCrossDown){ recentCrossDown=true; crossBarsAgo=i; }
-  }
   return { macdLine, signalLine, hist,
     last:{macd:macdLine.at(-1), signal:signalLine.at(-1), hist:hist.at(-1)},
-    prev:{macd:macdLine.at(-2), signal:signalLine.at(-2), hist:hist.at(-2)},
-    recentCrossUp, recentCrossDown, crossBarsAgo };
+    prev:{macd:macdLine.at(-2), signal:signalLine.at(-2), hist:hist.at(-2)} };
 }
 // Bollinger Bands (SMA basis + N std-dev envelope) — standard 20-period / 2 std-dev.
 function bollinger(closes, period=20, mult=2){
@@ -1093,85 +980,6 @@ function stochastic(highs, lows, closes, kPeriod=14, dPeriod=3){
   const crossUp = kPrev!=null && dPrev!=null && kPrev<=dPrev && k>d;
   const crossDown = kPrev!=null && dPrev!=null && kPrev>=dPrev && k<d;
   return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20 };
-}
-// Stochastic RSI — applies the classic %K/%D stochastic formula on top of the RSI
-// series itself (instead of price), which makes it react far faster to short-term
-// momentum swings than a plain RSI. Used for the Scalping strategy where entries/exits
-// happen within minutes and a slower oscillator would arrive too late.
-function stochasticRSI(closes, rsiPeriod=14, stochPeriod=14, kSmooth=3, dSmooth=3){
-  const rsiArr = rsi14Series(closes, rsiPeriod).filter(v=>v!=null);
-  if(rsiArr.length < stochPeriod+kSmooth+dSmooth) return null;
-  const kRaw=[];
-  for(let i=stochPeriod-1;i<rsiArr.length;i++){
-    const slice=rsiArr.slice(i-stochPeriod+1,i+1);
-    const hh=Math.max(...slice), ll=Math.min(...slice);
-    kRaw.push(hh>ll ? (rsiArr[i]-ll)/(hh-ll)*100 : 50);
-  }
-  if(kRaw.length<kSmooth) return null;
-  const kSmoothed=[];
-  for(let i=kSmooth-1;i<kRaw.length;i++) kSmoothed.push(kRaw.slice(i-kSmooth+1,i+1).reduce((s,v)=>s+v,0)/kSmooth);
-  if(kSmoothed.length<dSmooth+1) return null;
-  const dVals=[];
-  for(let i=dSmooth-1;i<kSmoothed.length;i++) dVals.push(kSmoothed.slice(i-dSmooth+1,i+1).reduce((s,v)=>s+v,0)/dSmooth);
-  const k=kSmoothed.at(-1), d=dVals.at(-1), kPrev=kSmoothed.at(-2), dPrev=dVals.at(-2);
-  const crossUp = kPrev!=null && dPrev!=null && kPrev<=dPrev && k>d;
-  const crossDown = kPrev!=null && dPrev!=null && kPrev>=dPrev && k<d;
-  // "Recently" oversold/overbought — checked over the few bars leading up to the
-  // current cross (wide enough to cover a cross that happened up to a couple of bars
-  // ago too), so an entry can require the sequence "dipped below 20, THEN crossed up"
-  // (not just "k happens to read <40 right now").
-  const lookback = kSmoothed.slice(-8,-1);
-  const recentLow = lookback.length ? Math.min(...lookback) : k;
-  const recentHigh = lookback.length ? Math.max(...lookback) : k;
-  const wasOversold = recentLow<20;
-  const wasOverbought = recentHigh>80;
-  // Sequence-aware cross: same rationale as MACD above — allow the K/D cross itself to
-  // have happened a couple of bars ago (not strictly the very last bar) so a scan that
-  // lands slightly after the actual cross still recognizes the setup.
-  let recentCrossUp=false, recentCrossDown=false, crossBarsAgo=null;
-  const crossLookback = 3;
-  for(let i=0;i<crossLookback;i++){
-    const idx = kSmoothed.length-1-i, pIdx = idx-1;
-    if(pIdx<0 || dVals[idx]==null || dVals[pIdx]==null) break;
-    const up = kSmoothed[pIdx]<=dVals[pIdx] && kSmoothed[idx]>dVals[idx];
-    const down = kSmoothed[pIdx]>=dVals[pIdx] && kSmoothed[idx]<dVals[idx];
-    if(up && !recentCrossUp && !recentCrossDown){ recentCrossUp=true; crossBarsAgo=i; }
-    if(down && !recentCrossUp && !recentCrossDown){ recentCrossDown=true; crossBarsAgo=i; }
-  }
-  return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20, wasOversold, wasOverbought, recentLow, recentHigh, recentCrossUp, recentCrossDown, crossBarsAgo };
-}
-// EMA Ribbon (default 5/8/13/21) — a stack of fast EMAs used as a single "is momentum
-// compressed or expanding" gauge for scalping: bullish when stacked fast>...>slow and
-// the spread between them is widening (fresh directional push), bearish on the mirror.
-function emaRibbon(closes, periods=[5,8,13,21]){
-  if(closes.length < Math.max(...periods)+6) return null;
-  const arrs = {}; periods.forEach(p=>{ arrs[p]=ema(closes,p); });
-  const values = {}; periods.forEach(p=>{ values[p]=arrs[p].at(-1); });
-  const bullish = values[periods[0]]>values[periods[1]] && values[periods[1]]>values[periods[2]] && values[periods[2]]>values[periods[3]];
-  const bearish = values[periods[0]]<values[periods[1]] && values[periods[1]]<values[periods[2]] && values[periods[2]]<values[periods[3]];
-  const price = closes.at(-1);
-  const spreadAt = (idx)=>{
-    const vals = periods.map(p=>arrs[p][idx]);
-    return (Math.max(...vals)-Math.min(...vals)) / closes[idx];
-  };
-  const lastIdx = closes.length-1;
-  const backIdx = Math.max(0, lastIdx-5);
-  const spreadNow = spreadAt(lastIdx), spreadBack = spreadAt(backIdx);
-  const expanding = spreadNow > spreadBack*1.15;
-  return { values, bullish, bearish, expanding };
-}
-// Rolling VWAP (Volume-Weighted Average Price) over the last `period` candles — a 24h
-// rolling window when fed 24 x 1H candles approximates the intraday session VWAP that
-// day-traders watch, without needing an exact UTC-midnight session reset.
-function vwapRolling(highs, lows, closes, volumes, period=24){
-  const n = closes.length;
-  const p = Math.min(period, n);
-  let pv=0, vol=0;
-  for(let i=n-p;i<n;i++){
-    const typical=(highs[i]+lows[i]+closes[i])/3;
-    pv += typical*volumes[i]; vol += volumes[i];
-  }
-  return vol>0 ? pv/vol : closes.at(-1);
 }
 // Classic Support/Resistance: cluster pivot highs/lows (>=2 touches within a tight
 // tolerance) into horizontal levels — distinct from the ATR-impulse Supply/Demand
@@ -1373,6 +1181,7 @@ async function initCryptoMarket(){
   document.getElementById('hSub').style.display = 'none';
   const list = document.getElementById('pairList');
   list.innerHTML = `<div class="sidebar-loading">${t('loading_market_data')} crypto…</div>`;
+  document.getElementById('setupCard').style.opacity = '0.5';
   try{
     await initCryptoPairs();
   }catch(e){
@@ -1383,6 +1192,7 @@ async function initCryptoMarket(){
         <button class="retry-btn" onclick="initCryptoMarket()">↻ ${t('retry')}</button>
       </div>`;
   }
+  document.getElementById('setupCard').style.opacity = '1';
   connectCryptoWS();
   scheduleRefresh();
 }
@@ -1765,8 +1575,20 @@ async function loadSignals(symbol){
     }
     body.appendChild(tr);
   });
+  const nowStr = new Date().toLocaleTimeString(uiLocale());
+  const su = document.getElementById('signalsUpdated'); if(su) su.textContent = nowStr;
   renderTimeframeTabs(rows);
   computeSetupRecommendation(symbol, rows);
+}
+// Auto-refresh guard: avoids overlapping loadSignals() calls if one fetch cycle
+// (10 timeframes x klines request) takes longer than the refresh interval.
+let signalsRefreshInFlight = false;
+async function refreshSignalsIfIdle(){
+  if(signalsRefreshInFlight) return;
+  signalsRefreshInFlight = true;
+  try{ await loadSignals(currentPair); }
+  catch(e){ console.error('Auto-refresh sinyal gagal', e); }
+  finally{ signalsRefreshInFlight = false; }
 }
 
 /* ================= PER-TIMEFRAME SIGNAL + MINI SETUP (M15/M30/H1/H4/D1) ================= */
@@ -1775,19 +1597,25 @@ async function loadSignals(symbol){
 // tab's stop-loss reflects H4-scale volatility, not H1's. Data is read from the same
 // `rows` that loadSignals just fetched (real-time on every pair select / refresh cycle),
 // no extra API calls needed.
+// Remembers which tf-tab (scalping M15/M30, day trading H1/H4, swing H4/D1/W1) the
+// user last picked so periodic auto-refreshes update that same tab in place instead
+// of silently snapping back to H1 every cycle.
+let activeTfTab = 'H1';
 function renderTimeframeTabs(rows){
   window.__tfRows = rows;
   // Tabs mirror CRYPTO_TFS: M1..W1 including H2/H3 (see TFS config near the top).
   const labels = TFS.map(tf=>tf.label);
-  const defaultTf = labels.includes('H1') ? 'H1' : labels[0];
+  const defaultTf = labels.includes(activeTfTab) ? activeTfTab : (labels.includes('H1') ? 'H1' : labels[0]);
   const tabsEl = document.getElementById('tfTabs');
   tabsEl.innerHTML = labels.map(l=>`<div class="tf-tab${l===defaultTf?' active':''}" data-tf="${l}" onclick="showTfDetail('${l}')">${l}</div>`).join('');
   showTfDetail(defaultTf);
 }
 function showTfDetail(label){
+  activeTfTab = label;
   document.querySelectorAll('.tf-tab').forEach(t=>t.classList.toggle('active', t.dataset.tf===label));
   const el = document.getElementById('tfDetail');
   const row = (window.__tfRows||[]).find(r=>r.tf===label);
+  const tfu = document.getElementById('tfDetailUpdated'); if(tfu) tfu.textContent = label+' · '+new Date().toLocaleTimeString(uiLocale());
   if(!row || !row.sig || !row.ohlc){ el.innerHTML = '<div class="ind-note">Data tidak tersedia untuk timeframe ini.</div>'; return; }
   const sig = row.sig, ohlc = row.ohlc;
   const price = ohlc.closes[ohlc.closes.length-1];
@@ -1871,9 +1699,9 @@ function showTfDetail(label){
 /* ================= SETUP RECOMMENDATION (multi-timeframe confluence) ================= */
 async function computeSetupRecommendation(symbol, rows){
   const badge = document.getElementById('setupBadge'), analysisEl = document.getElementById('setupAnalysis'), metricsEl = document.getElementById('setupMetrics');
-  if(badge){ badge.className='setup-badge none'; badge.textContent=t('analyzing'); }
-  if(analysisEl) analysisEl.textContent='Menghitung skor konfluensi timeframe + volatilitas (ATR)…';
-  if(metricsEl) metricsEl.innerHTML='';
+  badge.className='setup-badge none'; badge.textContent=t('analyzing');
+  analysisEl.textContent='Menghitung skor konfluensi timeframe + volatilitas (ATR)…';
+  metricsEl.innerHTML='';
   try{
     let weightedScore=0, maxWeight=0, buyCount=0, sellCount=0;
     rows.forEach(r=>{
@@ -1916,14 +1744,10 @@ async function computeSetupRecommendation(symbol, rows){
       if(finalDirection==='short' && entryTF.rsi<30) caution = `Catatan: RSI M15 sudah di ${entryTF.rsi.toFixed(1)} (oversold) — pertimbangkan tunggu bounce sebelum entry.`;
     }
 
-    if(badge){
-      badge.className='setup-badge '+finalDirection;
-      badge.textContent = finalDirection==='long' ? `LONG / BUY (${strength})` : finalDirection==='short' ? `SHORT / SELL (${strength})` : 'NO TRADE — Sinyal Belum Searah';
-    }
-    const confidenceValueEl = document.getElementById('confidenceValue');
-    if(confidenceValueEl) confidenceValueEl.textContent = confidencePct+'%';
-    const fill = document.getElementById('confidenceFill');
-    if(fill){ fill.className='confidence-fill '+finalDirection; fill.style.width=confidencePct+'%'; }
+    badge.className='setup-badge '+finalDirection;
+    badge.textContent = finalDirection==='long' ? `LONG / BUY (${strength})` : finalDirection==='short' ? `SHORT / SELL (${strength})` : 'NO TRADE — Sinyal Belum Searah';
+    document.getElementById('confidenceValue').textContent = confidencePct+'%';
+    const fill = document.getElementById('confidenceFill'); fill.className='confidence-fill '+finalDirection; fill.style.width=confidencePct+'%';
 
     const metrics = [
       {label:'Timeframe Selaras', value:`${finalDirection==='long'?buyCount:finalDirection==='short'?sellCount:Math.max(buyCount,sellCount)}/${rows.length}`},
@@ -1933,7 +1757,7 @@ async function computeSetupRecommendation(symbol, rows){
       {label:'Saran Jarak SL', value: slPctSuggested.toFixed(2)+'%'},
       {label:'Volume vs Rata-rata', value: volRatio?volRatio.toFixed(2)+'×':'–'},
     ];
-    if(metricsEl) metricsEl.innerHTML = metrics.map(m=>`<div class="ind-box"><div class="ind-label">${m.label}</div><div class="ind-value mono" style="font-size:15px;">${m.value}</div></div>`).join('');
+    metricsEl.innerHTML = metrics.map(m=>`<div class="ind-box"><div class="ind-label">${m.label}</div><div class="ind-value mono" style="font-size:15px;">${m.value}</div></div>`).join('');
 
     let text = '';
     if(finalDirection==='none'){
@@ -1943,9 +1767,8 @@ async function computeSetupRecommendation(symbol, rows){
       text = `Rekomendasi <strong>${dirWord}</strong> ini diambil karena ${finalDirection==='long'?buyCount:sellCount} dari ${rows.length} timeframe menunjukkan bias searah, dengan skor konfluensi terbobot ${confidencePct}% (timeframe besar seperti H4/D1 diberi bobot lebih tinggi karena lebih tahan noise). Tren di H4 (${higherTF1?.label ?? '–'}) dan D1 (${higherTF2?.label ?? '–'}) searah dengan sinyal ini, jadi posisi ini <strong>mengikuti tren utama</strong>. Volatilitas H1 (ATR14) sekitar ${atrPct?atrPct.toFixed(2):'–'}% dari harga — dipakai sebagai basis jarak Stop Loss (${slPctSuggested.toFixed(2)}%).`;
     }
     if(caution) text += `<br><span class="caution">${caution}</span>`;
-    if(analysisEl) analysisEl.innerHTML = text;
-    const setupUpdatedEl = document.getElementById('setupUpdated');
-    if(setupUpdatedEl) setupUpdatedEl.textContent = new Date().toLocaleTimeString(uiLocale());
+    analysisEl.innerHTML = text;
+    document.getElementById('setupUpdated').textContent = new Date().toLocaleTimeString(uiLocale());
     const rrRatio = (()=>{
       if(finalDirection==='none') return null;
       const slDist = lastPrice*(slPctSuggested/100);
@@ -1964,8 +1787,8 @@ async function computeSetupRecommendation(symbol, rows){
     computeAdvancedTA(symbol, rows);
   }catch(e){
     console.error(e);
-    if(badge){ badge.className='setup-badge none'; badge.textContent=t('analysis_failed'); }
-    if(analysisEl) analysisEl.textContent='Terjadi kesalahan saat mengambil data ATR/volatilitas. Coba pilih ulang pair.';
+    badge.className='setup-badge none'; badge.textContent=t('analysis_failed');
+    analysisEl.textContent='Terjadi kesalahan saat mengambil data ATR/volatilitas. Coba pilih ulang pair.';
   }
 }
 
@@ -2206,7 +2029,6 @@ function computeWinRateScore(){
   const scoreEl = document.getElementById('winrateScore');
   const listEl = document.getElementById('winrateChecklist');
   const fillEl = document.getElementById('winrateFill');
-  if(!scoreEl || !listEl || !fillEl) return;
   if(!s || s.direction==='none'){
     scoreEl.textContent = '–/10';
     fillEl.style.width = '0%'; fillEl.className = 'confidence-fill none';
@@ -2356,667 +2178,11 @@ function initEconomicCalendar(){
   container.appendChild(script);
 }
 
-/* ================= FUTURES / SPOT SIGNAL SCANNER ================= *
- * Scans the most-liquid USDT perpetuals and produces ready-to-trade scalping
- * setups (LONG/SHORT, Leverage, Capital%, Entry, 4 Targets, Stoploss).
- *
- * Algorithm (per pair):
- *  1. H4 candles = the CONFIRMATION timeframe (per requirement: "confirm with 4H"):
- *     - EMA50 vs EMA200  -> long-term trend direction / golden-death regime
- *     - RSI(14)          -> oversold(<30) / overbought(>70)
- *     - MACD              -> golden cross (buy) / death cross (sell)
- *     - Bollinger Bands   -> cheap (<20% of band) / expensive (>80% of band) zone
- *  2. M15 candles = the SCALPING ENTRY TRIGGER timeframe (fast confirmation that
- *     must agree with the H4 regime before a signal is published):
- *     - MACD cross, EMA9/21 structure, RSI
- *  3. Order book depth = Order Book / Volume Profile proxy: sums bid vs ask size
- *     within ~1% of mid price to see which side (buy wall / sell wall) whales are
- *     stacking on.
- *  A signal is only published if total confluence clears a minimum threshold AND
- *  the H4 regime agrees with the final direction (the "4H confirmation" rule).
- * ===================================================================== */
-// Screening: previously only the 30 most-liquid pairs were scanned, which — combined
-// with strict multi-condition entry rules that must all line up at once — meant good
-// setups were being missed simply because most of the market was never even checked.
-// Scanning far more of the ~500+ available USDT perpetuals gives the strict rules a
-// much bigger pool to actually find a genuine match in every day. The cutoff is still
-// sorted by 24h volume (see fetchAllPerpetualPairs), so it doubles as a liquidity
-// screen too — a technically "perfect" setup on an illiquid pair with no real order
-// flow behind it isn't a signal worth trading anyway.
-const SIGNAL_SCAN_TOP_N = 250;         // most-liquid pairs scanned per run
-const SIGNAL_ENTRY_INTERVAL = '15m';   // fast scalping entry-trigger timeframe
-const SIGNAL_CONFIRM_INTERVAL = '4h';  // confirmation timeframe (per requirement)
-let signalScannerMode = 'futures';     // 'futures' | 'spot'
-// Futures Signal is branched into 3 independent trading-style scanners, each with its
-// own timeframe, indicator combo and (per requirement) its own separate signal list —
-// switching style never mixes results between Scalping / Day Trading / Swing Trading.
-let signalScannerStyle = 'scalping';   // 'scalping' | 'daytrading' | 'swing' (futures only)
-let futuresSignalResultsByStyle = { scalping: [], daytrading: [], swing: [] };
-let spotSignalResults = [];
-let signalScanRunning = false;
-let signalPriceTimer = null;
-let signalRescanTimer = null;
-
-async function mapLimit(items, limit, fn){
-  const ret = new Array(items.length);
-  let i = 0;
-  async function worker(){
-    while(i<items.length){
-      const idx = i++;
-      try{ ret[idx] = await fn(items[idx], idx); }catch(e){ ret[idx] = null; }
-    }
-  }
-  await Promise.all(Array.from({length:Math.min(limit, items.length)}, worker));
-  return ret;
-}
-
-// Order Book / Volume Profile proxy — sums resting bid/ask size within ~1% of mid
-// price to approximate where whale buy-walls / sell-walls are sitting.
-async function fetchOrderBookBias(symbol, isFutures){
-  try{
-    const url = isFutures
-      ? `https://fapi.binance.com/fapi/v1/depth?symbol=${symbol}&limit=100`
-      : `https://api.binance.com/api/v3/depth?symbol=${symbol}&limit=100`;
-    const ob = await fetchJsonRace([url], 6000);
-    const bids = (ob.bids||[]).map(b=>({p:parseFloat(b[0]), q:parseFloat(b[1])}));
-    const asks = (ob.asks||[]).map(a=>({p:parseFloat(a[0]), q:parseFloat(a[1])}));
-    if(!bids.length || !asks.length) return {ratio:0.5, bias:'neutral'};
-    const mid = (bids[0].p + asks[0].p) / 2;
-    const band = mid * 0.01;
-    const bidQty = bids.filter(b=>b.p>=mid-band).reduce((s,b)=>s+b.q, 0);
-    const askQty = asks.filter(a=>a.p<=mid+band).reduce((s,a)=>s+a.q, 0);
-    const total = bidQty + askQty;
-    const ratio = total>0 ? bidQty/total : 0.5;
-    const bias = ratio>=0.58 ? 'buy' : ratio<=0.42 ? 'sell' : 'neutral';
-    return {ratio, bias};
-  }catch(e){ return {ratio:0.5, bias:'neutral'}; }
-}
-
-// Core scoring: combines the H4 confirmation timeframe + M15 scalping trigger +
-// order-book wall bias into a single LONG/SHORT setup, or null if not confluent
-// enough / not confirmed by the H4 regime.
-// Signals are LOCKED once created — entry/SL/targets/open-date are persisted in
-// localStorage and never recalculated on later scans/reloads, per requirement.
-const SIGNAL_STORE_KEY_SPOT = 'tiaa_spot_signals_v1';
-const SIGNAL_STORE_KEYS_FUTURES = {
-  scalping: 'tiaa_futures_signals_scalping_v1',
-  daytrading: 'tiaa_futures_signals_daytrading_v1',
-  swing: 'tiaa_futures_signals_swing_v1',
-};
-// `style` is only meaningful when mode==='futures' — each style gets its own storage
-// key so Scalping / Day Trading / Swing Trading signals are locked & tracked separately.
-function storeKeyFor(mode, style){
-  if(mode==='spot') return SIGNAL_STORE_KEY_SPOT;
-  return SIGNAL_STORE_KEYS_FUTURES[style] || SIGNAL_STORE_KEYS_FUTURES.scalping;
-}
-function loadStoredSignals(mode, style){
-  try{ return JSON.parse(localStorage.getItem(storeKeyFor(mode, style)) || '{}'); }
-  catch(e){ return {}; }
-}
-function saveStoredSignals(mode, style, obj){
-  try{ localStorage.setItem(storeKeyFor(mode, style), JSON.stringify(obj)); }catch(e){}
-}
-
-async function computeConfirmedSignal(pairSymbol, isFutures){
-  const h4k = await fetchKlinesCrypto(pairSymbol, SIGNAL_CONFIRM_INTERVAL, 260);
-  const h4closes = h4k.map(c=>parseFloat(c[4])), h4highs = h4k.map(c=>parseFloat(c[2])), h4lows = h4k.map(c=>parseFloat(c[3]));
-  if(h4closes.length < 210) return null; // not enough history for a reliable EMA200
-
-  const h4Ema50 = ema(h4closes,50).at(-1);
-  const h4Ema200 = ema(h4closes,200).at(-1);
-  const h4Rsi = rsi(h4closes,14);
-  const h4Macd = macdFull(h4closes);
-  const h4Bb = bollinger(h4closes,20,2);
-  const h4Atr = atr(h4highs, h4lows, h4closes, 14);
-  const price = h4closes.at(-1);
-  if([h4Ema50,h4Ema200,h4Rsi,h4Atr].some(v=>v==null)) return null;
-
-  const m15k = await fetchKlinesCrypto(pairSymbol, SIGNAL_ENTRY_INTERVAL, 150);
-  const m15closes = m15k.map(c=>parseFloat(c[4]));
-  if(m15closes.length < 30) return null;
-  const m15Ema9 = ema(m15closes,9).at(-1), m15Ema21 = ema(m15closes,21).at(-1);
-  const m15Rsi = rsi(m15closes,14);
-  const m15Macd = macdFull(m15closes);
-
-  const ob = await fetchOrderBookBias(pairSymbol, isFutures);
-
-  // Struktur pasar (Smart Money Concept): HH+HL = uptrend, LH+LL = downtrend — dihitung
-  // murni dari price action koin ini sendiri (bukan dari BTC), jadi tiap koin bisa punya
-  // arah sinyal yang berbeda tergantung polanya masing-masing.
-  const patterns = detectPatterns(h4highs, h4lows, h4closes);
-  const structureTrend = patterns[0]?.dir || 'neutral'; // 'bullish' | 'bearish' | 'neutral'
-  // Smart Money Concept: fresh demand/supply zone (base sebuah impulsive move) dekat harga
-  const sd = findSupplyDemandZones(h4highs, h4lows, h4closes, h4Atr);
-  const inFreshDemand = sd.demandZones.some(z=>!z.tested && price>=z.low && price<=z.high*1.01);
-  const inFreshSupply = sd.supplyZones.some(z=>!z.tested && price<=z.high && price>=z.low*0.99);
-  // Support & Resistance klasik (cluster pivot dengan banyak sentuhan)
-  const sr = findSupportResistance(h4highs, h4lows, h4closes);
-  const nearSupport = sr.nearestSupport && Math.abs(price-sr.nearestSupport.price)/price<0.006;
-  const nearResistance = sr.nearestResistance && Math.abs(price-sr.nearestResistance.price)/price<0.006;
-
-  let long=0, short=0;
-  // Arah tren utama & struktur pasar (SMC) — bobot terbesar karena ini penentu arah LONG/SHORT
-  if(structureTrend==='bullish') long+=3; else if(structureTrend==='bearish') short+=3;
-  // EMA50/EMA200 (arah tren jangka panjang / dynamic S&R)
-  if(h4Ema50>h4Ema200) long+=2; else short+=2;
-  if(price>h4Ema50) long+=1; else short+=1;
-  // RSI(14) oversold / overbought
-  if(h4Rsi<30) long+=1.5; else if(h4Rsi>70) short+=1.5;
-  // MACD golden cross / death cross
-  const h4CrossUp = h4Macd.prev.macd<=h4Macd.prev.signal && h4Macd.last.macd>h4Macd.last.signal;
-  const h4CrossDown = h4Macd.prev.macd>=h4Macd.prev.signal && h4Macd.last.macd<h4Macd.last.signal;
-  if(h4CrossUp) long+=2; else if(h4Macd.last.hist>0) long+=1;
-  if(h4CrossDown) short+=2; else if(h4Macd.last.hist<0) short+=1;
-  // Bollinger Bands cheap/expensive zone
-  if(h4Bb){ if(h4Bb.pctB<0.2) long+=1; else if(h4Bb.pctB>0.8) short+=1; }
-  // Smart Money Concept: fresh demand/supply zone
-  if(inFreshDemand) long+=1.5;
-  if(inFreshSupply) short+=1.5;
-  // Support & Resistance proximity
-  if(nearSupport) long+=1;
-  if(nearResistance) short+=1;
-  // M15 scalping entry trigger
-  const m15CrossUp = m15Macd.prev.macd<=m15Macd.prev.signal && m15Macd.last.macd>m15Macd.last.signal;
-  const m15CrossDown = m15Macd.prev.macd>=m15Macd.prev.signal && m15Macd.last.macd<m15Macd.last.signal;
-  if(m15CrossUp) long+=1.5; else if(m15CrossDown) short+=1.5;
-  if(m15Ema9>m15Ema21) long+=0.5; else short+=0.5;
-  if(m15Rsi!=null){ if(m15Rsi<35) long+=0.5; else if(m15Rsi>65) short+=0.5; }
-  // Order Book / Volume Profile buy-wall / sell-wall
-  if(ob.bias==='buy') long+=1.5; else if(ob.bias==='sell') short+=1.5;
-
-  const total = long+short, diff = long-short;
-  if(total<4 || Math.abs(diff)<3) return null; // not confluent enough — skip
-  const direction = diff>0 ? 'LONG' : 'SHORT';
-  const h4Regime = h4Ema50>h4Ema200 ? 'LONG' : 'SHORT';
-  if(h4Regime !== direction) return null; // must be confirmed by the 4H regime
-  // Arah sinyal wajib selaras dengan struktur tren koin itu sendiri (naik->long, turun->short)
-  if(structureTrend==='bullish' && direction==='SHORT') return null;
-  if(structureTrend==='bearish' && direction==='LONG') return null;
-
-  const confidence = Math.max(40, Math.min(97, Math.round((Math.abs(diff)/15.5)*100)));
-  if(confidence<65) return null; // minimum conviction required to lock in a signal
-  const atrPct = h4Atr/price*100;
-  let leverage;
-  if(atrPct<1) leverage=10; else if(atrPct<2) leverage=8; else if(atrPct<3.5) leverage=5; else if(atrPct<6) leverage=3; else leverage=2;
-  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
-
-  const dir = direction==='LONG' ? 1 : -1;
-  const entry = price;
-  const sl = entry - dir*1.3*h4Atr;
-  const targets = [0.8,1.6,2.8,4.5].map(m=> entry + dir*m*h4Atr);
-
-  const trendLabel = structureTrend==='bullish' ? 'Uptrend (HH/HL)' : structureTrend==='bearish' ? 'Downtrend (LH/LL)' : 'Netral';
-  const reason = `Trend: ${trendLabel} · RSI H4 ${h4Rsi.toFixed(0)} · ATR ${atrPct.toFixed(2)}% · Order Book: ${ob.bias.toUpperCase()} · Confidence ${confidence}%`;
-
-  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
-    entry, sl, targets, leverage, capitalPct, atrPct, obBias: ob.bias, rsiH4: h4Rsi,
-    structureTrend, timeframe:'H4 + M15', reason, openTime: Date.now() };
-}
-
-/* ================= FUTURES SIGNAL — BRANCHED STRATEGIES ================= */
-// Three fully independent scanners for the Futures Signal page, per the user's
-// requirement: Scalping (1m/5m, Stoch RSI + EMA Ribbon), Day Trading (15m entry / 1H
-// trend, VWAP + RSI + Volume) and Swing Trading (4H, Bollinger Bands + MACD Histogram).
-// Each keeps its own locked signal list — switching style never mixes results.
-
-// ---- 1) SCALPING (menit) — Stochastic RSI + EMA Ribbon (EMA 5/8/13/21) on M5 ----
-// Strictly follows the given playbook:
-//  Entry LONG : EMA Ribbon rapi tersusun naik & mulai membuka lebar (uptrend kuat) +
-//               Stoch RSI sempat oversold (<20) lalu cross up.
-//  Entry SHORT: mirror — ribbon turun & melebar ke bawah + Stoch RSI sempat overbought
-//               (>80) lalu cross down.
-//  Exit (TP)  : Stoch RSI menyentuh 80/20, atau harga menembus balik EMA5 — didekati
-//               di sini lewat tangga target ATR + SL below/above EMA5 (lihat status).
-//  SL         : wajib ketat di bawah/atas EMA21.
-async function computeScalpingSignal(pairSymbol){
-  const k5 = await fetchKlinesCrypto(pairSymbol, '5m', 150);
-  const closes=k5.map(c=>parseFloat(c[4])), highs=k5.map(c=>parseFloat(c[2])), lows=k5.map(c=>parseFloat(c[3]));
-  if(closes.length<40) return null;
-  const price = closes.at(-1);
-  const ribbon = emaRibbon(closes, [5,8,13,21]);
-  const srsi = stochasticRSI(closes, 14, 14, 3, 3);
-  const atrVal = atr(highs, lows, closes, 14);
-  if(!ribbon || !srsi || atrVal==null) return null;
-
-  const reasons=[];
-  const longTrigger = ribbon.bullish && ribbon.expanding && srsi.recentCrossUp && srsi.wasOversold;
-  const shortTrigger = ribbon.bearish && ribbon.expanding && srsi.recentCrossDown && srsi.wasOverbought;
-  if(!longTrigger && !shortTrigger) return null; // must satisfy the full playbook, not a partial score
-  const direction = longTrigger ? 'LONG' : 'SHORT';
-
-  if(direction==='LONG'){
-    reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun naik dan mulai membuka lebar (tren naik kuat)');
-    reasons.push(`Stoch RSI sempat oversold (low ${srsi.recentLow.toFixed(0)}) lalu cross up (K ${srsi.k.toFixed(0)})`);
-  } else {
-    reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun turun dan mulai membuka lebar (tren turun kuat)');
-    reasons.push(`Stoch RSI sempat overbought (high ${srsi.recentHigh.toFixed(0)}) lalu cross down (K ${srsi.k.toFixed(0)})`);
-  }
-
-  // Confidence: locked at a 65% floor once the full playbook fires, then scaled up by
-  // how strong the trigger is — a deeper oversold/overbought dip and a wider-expanding
-  // ribbon both mean more conviction, capped at 95%.
-  const depthExtreme = direction==='LONG' ? (20-srsi.recentLow) : (srsi.recentHigh-80);
-  const depthBonus = Math.max(0, Math.min(15, depthExtreme/20*15));
-  const ribbonSpreadNow = Math.abs(ribbon.values[5]-ribbon.values[21])/price*100;
-  const spreadBonus = Math.max(0, Math.min(10, ribbonSpreadNow*4));
-  const priceBeyondEma5 = direction==='LONG' ? price>ribbon.values[5] : price<ribbon.values[5];
-  const confirmBonus = priceBeyondEma5 ? 5 : 0;
-  const confidence = Math.max(65, Math.min(95, Math.round(65+depthBonus+spreadBonus+confirmBonus)));
-
-  const atrPct = atrVal/price*100;
-  // SL wajib ketat di bawah/atas EMA21 (small ATR buffer keeps it from sitting exactly
-  // on the line, which would get stopped out by noise).
-  const dir = direction==='LONG' ? 1 : -1;
-  const entry = price;
-  const sl = direction==='LONG' ? ribbon.values[21] - 0.15*atrVal : ribbon.values[21] + 0.15*atrVal;
-  // Targets approximate the "Stoch RSI 80/20 atau tembus balik EMA5" exit rule as an
-  // ATR ladder — scalping exits are meant to land within minutes.
-  const targets = [0.5,1.0,1.6,2.2].map(m=> entry + dir*m*atrVal);
-  let leverage; if(atrPct<0.5) leverage=15; else if(atrPct<1) leverage=10; else if(atrPct<2) leverage=6; else if(atrPct<3.5) leverage=4; else leverage=2;
-  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
-  const reason = `${reasons.join(' · ')} · ATR ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
-
-  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
-    entry, sl, targets, leverage, capitalPct, atrPct, style:'scalping', timeframe:'M5', reason, openTime: Date.now() };
-}
-
-// ---- 2) DAY TRADING (4–12 jam) — VWAP + RSI Standar + Volume, M15 entry / H1 trend ----
-// Strictly follows the given playbook:
-//  1H  : harga di atas/bawah VWAP ~24h = konfirmasi bias bullish/bearish harian.
-//  M15 : harga koreksi mendekati VWAP atau support/resistance horizontal terdekat,
-//        RSI M15 di area 30–40 (LONG) atau 60–70 (SHORT), volume mulai membesar.
-//  Exit: target di resistance/support terdekat atau RSI M15 menyentuh 70/30.
-//  SL  : sedikit di bawah/atas VWAP — kalau VWAP jebol dengan volume besar, keluar.
-async function computeDayTradingSignal(pairSymbol){
-  const k1h = await fetchKlinesCrypto(pairSymbol, '1h', 60);
-  const h1closes=k1h.map(c=>parseFloat(c[4])), h1highs=k1h.map(c=>parseFloat(c[2])), h1lows=k1h.map(c=>parseFloat(c[3])), h1vol=k1h.map(c=>parseFloat(c[5]));
-  if(h1closes.length<26) return null;
-  const vwap1h = vwapRolling(h1highs, h1lows, h1closes, h1vol, 24); // ~24h rolling VWAP
-  const price = h1closes.at(-1);
-  const aboveVwap = price>vwap1h;
-  const atr1h = atr(h1highs, h1lows, h1closes, 14);
-  if(atr1h==null) return null;
-
-  const k15 = await fetchKlinesCrypto(pairSymbol, '15m', 100);
-  const m15closes=k15.map(c=>parseFloat(c[4])), m15highs=k15.map(c=>parseFloat(c[2])), m15lows=k15.map(c=>parseFloat(c[3])), m15vol=k15.map(c=>parseFloat(c[5]));
-  if(m15closes.length<30) return null;
-  const price15 = m15closes.at(-1);
-  const rsi15 = rsi(m15closes, 14);
-  const volRatio = volumeRatio(m15vol, 20);
-  const sr = findSupportResistance(m15highs, m15lows, m15closes);
-  const nearVwap = Math.abs(price15-vwap1h)/price15 < 0.015;
-  const nearSupport = sr.nearestSupport && Math.abs(price15-sr.nearestSupport.price)/price15 < 0.01;
-  const nearResistance = sr.nearestResistance && Math.abs(price15-sr.nearestResistance.price)/price15 < 0.01;
-  const pulledBack = nearVwap || nearSupport || nearResistance;
-  const volumeUp = volRatio!=null && volRatio>1.1;
-  const rsiLongZone = rsi15!=null && rsi15>=30 && rsi15<=40;
-  const rsiShortZone = rsi15!=null && rsi15>=60 && rsi15<=70;
-
-  const longTrigger = aboveVwap && pulledBack && rsiLongZone && volumeUp;
-  const shortTrigger = !aboveVwap && pulledBack && rsiShortZone && volumeUp;
-  if(!longTrigger && !shortTrigger) return null; // must satisfy the full playbook, not a partial score
-  const direction = longTrigger ? 'LONG' : 'SHORT';
-
-  const reasons=[];
-  reasons.push(aboveVwap ? 'Harga H1 di atas VWAP ~24h (konfirmasi bias bullish harian)' : 'Harga H1 di bawah VWAP ~24h (konfirmasi bias bearish harian)');
-  if(nearVwap) reasons.push('Harga M15 koreksi mendekati garis VWAP');
-  if(nearSupport) reasons.push('Harga M15 koreksi mendekati level Support horizontal');
-  if(nearResistance) reasons.push('Harga M15 koreksi mendekati level Resistance horizontal');
-  reasons.push(`RSI M15 ${rsi15.toFixed(0)} — persis di area ${direction==='LONG'?'30–40':'60–70'} yang disyaratkan`);
-  reasons.push(`Volume M15 mulai membesar (${volRatio.toFixed(1)}x rata-rata)`);
-
-  // Confidence: locked at a 65% floor once the full playbook fires, then scaled up by
-  // how centered the RSI pullback is and how strong the volume push is.
-  const rsiCenter = direction==='LONG' ? 35 : 65;
-  const rsiPrecision = Math.max(0, 10 - Math.abs(rsi15-rsiCenter)*2); // up to +10
-  const volBonus = Math.max(0, Math.min(15, (volRatio-1.1)*20));
-  const pullbackBonus = (nearVwap?4:0) + (nearSupport||nearResistance?6:0);
-  const confidence = Math.max(65, Math.min(95, Math.round(65+rsiPrecision+volBonus+pullbackBonus)));
-
-  const atrPct = atr1h/price*100;
-  const dir = direction==='LONG' ? 1 : -1;
-  const entry = price15;
-  // SL sits just beyond the VWAP line — if price breaks VWAP against the position with
-  // volume, the daily trend has flipped and the setup is invalidated.
-  const sl = direction==='LONG' ? vwap1h - 0.3*atr1h : vwap1h + 0.3*atr1h;
-  const resistanceTp = direction==='LONG' ? sr.nearestResistance?.price : sr.nearestSupport?.price;
-  const targets = [1.2,2.2,3.5,5].map((m,idx)=>{
-    const atrTarget = entry + dir*m*atr1h;
-    // First target prefers the nearest horizontal resistance/support if it's beyond entry.
-    if(idx===0 && resistanceTp && (dir>0 ? resistanceTp>entry : resistanceTp<entry)) return resistanceTp;
-    return atrTarget;
-  });
-  let leverage; if(atrPct<1) leverage=8; else if(atrPct<2) leverage=6; else if(atrPct<3.5) leverage=4; else leverage=2;
-  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
-  const reason = `${reasons.join(' · ')} · ATR H1 ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
-
-  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
-    entry, sl, targets, leverage, capitalPct, atrPct, style:'daytrading', timeframe:'M15 + H1', reason, openTime: Date.now() };
-}
-
-// ---- 3) SWING TRADING (1–3 hari) — Bollinger Bands + MACD Histogram on H4 ----
-// Strictly follows the given playbook:
-//  Entry LONG : harga menyentuh/menembus Lower Band + histogram merah mulai memudar
-//               + Golden Cross MACD terkonfirmasi.
-//  Entry SHORT: mirror — Upper Band + histogram hijau memudar + Death Cross.
-//  Exit (TP)  : biarkan mengalir sampai menyentuh Band seberang (1–3 hari).
-//  SL         : di bawah/atas swing low/high candlestick terakhir sebelum entry.
-async function computeSwingSignal(pairSymbol){
-  const k4h = await fetchKlinesCrypto(pairSymbol, '4h', 150);
-  const closes=k4h.map(c=>parseFloat(c[4])), highs=k4h.map(c=>parseFloat(c[2])), lows=k4h.map(c=>parseFloat(c[3]));
-  if(closes.length<35) return null;
-  const bb = bollinger(closes, 20, 2);
-  const m = macdFull(closes);
-  const atrVal = atr(highs, lows, closes, 14);
-  if(!bb || atrVal==null) return null;
-  const price = closes.at(-1);
-
-  const touchLower = lows.slice(-5).some(low=> low<=bb.lower*1.003);
-  const touchUpper = highs.slice(-5).some(high=> high>=bb.upper*0.997);
-  const histNow=m.last.hist, histPrev=m.prev.hist;
-  const fadingDown = histNow<0 && Math.abs(histNow)<Math.abs(histPrev);
-  const fadingUp = histNow>0 && Math.abs(histNow)<Math.abs(histPrev);
-  const crossUp = m.recentCrossUp;
-  const crossDown = m.recentCrossDown;
-
-  const longTrigger = touchLower && fadingDown && crossUp;
-  const shortTrigger = touchUpper && fadingUp && crossDown;
-  if(!longTrigger && !shortTrigger) return null; // must satisfy the full playbook, not a partial score
-  const direction = longTrigger ? 'LONG' : 'SHORT';
-
-  const reasons=[];
-  reasons.push(direction==='LONG'
-    ? `Harga menyentuh/menembus Lower Bollinger Band (%B ${bb.pctB.toFixed(2)})`
-    : `Harga menyentuh/menembus Upper Bollinger Band (%B ${bb.pctB.toFixed(2)})`);
-  reasons.push(direction==='LONG' ? 'MACD Histogram merah mulai memudar (tekanan jual habis)' : 'MACD Histogram hijau mulai memudar (tekanan beli habis)');
-  reasons.push(direction==='LONG' ? 'Golden Cross MACD terkonfirmasi' : 'Death Cross MACD terkonfirmasi');
-
-  // Confidence: locked at a 65% floor once the full playbook fires, then scaled up by
-  // how deep the band touch was and how strongly the histogram is fading.
-  const deepestTouch = direction==='LONG'
-    ? Math.max(0, (bb.lower*1.003-Math.min(...lows.slice(-5)))/bb.lower*100)
-    : Math.max(0, (Math.max(...highs.slice(-5))-bb.upper*0.997)/bb.upper*100);
-  const bandBonus = Math.max(0, Math.min(12, deepestTouch*30));
-  const fadeRatio = histPrev!==0 ? 1-Math.abs(histNow)/Math.abs(histPrev) : 0;
-  const fadeBonus = Math.max(0, Math.min(13, fadeRatio*20));
-  const confidence = Math.max(65, Math.min(95, Math.round(65+bandBonus+fadeBonus)));
-
-  const atrPct = atrVal/price*100;
-  const dir = direction==='LONG' ? 1 : -1;
-  const entry = price;
-  // SL: di bawah/atas swing low/high (candlestick pivot terakhir) sebelum entry — jatuh
-  // balik ke min/max mentah dari beberapa candle terakhir kalau belum ada pivot valid.
-  const {pivotHighs, pivotLows} = findPivots(highs, lows, 2);
-  const lastPivotLow = pivotLows.length ? pivotLows[pivotLows.length-1].price : Math.min(...lows.slice(-8));
-  const lastPivotHigh = pivotHighs.length ? pivotHighs[pivotHighs.length-1].price : Math.max(...highs.slice(-8));
-  const sl = direction==='LONG' ? lastPivotLow - 0.3*atrVal : lastPivotHigh + 0.3*atrVal;
-  // Primary exit is the opposite Bollinger Band; extra extension targets beyond it are
-  // offered for those who want to trail rather than exit all at once.
-  const targets = direction==='LONG'
-    ? [bb.basis, bb.upper, bb.upper+0.6*atrVal, bb.upper+1.2*atrVal]
-    : [bb.basis, bb.lower, bb.lower-0.6*atrVal, bb.lower-1.2*atrVal];
-  let leverage; if(atrPct<1.5) leverage=5; else if(atrPct<3) leverage=3; else leverage=2;
-  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
-  const reason = `${reasons.join(' · ')} · ATR H4 ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
-
-  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
-    entry, sl, targets, leverage, capitalPct, atrPct, style:'swing', timeframe:'H4', reason, openTime: Date.now() };
-}
-
-async function computeStyleSignal(pairSymbol, style){
-  if(style==='daytrading') return computeDayTradingSignal(pairSymbol);
-  if(style==='swing') return computeSwingSignal(pairSymbol);
-  return computeScalpingSignal(pairSymbol);
-}
-
-// Scans the universe for pairs WITHOUT an already-locked active signal, and locks in
-// any new confluent setup found. Pairs that already have an active signal are skipped
-// entirely (their entry/SL/TP/date must never change once set) — we only refresh their
-// live price (via refreshSignalTickers) to check if SL/TP has since been hit.
-async function scanSignals(mode){
-  if(signalScanRunning) return;
-  signalScanRunning = true;
-  const isFutures = mode==='futures';
-  const style = isFutures ? signalScannerStyle : null;
-  const listEl = document.getElementById('fsigList');
-  const store = loadStoredSignals(mode, style);
-  const hasExisting = Object.values(store).some(s=>s.status==='active');
-  if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_market_data')}…</div>`;
-  try{
-    const {pairs} = await fetchAllPerpetualPairs();
-    const universe = pairs.slice(0, SIGNAL_SCAN_TOP_N).map(p=>p.pair);
-    const toScan = universe.filter(sym=> !store[sym] || store[sym].status!=='active');
-    let done = 0;
-    await mapLimit(toScan, 10, async(sym)=>{
-      const r = isFutures ? await computeStyleSignal(sym, style) : await computeConfirmedSignal(sym, isFutures);
-      done++;
-      if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${toScan.length})</div>`;
-      // Spot can only ever BUY (no shorting on spot) — drop SHORT-direction results there.
-      if(r && !isFutures && r.direction==='SHORT') return;
-      if(r) store[sym] = { ...r, status:'active', tpHit:new Array(r.targets.length).fill(false), mfe:r.entry }; // LOCKED here — never overwritten again
-    });
-    saveStoredSignals(mode, style, store);
-    applyStoreToState(mode, style, store);
-    await refreshSignalTickers(false);
-    checkSignalClosures(mode, style);
-    renderSignalList(mode);
-    startSignalPriceLoop();
-  }catch(e){
-    console.error(e);
-    if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">
-        ${t('failed_load_market')}<br>
-        <button class="retry-btn" onclick="scanSignals('${mode}')">↻ ${t('retry')}</button>
-      </div>`;
-  }
-  signalScanRunning = false;
-}
-
-function applyStoreToState(mode, style, store){
-  const active = Object.values(store).filter(s=>s.status==='active').sort((a,b)=>b.confidence-a.confidence);
-  if(mode==='futures') futuresSignalResultsByStyle[style] = active; else spotSignalResults = active;
-}
-
-// Once a locked signal's live price crosses its stoploss, or the move fully reverses
-// against the position, the setup is invalid — it's deleted immediately so the pair
-// frees up for a fresh signal. Hitting a take-profit level is permanently remembered
-// (tpHit stays true forever, even if price later pulls back) so its checkmark never
-// disappears. Only the final target closes the trade out entirely. Entry/SL/targets/
-// openTime themselves are NEVER modified here — only status/tpHit/mfe are touched.
-function checkSignalClosures(mode, style){
-  const store = loadStoredSignals(mode, style);
-  let changed = false;
-  Object.keys(store).forEach(sym=>{
-    const s = store[sym];
-    if(s.status!=='active') return;
-    const live = tickerMap[s.pair] ? parseFloat(tickerMap[s.pair].lastPrice) : null;
-    if(live==null) return;
-    const dir = s.direction==='LONG' ? 1 : -1;
-    const finalTp = s.targets[s.targets.length-1];
-
-    // 1) Stoploss hit -> invalid, delete immediately.
-    const slHit = dir>0 ? live<=s.sl : live>=s.sl;
-    if(slHit){ delete store[sym]; changed=true; return; }
-
-    // 2) Track max favorable excursion (best price reached in the signal's favor).
-    if(s.mfe==null) s.mfe = s.entry;
-    s.mfe = dir>0 ? Math.max(s.mfe, live) : Math.min(s.mfe, live);
-
-    // 3) Reversal: price had genuinely moved in the signal's favor (past 30% of the
-    //    distance to TP1) but has since fully reversed back through entry — the setup
-    //    that justified the signal no longer holds, so it's invalid and gets deleted.
-    const firstTpDist = Math.abs(s.targets[0]-s.entry);
-    const favorableMove = Math.abs(s.mfe-s.entry);
-    const wentFavorable = favorableMove >= 0.3*firstTpDist;
-    const backThroughEntry = dir>0 ? live<=s.entry : live>=s.entry;
-    if(wentFavorable && backThroughEntry){ delete store[sym]; changed=true; return; }
-
-    // 4) Take-profit checkmarks — set once, never unset.
-    if(!Array.isArray(s.tpHit) || s.tpHit.length!==s.targets.length) s.tpHit = new Array(s.targets.length).fill(false);
-    s.targets.forEach((tp,idx)=>{
-      const hit = dir>0 ? live>=tp : live<=tp;
-      if(hit && !s.tpHit[idx]){ s.tpHit[idx]=true; changed=true; }
-    });
-
-    // 5) Final target hit -> trade fully closed, frees the pair for a new signal.
-    const finalHit = dir>0 ? live>=finalTp : live<=finalTp;
-    if(finalHit){ s.status='tp_hit'; changed=true; }
-  });
-  if(changed) saveStoredSignals(mode, style, store);
-  applyStoreToState(mode, style, store);
-}
-
-function switchSignalScanner(mode){
-  signalScannerMode = mode;
-  document.getElementById('sigTabSpot')?.classList.toggle('active', mode==='spot');
-  document.getElementById('sigTabFutures')?.classList.toggle('active', mode==='futures');
-  document.getElementById('fsigTitle').textContent = mode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
-  document.getElementById('fsigResultsPanel').style.display = 'none';
-  // The Scalping/Day Trading/Swing Trading branch tabs only apply to Futures Signal —
-  // Spot Signal keeps its original single-list behaviour.
-  const styleTabs = document.getElementById('fsigStyleTabs');
-  const styleDesc = document.getElementById('fsigStyleDesc');
-  if(styleTabs) styleTabs.style.display = mode==='futures' ? 'flex' : 'none';
-  if(styleDesc) styleDesc.style.display = mode==='futures' ? 'block' : 'none';
-  const style = mode==='futures' ? signalScannerStyle : null;
-  applyStoreToState(mode, style, loadStoredSignals(mode, style));
-  renderSignalList(mode);
-  startSignalPriceLoop();
-  scanSignals(mode); // fills in any newly-forming signals; already-locked ones are untouched
-}
-
-// Switches which of the 3 Futures Signal strategies (Scalping / Day Trading / Swing
-// Trading) is showing. Each keeps a fully separate, independently-locked signal list.
-function switchSignalStyle(style){
-  if(signalScannerStyle===style && signalScannerMode==='futures') { /* still refresh below */ }
-  signalScannerStyle = style;
-  document.querySelectorAll('.fsig-style-tab').forEach(el=> el.classList.toggle('active', el.dataset.style===style));
-  const descKey = style==='daytrading' ? 'fsig_style_daytrading_desc' : style==='swing' ? 'fsig_style_swing_desc' : 'fsig_style_scalping_desc';
-  const descEl = document.getElementById('fsigStyleDesc');
-  if(descEl){ descEl.dataset.i18n = descKey; descEl.textContent = t(descKey); }
-  document.getElementById('fsigResultsPanel').style.display = 'none';
-  applyStoreToState('futures', style, loadStoredSignals('futures', style));
-  renderSignalList('futures');
-  startSignalPriceLoop();
-  scanSignals('futures');
-}
-
-// Pulls fresh 24h tickers so target/stoploss checkmarks reflect the live price —
-// reuses the same ticker map the rest of the dashboard uses.
-async function refreshSignalTickers(rerender=true){
-  try{
-    const tickers = await fetchAllBinanceTickers();
-    tickers.forEach(tk=>{ tickerMap[tk.symbol] = tk; });
-  }catch(e){ /* keep last known prices on failure */ }
-  checkSignalClosures(signalScannerMode, signalScannerMode==='futures' ? signalScannerStyle : null);
-  if(rerender) renderSignalList(signalScannerMode);
-}
-function startSignalPriceLoop(){
-  if(signalPriceTimer) clearInterval(signalPriceTimer);
-  signalPriceTimer = setInterval(()=>refreshSignalTickers(true), 30000);
-  // Full rescan every few minutes: picks up brand-new confluent signals as they form,
-  // and (via checkSignalClosures inside scanSignals) prunes out any signal that has
-  // since hit its stoploss or reversed — so the list stays live/real-time all day
-  // without needing the user to switch tabs.
-  if(signalRescanTimer) clearInterval(signalRescanTimer);
-  signalRescanTimer = setInterval(()=>scanSignals(signalScannerMode), 5*60000);
-}
-
-function pctFrom(entry, val){ return (val-entry)/entry*100; }
-
-function renderSignalList(mode){
-  if(mode!==signalScannerMode) return;
-  const signals = mode==='futures' ? (futuresSignalResultsByStyle[signalScannerStyle]||[]) : spotSignalResults;
-  const countEl = document.getElementById('fsigCount');
-  if(countEl) countEl.textContent = `(${signals.length})`;
-  const listEl = document.getElementById('fsigList');
-  if(!listEl) return;
-  if(!signals.length){
-    listEl.innerHTML = `<div class="sidebar-loading">${t('fsig_no_signal')}<br>
-        <button class="retry-btn" onclick="scanSignals('${mode}')">↻ ${t('retry')}</button></div>`;
-    return;
-  }
-  const openCards = new Set([...listEl.querySelectorAll('.fsig-card.open')].map(c=>c.id));
-  listEl.innerHTML = signals.map((s,i)=>renderSignalCard(s,i,mode, openCards.has('fsigCard'+i))).join('');
-}
-
-const FSIG_STYLE_LABEL = { scalping:'Scalping', daytrading:'Day Trading', swing:'Swing Trading' };
-function renderSignalCard(s, i, mode, wasOpen){
-  const dirClass = s.direction==='LONG' ? 'long' : 'short';
-  // Tanggal & jam sinyal dibuat — dikunci sejak pertama kali terdeteksi, tidak berubah lagi.
-  const dateStr = new Date(s.openTime).toLocaleDateString('en-GB');
-  const timeStr = new Date(s.openTime).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-  const live = tickerMap[s.pair] ? parseFloat(tickerMap[s.pair].lastPrice) : s.entry;
-  const dir = s.direction==='LONG' ? 1 : -1;
-  const targetsHtml = s.targets.map((tp,idx)=>{
-    const hit = Array.isArray(s.tpHit) ? !!s.tpHit[idx] : (dir>0 ? live>=tp : live<=tp);
-    const pct = Math.abs(pctFrom(s.entry, tp));
-    return `<div class="fsig-target ${hit?'hit':''}">
-        <span>${hit?'✓ ':''}${t('fsig_target')} ${String(idx+1).padStart(2,'0')}</span>
-        <span class="mono">${formatPrice(tp)}</span>
-        <span class="mono fsig-target-pct">${pct.toFixed(0)}%</span>
-      </div>`;
-  }).join('');
-  const slPct = Math.abs(pctFrom(s.entry, s.sl));
-  const levBadge = mode==='futures'
-    ? `<div class="fsig-badge fsig-badge-lev">${t('fsig_leverage')}: ${s.leverage}x</div>`
-    : `<div class="fsig-badge fsig-badge-lev" style="background:var(--panel-2); color:var(--ink-dim);">Spot</div>`;
-  const styleBadge = (mode==='futures' && s.style)
-    ? `<span class="fsig-style-badge">${FSIG_STYLE_LABEL[s.style]||s.style} · ${s.timeframe||''}</span>` : '';
-  const reasonText = s.reason || `Confidence ${s.confidence}%`;
-  return `<div class="fsig-card${wasOpen?' open':''}" id="fsigCard${i}">
-    <div class="fsig-head" onclick="toggleFsigCard(${i})">
-      <div class="fsig-avatar ${dirClass}">${s.symbol.slice(0,1)}</div>
-      <div class="fsig-title-col">
-        <div class="fsig-pair">${s.symbol} / USDT</div>
-        <div class="fsig-sub ${dirClass}">${s.direction} · ${t('fsig_open_on')} ${dateStr} ${timeStr}</div>
-      </div>
-      <div class="fsig-chevron">▾</div>
-    </div>
-    <div class="fsig-badges">
-      ${levBadge}
-      <div class="fsig-badge fsig-badge-cap">${t('fsig_capital')}: ${s.capitalPct}%</div>
-    </div>
-    <div class="fsig-body" id="fsigBody${i}" style="display:${wasOpen?'flex':'none'};">
-      ${styleBadge ? `<div>${styleBadge}</div>` : ''}
-      <div class="fsig-entry">${t('entry')}: <span class="mono">${formatPrice(s.entry)}</span></div>
-      ${targetsHtml}
-      <div class="fsig-sl"><span>STOPLOSS</span><span class="mono">${formatPrice(s.sl)} (-${slPct.toFixed(1)}%)</span></div>
-      <div class="fsig-reason">${reasonText}</div>
-    </div>
-  </div>`;
-}
-
-function toggleFsigCard(i){
-  const body = document.getElementById('fsigBody'+i);
-  const card = document.getElementById('fsigCard'+i);
-  const open = body.style.display!=='none';
-  body.style.display = open ? 'none' : 'flex';
-  card.classList.toggle('open', !open);
-}
-
-function toggleFsigResults(){
-  const panel = document.getElementById('fsigResultsPanel');
-  const visible = panel.style.display!=='none';
-  if(visible){ panel.style.display='none'; return; }
-  const signals = signalScannerMode==='futures' ? (futuresSignalResultsByStyle[signalScannerStyle]||[]) : spotSignalResults;
-  const longs = signals.filter(s=>s.direction==='LONG').length;
-  const shorts = signals.filter(s=>s.direction==='SHORT').length;
-  const avgConf = signals.length ? Math.round(signals.reduce((a,s)=>a+s.confidence,0)/signals.length) : 0;
-  panel.innerHTML = `<div class="backtest-strip">
-      <div class="backtest-stat"><div class="bt-label">${t('fsig_total_signal')}</div><div class="bt-value">${signals.length}</div></div>
-      <div class="backtest-stat"><div class="bt-label">LONG</div><div class="bt-value up">${longs}</div></div>
-      <div class="backtest-stat"><div class="bt-label">SHORT</div><div class="bt-value down">${shorts}</div></div>
-      <div class="backtest-stat"><div class="bt-label">${t('fsig_avg_confidence')}</div><div class="bt-value">${avgConf}%</div></div>
-    </div>`;
-  panel.style.display = 'block';
-}
-
 /* ================= NAVIGATION DRAWER / MULTI-PAGE ================= */
 function openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); }
 function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); }
 const PAGE_LOADERS = {
   dashboard: ()=>loadDashboardOverview(),
-  'futures-signal': ()=>switchSignalScanner('futures'),
   livechart: ()=>loadLiveChartPro(),
   heatmap: ()=>loadHeatmap(),
   screener: ()=>loadScreener(),
@@ -3204,6 +2370,7 @@ function applySetupToCalculator(){
   document.getElementById('inEntry').value = s.entry;
   document.getElementById('inSlPct').value = s.slPct.toFixed(2);
   calcTPSL();
+  document.getElementById('setupCard').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 /* ================= CALCULATOR ================= */
@@ -3230,6 +2397,13 @@ applyI18n();
 initCryptoMarket();
 initEconomicCalendar();
 setInterval(()=>loadIndicators(currentPair), 60000);
+// FIX: previously the futures signal panels (Sinyal Multi-Timeframe table, the
+// scalping/day-trading/swing tf-tabs, and the Setup Recommendation card) were only
+// computed once — inside selectPair() — and never again until the user clicked
+// another pair or reloaded the page. That's why they looked "stuck" for hours/days.
+// This interval now recomputes them on the same 60s cadence as the price/indicator
+// refresh, so every timeframe's signal (scalping, day trading, swing) stays current.
+setInterval(refreshSignalsIfIdle, 60000);
 </script>
 
 </body>
