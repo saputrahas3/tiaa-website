@@ -222,6 +222,61 @@
   }
   .setup-apply-btn:hover{background:var(--accent-glow);}
 
+  /* ---- Entry Signal (S/R x Volume x Pattern) ---- */
+  .entry-controls{display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end; margin-bottom:6px;}
+  .entry-field{display:flex; flex-direction:column; gap:6px; min-width:120px;}
+  .entry-field label{font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.5px;}
+  .entry-field select, .entry-field input{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:6px; color:var(--ink);
+    font-size:13px; padding:8px 10px; font-family:'JetBrains Mono',monospace;
+  }
+  .entry-field select{font-family:'Inter',sans-serif;}
+  .entry-field select:focus, .entry-field input:focus{outline:none; border-color:var(--accent);}
+  .entry-pair-readout{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:8px 10px;
+    font-size:13px; font-weight:700; color:var(--accent);
+  }
+  .btn-analyze{
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
+    padding:9px 18px; font-size:12.5px; font-weight:700; cursor:pointer; letter-spacing:0.3px;
+  }
+  .btn-analyze:hover{background:var(--accent-deep);}
+  .btn-analyze:disabled{opacity:0.55; cursor:not-allowed;}
+  .entry-error{
+    display:flex; gap:8px; align-items:flex-start; color:var(--sell); font-size:12.5px; margin-top:10px;
+  }
+  .entry-hero{display:flex; flex-wrap:wrap; align-items:center; gap:22px; justify-content:space-between; margin-top:14px;}
+  .entry-hero-left{display:flex; align-items:center; gap:14px;}
+  .entry-signal-circle{
+    width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--panel-2); border:2px solid var(--line); flex-shrink:0; font-size:20px; font-weight:700;
+  }
+  .entry-signal-label{font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:var(--ink-dim); margin-bottom:2px;}
+  .entry-signal-value{font-size:24px; font-weight:700;}
+  .entry-hero-stats{display:flex; flex-wrap:wrap; gap:24px;}
+  .entry-hero-stats .es-label{font-size:11px; color:var(--ink-dim); margin-bottom:2px;}
+  .entry-hero-stats .es-value{font-size:17px; font-weight:600; font-family:'JetBrains Mono',monospace;}
+  .entry-buy, .entry-signal-circle.entry-buy, .entry-signal-value.entry-buy{color:var(--buy); border-color:var(--buy) !important;}
+  .entry-sell, .entry-signal-circle.entry-sell, .entry-signal-value.entry-sell{color:var(--sell); border-color:var(--sell) !important;}
+  .entry-neutral, .entry-signal-circle.entry-neutral, .entry-signal-value.entry-neutral{color:var(--accent); border-color:var(--accent) !important;}
+  .entry-grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:16px;}
+  @media (max-width:760px){ .entry-grid3{grid-template-columns:1fr;} }
+  .entry-subcard{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px 14px;}
+  .entry-subcard h4{font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-dim); margin:0 0 8px; font-weight:600;}
+  .entry-subcard .er{display:flex; justify-content:space-between; align-items:center; padding:5px 0; font-size:12.5px;}
+  .entry-subcard .er + .er{border-top:1px solid var(--line);}
+  .entry-subcard .er .k{color:var(--ink-dim);}
+  .entry-subcard .er .v{font-weight:600; font-family:'JetBrains Mono',monospace;}
+  ul.entry-reasons{list-style:none; margin:0; padding:0;}
+  ul.entry-reasons li{display:flex; gap:9px; align-items:flex-start; font-size:12.5px; padding:7px 0; line-height:1.5;}
+  ul.entry-reasons li + li{border-top:1px solid var(--line);}
+  ul.entry-reasons .ea{flex-shrink:0; margin-top:2px; font-weight:700;}
+  ul.entry-reasons .ea.bullish{color:var(--buy);}
+  ul.entry-reasons .ea.bearish{color:var(--sell);}
+  ul.entry-reasons .ea.netral{color:var(--ink-dim);}
+  .entry-disclaimer{color:var(--ink-dim); font-size:11px; line-height:1.6; margin-top:16px;}
+  #entryChartSvg text{font-family:'JetBrains Mono',monospace;}
+
   /* ---- Calculator ---- */
   .calc-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
   @media (max-width:600px){.calc-grid{grid-template-columns:1fr;}}
@@ -487,6 +542,72 @@
         <div class="setup-metrics" id="setupMetrics"></div>
         <div class="setup-analysis" id="setupAnalysis" data-i18n="analyzing_tf">Menganalisis konfluensi timeframe…</div>
         <button class="setup-apply-btn" onclick="applySetupToCalculator()" data-i18n="btn_apply_calc">Terapkan ke Kalkulator ↓</button>
+      </div>
+    </div>
+
+    <div class="card" id="entryCard">
+      <div class="card-title"><span>Sinyal Entry — S/R × Volume × Pola Chart</span><span id="entryUpdated" class="mono" style="font-size:10px;">–</span></div>
+      <div class="card-body">
+        <div class="entry-controls">
+          <div class="entry-field">
+            <label>Pair</label>
+            <div class="entry-pair-readout mono" id="entryPairReadout">BTCUSDT</div>
+          </div>
+          <div class="entry-field">
+            <label>Timeframe</label>
+            <select id="entryTfSelect">
+              <option value="M15">15 menit</option>
+              <option value="H1">1 jam</option>
+              <option value="H4" selected>4 jam</option>
+              <option value="D1">1 hari</option>
+              <option value="W1">1 minggu</option>
+            </select>
+          </div>
+          <div class="entry-field">
+            <label>Jumlah candle</label>
+            <input type="number" id="entryLimitInput" value="150" min="30" max="500">
+          </div>
+          <button class="btn-analyze" id="entryAnalyzeBtn" onclick="runEntryAnalysis()">Analisis Ulang</button>
+        </div>
+        <div id="entryErrorMsg" class="entry-error hidden"></div>
+
+        <div id="entryResults" class="hidden">
+          <div class="entry-hero">
+            <div class="entry-hero-left">
+              <div class="entry-signal-circle" id="entrySignalCircle"></div>
+              <div>
+                <div class="entry-signal-label">Sinyal gabungan</div>
+                <div class="entry-signal-value" id="entrySignalValue">-</div>
+              </div>
+            </div>
+            <div class="entry-hero-stats" id="entryHeroStats"></div>
+          </div>
+
+          <svg id="entryChartSvg" viewBox="0 0 900 360" style="width:100%; height:auto; display:block; margin-top:14px;"></svg>
+
+          <div class="entry-grid3">
+            <div class="entry-subcard">
+              <h4>Support &amp; Resistance</h4>
+              <div id="entrySrBox"></div>
+            </div>
+            <div class="entry-subcard">
+              <h4>Volume</h4>
+              <div id="entryVolBox"></div>
+            </div>
+            <div class="entry-subcard">
+              <h4>Tren (Moving Average)</h4>
+              <div id="entryTrendBox"></div>
+            </div>
+          </div>
+
+          <h4 style="margin:16px 0 8px;">Rincian Alasan Sinyal</h4>
+          <ul class="entry-reasons" id="entryReasonsList"></ul>
+
+          <div class="entry-disclaimer">
+            Analisis berbasis data historis (support/resistance, volume, pola chart) — bukan nasihat keuangan.
+            Selalu gunakan manajemen risiko (stop loss) sendiri.
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1350,6 +1471,7 @@ function selectPair(p){
   loadSignals(p);
   loadNews(p);
   loadFoilsSentiment(p);
+  runEntryAnalysis();
 }
 
 document.getElementById('pairSearch').addEventListener('input', e=>{
@@ -2392,6 +2514,337 @@ function calcTPSL(){
   boxes.forEach(b=>{ const box=document.createElement('div'); box.className='result-box '+b.cls; box.innerHTML=`<div class="rl">${b.label}</div><div class="rv mono">${b.value}</div>`; resultGrid.appendChild(box); });
 }
 
+/* ================= ENTRY SIGNAL (S/R × Volume × Chart Pattern) =================
+   Ported from the standalone "Sinyal Entry" analyzer tool. Reuses the dashboard's
+   own fetchKlinesCrypto()/formatPrice() rather than duplicating data-fetch code —
+   only the analysis engine (S/R clustering, volume confirmation, pattern
+   detection) and its own rendering are new. Runs on the currently selected pair
+   (currentPair) + a timeframe/candle-count picked in this card, independent of
+   the multi-timeframe confluence engine above. Function names are prefixed with
+   "entry" / "SR" to avoid clashing with the existing formatPrice()/detectPatterns()
+   used by the rest of the dashboard. */
+
+function entrySma(values, period, idx){
+  if(idx < period-1) return null;
+  let sum=0; for(let i=idx-period+1;i<=idx;i++) sum+=values[i];
+  return sum/period;
+}
+function entryFindSwings(rows, window=3){
+  const highs=[], lows=[];
+  for(let i=window;i<rows.length-window;i++){
+    const sliceH=rows.slice(i-window,i+window+1).map(r=>r.high);
+    const sliceL=rows.slice(i-window,i+window+1).map(r=>r.low);
+    if(rows[i].high===Math.max(...sliceH)) highs.push({index:i, price:rows[i].high});
+    if(rows[i].low===Math.min(...sliceL)) lows.push({index:i, price:rows[i].low});
+  }
+  return {highs, lows};
+}
+function entryClusterLevels(points, currentPrice, tolerancePct=0.02){
+  const sorted=[...points].sort((a,b)=>a.price-b.price);
+  const clusters=[];
+  for(const p of sorted){
+    const last=clusters[clusters.length-1];
+    if(last && Math.abs(p.price-last.avg)/last.avg<=tolerancePct){
+      last.items.push(p);
+      last.avg=last.items.reduce((s,x)=>s+x.price,0)/last.items.length;
+      last.lastIndex=Math.max(last.lastIndex,p.index);
+    } else {
+      clusters.push({avg:p.price, items:[p], lastIndex:p.index});
+    }
+  }
+  return clusters.map(c=>({
+    level:c.avg, touches:c.items.length, lastIndex:c.lastIndex,
+    side: c.avg>=currentPrice ? "resistance" : "support"
+  })).sort((a,b)=> b.touches-a.touches || b.lastIndex-a.lastIndex);
+}
+function entryDetectSRPatterns(rows, highs, lows, currentPrice, resistance, support){
+  const reasons=[]; let score=0; const tol=0.025;
+  const recentHighs=highs.slice(-6), recentLows=lows.slice(-6);
+
+  for(let i=0;i<recentHighs.length-1;i++){
+    const h1=recentHighs[i], h2=recentHighs[i+1];
+    if(Math.abs(h1.price-h2.price)/h1.price<=tol){
+      const between=lows.filter(l=>l.index>h1.index && l.index<h2.index);
+      if(between.length){
+        const neckline=Math.min(...between.map(l=>l.price));
+        if(currentPrice<neckline){ score-=2; reasons.push({type:"bearish",weight:2,text:"Terdeteksi pola Double Top dan neckline sudah ditembus ke bawah — indikasi pembalikan turun."});}
+        else { score-=0.7; reasons.push({type:"bearish",weight:0.7,text:"Terbentuk dua puncak sejajar (Double Top), waspadai pembalikan jika neckline tertembus."});}
+      }
+    }
+  }
+  for(let i=0;i<recentLows.length-1;i++){
+    const l1=recentLows[i], l2=recentLows[i+1];
+    if(Math.abs(l1.price-l2.price)/l1.price<=tol){
+      const between=highs.filter(h=>h.index>l1.index && h.index<l2.index);
+      if(between.length){
+        const neckline=Math.max(...between.map(h=>h.price));
+        if(currentPrice>neckline){ score+=2; reasons.push({type:"bullish",weight:2,text:"Terdeteksi pola Double Bottom dan neckline sudah ditembus ke atas — indikasi pembalikan naik."});}
+        else { score+=0.7; reasons.push({type:"bullish",weight:0.7,text:"Terbentuk dua lembah sejajar (Double Bottom), potensi pembalikan naik jika neckline tertembus."});}
+      }
+    }
+  }
+  if(recentHighs.length>=3){
+    const [h1,h2,h3]=recentHighs.slice(-3);
+    if(h2.price>h1.price && h2.price>h3.price && Math.abs(h1.price-h3.price)/h1.price<=0.04){
+      const necklineLows=lows.filter(l=>l.index>h1.index && l.index<h3.index);
+      const neckline=necklineLows.length ? Math.min(...necklineLows.map(l=>l.price)) : null;
+      if(neckline && currentPrice<neckline){ score-=2.2; reasons.push({type:"bearish",weight:2.2,text:"Pola Head & Shoulders lengkap dan neckline sudah pecah — sinyal bearish kuat."});}
+      else { score-=0.8; reasons.push({type:"bearish",weight:0.8,text:"Terbentuk pola menyerupai Head & Shoulders, perhatikan area neckline."});}
+    }
+  }
+  if(recentLows.length>=3){
+    const [l1,l2,l3]=recentLows.slice(-3);
+    if(l2.price<l1.price && l2.price<l3.price && Math.abs(l1.price-l3.price)/l1.price<=0.04){
+      const necklineHighs=highs.filter(h=>h.index>l1.index && h.index<l3.index);
+      const neckline=necklineHighs.length ? Math.max(...necklineHighs.map(h=>h.price)) : null;
+      if(neckline && currentPrice>neckline){ score+=2.2; reasons.push({type:"bullish",weight:2.2,text:"Pola Inverse Head & Shoulders lengkap dan neckline sudah pecah — sinyal bullish kuat."});}
+      else { score+=0.8; reasons.push({type:"bullish",weight:0.8,text:"Terbentuk pola menyerupai Inverse Head & Shoulders, perhatikan area neckline."});}
+    }
+  }
+  if(recentHighs.length>=3 && recentLows.length>=3){
+    const lastHighs=recentHighs.slice(-3).map(h=>h.price);
+    const lastLows=recentLows.slice(-3).map(l=>l.price);
+    const highsFlat=(Math.max(...lastHighs)-Math.min(...lastHighs))/Math.min(...lastHighs)<=0.02;
+    const lowsRising=lastLows[0]<lastLows[1] && lastLows[1]<lastLows[2];
+    const lowsFlat=(Math.max(...lastLows)-Math.min(...lastLows))/Math.min(...lastLows)<=0.02;
+    const highsFalling=lastHighs[0]>lastHighs[1] && lastHighs[1]>lastHighs[2];
+    if(highsFlat && lowsRising){ score+=1.2; reasons.push({type:"bullish",weight:1.2,text:"Pola Ascending Triangle: resistance mendatar, low semakin tinggi — bias breakout naik."});}
+    if(lowsFlat && highsFalling){ score-=1.2; reasons.push({type:"bearish",weight:1.2,text:"Pola Descending Triangle: support mendatar, high semakin rendah — bias breakdown turun."});}
+  }
+  const lastVol=rows[rows.length-1].volume;
+  const volAvg=entrySma(rows.map(r=>r.volume),20,rows.length-1) || lastVol;
+  const volSpike=lastVol>volAvg*1.3;
+  if(resistance && currentPrice>resistance.level && volSpike){ score+=1.8; reasons.push({type:"bullish",weight:1.8,text:`Harga breakout di atas resistance ${formatPrice(resistance.level)} disertai volume tinggi.`});}
+  if(support && currentPrice<support.level && volSpike){ score-=1.8; reasons.push({type:"bearish",weight:1.8,text:`Harga breakdown di bawah support ${formatPrice(support.level)} disertai volume tinggi.`});}
+
+  return {score, reasons};
+}
+function entryAnalyze(rows){
+  const closes=rows.map(r=>r.close), volumes=rows.map(r=>r.volume), n=rows.length;
+  const last=rows[n-1], prev=rows[n-2];
+  const sma20=entrySma(closes,20,n-1), sma50=entrySma(closes, Math.min(50,n-1), n-1);
+  const volSma20=entrySma(volumes,20,n-1);
+  const {highs,lows}=entryFindSwings(rows,3);
+  const allSwings=[...highs,...lows];
+  const clusters=entryClusterLevels(allSwings,last.close);
+  const supports=clusters.filter(c=>c.side==="support").sort((a,b)=>b.level-a.level);
+  const resistances=clusters.filter(c=>c.side==="resistance").sort((a,b)=>a.level-b.level);
+  const nearestSupport=supports[0]||null, nearestResistance=resistances[0]||null;
+  const nextSupport=supports[1]||nearestSupport, nextResistance=resistances[1]||nearestResistance;
+
+  const reasons=[]; let score=0;
+  if(sma20 && sma50){
+    if(last.close>sma20 && sma20>sma50){ score+=1.5; reasons.push({type:"bullish",weight:1.5,text:"Tren jangka pendek & menengah naik (harga > SMA20 > SMA50)."});}
+    else if(last.close<sma20 && sma20<sma50){ score-=1.5; reasons.push({type:"bearish",weight:1.5,text:"Tren jangka pendek & menengah turun (harga < SMA20 < SMA50)."});}
+    else { reasons.push({type:"netral",weight:0,text:"Tren campuran / sideways — SMA20 dan SMA50 belum searah."}); }
+  }
+  const priceUp=last.close>prev.close;
+  const volSpike=volSma20 && last.volume>volSma20*1.3;
+  const volWeak=volSma20 && last.volume<volSma20*0.7;
+  if(volSpike && priceUp){ score+=1.3; reasons.push({type:"bullish",weight:1.3,text:"Volume di atas rata-rata mengonfirmasi kenaikan harga terakhir."});}
+  else if(volSpike && !priceUp){ score-=1.3; reasons.push({type:"bearish",weight:1.3,text:"Volume di atas rata-rata mengonfirmasi penurunan harga terakhir."});}
+  else if(volWeak){ reasons.push({type:"netral",weight:0,text:"Volume di bawah rata-rata — pergerakan harga saat ini kurang meyakinkan."});}
+
+  if(nearestSupport){
+    const dist=(last.close-nearestSupport.level)/nearestSupport.level;
+    if(dist>=0 && dist<=0.02 && last.close>prev.close){ score+=1; reasons.push({type:"bullish",weight:1,text:`Harga memantul dari area support kuat ${formatPrice(nearestSupport.level)} (disentuh ${nearestSupport.touches}x).`});}
+  }
+  if(nearestResistance){
+    const dist=(nearestResistance.level-last.close)/nearestResistance.level;
+    if(dist>=0 && dist<=0.02 && last.close<prev.close){ score-=1; reasons.push({type:"bearish",weight:1,text:`Harga ditolak di area resistance kuat ${formatPrice(nearestResistance.level)} (disentuh ${nearestResistance.touches}x).`});}
+  }
+
+  const patternResult=entryDetectSRPatterns(rows, highs, lows, last.close, nearestResistance, nearestSupport);
+  score += patternResult.score;
+  reasons.push(...patternResult.reasons);
+
+  const maxScale=8;
+  const clamped=Math.max(-maxScale, Math.min(maxScale, score));
+  const confidence=Math.round((Math.abs(clamped)/maxScale)*100);
+  let signal="TUNGGU";
+  if(score>=1.8) signal="BUY"; else if(score<=-1.8) signal="SELL";
+
+  let entryPlan=null;
+  if(signal==="BUY"){
+    const sl = nearestSupport ? nearestSupport.level*0.98 : last.close*0.95;
+    const tp = nextResistance ? nextResistance.level : last.close*1.08;
+    entryPlan={entry:last.close, stopLoss:sl, takeProfit:tp,
+      rr: (tp>last.close && last.close>sl) ? ((tp-last.close)/(last.close-sl)).toFixed(2) : null};
+  } else if(signal==="SELL"){
+    const sl = nearestResistance ? nearestResistance.level*1.02 : last.close*1.05;
+    const tp = nextSupport ? nextSupport.level : last.close*0.92;
+    entryPlan={entry:last.close, stopLoss:sl, takeProfit:tp,
+      rr: (sl>last.close && last.close>tp) ? ((last.close-tp)/(sl-last.close)).toFixed(2) : null};
+  }
+
+  return {last, sma20, sma50, volSma20, nearestSupport, nearestResistance, nextSupport, nextResistance,
+    reasons: reasons.sort((a,b)=>b.weight-a.weight), score, confidence, signal, entryPlan, rows};
+}
+function entryFormatVol(n){
+  if(n>=1000000) return (n/1000000).toFixed(2)+'jt';
+  if(n>=1000) return (n/1000).toFixed(1)+'rb';
+  return String(n);
+}
+function entryRenderChart(rows, nearestSupport, nearestResistance){
+  const W=900, H=360;
+  const priceTop=15, priceBottom=230;
+  const volTop=245, volBottom=320;
+  const plotLeft=15, plotRight=840;
+  const n=rows.length;
+
+  const closes=rows.map(r=>r.close);
+  let pMin=Math.min(...closes), pMax=Math.max(...closes);
+  if(nearestSupport) pMin=Math.min(pMin, nearestSupport.level);
+  if(nearestResistance) pMax=Math.max(pMax, nearestResistance.level);
+  const pad=(pMax-pMin)*0.08 || pMax*0.02;
+  pMin-=pad; pMax+=pad;
+
+  const vMax=Math.max(...rows.map(r=>r.volume)) * 1.1;
+
+  const xAt = i => plotLeft + (i/(n-1)) * (plotRight-plotLeft);
+  const yPriceAt = v => priceBottom - ((v-pMin)/(pMax-pMin)) * (priceBottom-priceTop);
+  const yVolAt = v => volBottom - (v/vMax) * (volBottom-volTop);
+
+  let svg = "";
+  for(let g=0; g<=4; g++){
+    const y = priceTop + (g/4)*(priceBottom-priceTop);
+    svg += `<line x1="${plotLeft}" y1="${y}" x2="${plotRight}" y2="${y}" stroke="var(--line)" stroke-width="1"/>`;
+  }
+  let pathD = "";
+  rows.forEach((r,i)=>{
+    const x=xAt(i), y=yPriceAt(r.close);
+    pathD += (i===0 ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1) + " ";
+  });
+  svg += `<path d="${pathD}" fill="none" stroke="var(--accent)" stroke-width="2"/>`;
+
+  const barW = Math.max(1, (plotRight-plotLeft)/n * 0.6);
+  rows.forEach((r,i)=>{
+    const x=xAt(i)-barW/2, y=yVolAt(r.volume);
+    const up = i===0 ? true : r.close>=rows[i-1].close;
+    svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${(volBottom-y).toFixed(1)}" fill="${up? 'var(--buy)':'var(--sell)'}" opacity="0.55"/>`;
+  });
+
+  if(nearestSupport){
+    const y=yPriceAt(nearestSupport.level);
+    svg += `<line x1="${plotLeft}" y1="${y}" x2="${plotRight}" y2="${y}" stroke="var(--buy)" stroke-width="1.5" stroke-dasharray="5,4"/>`;
+    svg += `<text x="${plotLeft+4}" y="${y-6}" fill="var(--buy)" font-size="12">Support ${formatPrice(nearestSupport.level)}</text>`;
+  }
+  if(nearestResistance){
+    const y=yPriceAt(nearestResistance.level);
+    svg += `<line x1="${plotLeft}" y1="${y}" x2="${plotRight}" y2="${y}" stroke="var(--sell)" stroke-width="1.5" stroke-dasharray="5,4"/>`;
+    svg += `<text x="${plotLeft+4}" y="${y-6}" fill="var(--sell)" font-size="12">Resistance ${formatPrice(nearestResistance.level)}</text>`;
+  }
+  for(let g=0; g<=4; g++){
+    const val = pMax - (g/4)*(pMax-pMin);
+    const y = priceTop + (g/4)*(priceBottom-priceTop);
+    svg += `<text x="${plotRight+8}" y="${(y+4).toFixed(1)}" fill="var(--ink-dim)" font-size="11">${formatPrice(val)}</text>`;
+  }
+  const labelCount = 6;
+  for(let k=0;k<labelCount;k++){
+    const idx = Math.round((k/(labelCount-1))*(n-1));
+    const x = xAt(idx);
+    svg += `<text x="${x.toFixed(1)}" y="${volBottom+16}" fill="var(--ink-dim)" font-size="11" text-anchor="middle">${rows[idx].date.slice(5)}</text>`;
+  }
+  document.getElementById("entryChartSvg").innerHTML = svg;
+}
+function entryRenderResults(result){
+  document.getElementById("entryResults").classList.remove("hidden");
+  const circle = document.getElementById("entrySignalCircle");
+  const val = document.getElementById("entrySignalValue");
+  circle.className = "entry-signal-circle";
+  val.className = "entry-signal-value";
+
+  let cls, label;
+  if(result.signal==="BUY"){ cls="entry-buy"; label="BUY / LONG"; }
+  else if(result.signal==="SELL"){ cls="entry-sell"; label="SELL / SHORT"; }
+  else { cls="entry-neutral"; label="TUNGGU"; }
+  circle.classList.add(cls);
+  val.classList.add(cls);
+  val.textContent = label;
+  circle.innerHTML = result.signal==="BUY" ? "▲" : result.signal==="SELL" ? "▼" : "■";
+
+  let statsHtml = `
+    <div><div class="es-label">Keyakinan sinyal</div><div class="es-value mono">${result.confidence}%</div></div>
+    <div><div class="es-label">Harga terakhir</div><div class="es-value mono">${formatPrice(result.last.close)}</div></div>`;
+  if(result.entryPlan){
+    statsHtml += `
+      <div><div class="es-label">Stop loss</div><div class="es-value mono entry-sell">${formatPrice(result.entryPlan.stopLoss)}</div></div>
+      <div><div class="es-label">Target</div><div class="es-value mono entry-buy">${formatPrice(result.entryPlan.takeProfit)}</div></div>`;
+    if(result.entryPlan.rr){
+      statsHtml += `<div><div class="es-label">Risk : Reward</div><div class="es-value mono">1 : ${result.entryPlan.rr}</div></div>`;
+    }
+  }
+  document.getElementById("entryHeroStats").innerHTML = statsHtml;
+
+  entryRenderChart(result.rows, result.nearestSupport, result.nearestResistance);
+
+  document.getElementById("entrySrBox").innerHTML = `
+    <div class="er"><span class="k">Resistance terdekat</span><span class="v entry-sell">${result.nearestResistance ? formatPrice(result.nearestResistance.level)+" ("+result.nearestResistance.touches+"x sentuh)" : "-"}</span></div>
+    <div class="er"><span class="k">Resistance berikut</span><span class="v">${result.nextResistance ? formatPrice(result.nextResistance.level) : "-"}</span></div>
+    <div class="er"><span class="k">Support terdekat</span><span class="v entry-buy">${result.nearestSupport ? formatPrice(result.nearestSupport.level)+" ("+result.nearestSupport.touches+"x sentuh)" : "-"}</span></div>
+    <div class="er"><span class="k">Support berikut</span><span class="v">${result.nextSupport ? formatPrice(result.nextSupport.level) : "-"}</span></div>`;
+
+  document.getElementById("entryVolBox").innerHTML = `
+    <div class="er"><span class="k">Volume terakhir</span><span class="v">${entryFormatVol(result.last.volume)}</span></div>
+    <div class="er"><span class="k">Rata-rata 20 bar</span><span class="v">${result.volSma20 ? entryFormatVol(result.volSma20) : "-"}</span></div>
+    <div class="er"><span class="k">Rasio vs rata-rata</span><span class="v">${result.volSma20 ? (result.last.volume/result.volSma20).toFixed(2)+"x" : "-"}</span></div>`;
+
+  document.getElementById("entryTrendBox").innerHTML = `
+    <div class="er"><span class="k">SMA 20</span><span class="v">${result.sma20 ? formatPrice(result.sma20) : "-"}</span></div>
+    <div class="er"><span class="k">SMA 50</span><span class="v">${result.sma50 ? formatPrice(result.sma50) : "-"}</span></div>
+    <div class="er"><span class="k">Skor mentah</span><span class="v">${result.score.toFixed(2)}</span></div>`;
+
+  const reasonsList = document.getElementById("entryReasonsList");
+  if(result.reasons.length===0){
+    reasonsList.innerHTML = `<li style="color:var(--ink-dim);">Tidak ada indikasi kuat terdeteksi — kondisi pasar netral.</li>`;
+  } else {
+    reasonsList.innerHTML = result.reasons.map(r =>
+      `<li><span class="ea ${r.type}">${r.type==="bullish"?"▲":r.type==="bearish"?"▼":"—"}</span><span>${r.text}</span></li>`
+    ).join("");
+  }
+  const eu = document.getElementById('entryUpdated'); if(eu) eu.textContent = new Date().toLocaleTimeString(uiLocale());
+}
+// Fetches OHLCV rows (with readable date labels) for the entry-signal engine.
+// Reuses fetchKlinesCrypto() — same Futures-with-Spot-fallback source as the rest
+// of the dashboard — instead of hitting Binance Spot directly like the standalone tool did.
+async function entryGetRows(symbol, tfLabel, limit){
+  const tf = TFS.find(t=>t.label===tfLabel) || TFS.find(t=>t.label==='H4');
+  const k = await fetchKlinesCrypto(symbol, tf.interval, Math.max(30, Math.min(1000, limit)));
+  return k.map(c=>{
+    const d = new Date(c[0]);
+    const dateMode = (tf.interval==='1d'||tf.interval==='1w') ? 'date' : 'datetime';
+    const label = dateMode==='date' ? d.toISOString().slice(0,10) : d.toISOString().slice(0,16).replace('T',' ');
+    return { date:label, open:parseFloat(c[1]), high:parseFloat(c[2]), low:parseFloat(c[3]), close:parseFloat(c[4]), volume:parseFloat(c[5]) };
+  });
+}
+let entryAnalysisInFlight = false;
+async function runEntryAnalysis(){
+  if(entryAnalysisInFlight) return;
+  entryAnalysisInFlight = true;
+  const btn = document.getElementById('entryAnalyzeBtn');
+  const errBox = document.getElementById('entryErrorMsg');
+  errBox.classList.add('hidden');
+  const originalLabel = btn.innerHTML;
+  btn.disabled = true; btn.textContent = 'Menganalisis…';
+  try{
+    document.getElementById('entryPairReadout').textContent = currentPair;
+    const tfLabel = document.getElementById('entryTfSelect').value;
+    const limit = parseInt(document.getElementById('entryLimitInput').value, 10) || 150;
+    const rows = await entryGetRows(currentPair, tfLabel, limit);
+    if(rows.length < 30) throw new Error(`Data hanya ${rows.length} candle — minimal 30 diperlukan untuk deteksi S/R & pola yang akurat.`);
+    const result = entryAnalyze(rows);
+    entryRenderResults(result);
+  }catch(e){
+    console.error('Entry analysis gagal', e);
+    errBox.classList.remove('hidden');
+    errBox.textContent = '⚠ '+(e.message||'Gagal mengambil/menganalisis data.');
+  } finally {
+    entryAnalysisInFlight = false;
+    btn.disabled = false; btn.innerHTML = originalLabel;
+  }
+}
+document.getElementById('entryTfSelect').addEventListener('change', runEntryAnalysis);
+
 /* ================= INIT ================= */
 applyI18n();
 initCryptoMarket();
@@ -2404,6 +2857,8 @@ setInterval(()=>loadIndicators(currentPair), 60000);
 // This interval now recomputes them on the same 60s cadence as the price/indicator
 // refresh, so every timeframe's signal (scalping, day trading, swing) stays current.
 setInterval(refreshSignalsIfIdle, 60000);
+// Entry-signal card (S/R × Volume × Pola Chart) refreshes on its own 60s cadence too.
+setInterval(()=>{ if(!entryAnalysisInFlight) runEntryAnalysis(); }, 60000);
 </script>
 
 </body>
