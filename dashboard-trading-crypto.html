@@ -2061,7 +2061,7 @@ async function computeSetupRecommendation(symbol, rows){
       h4Bias: higherTF1?.bias, d1Bias: higherTF2?.bias, entryRsi: entryTF?.rsi,
       macdHist: macdH1.hist, atrPct, confidencePct, volRatio, divergence, rrRatio, btcBias, isBtc
     };
-    if(window.__foilsPromise) await window.__foilsPromise.catch(()=>{});
+    if(window.__foilsPromise) window.__foilsPromise.catch(()=>{}).then(()=>renderEntryWhy());
     computeWinRateScore();
     computeAdvancedTA(symbol, rows);
   }catch(e){
@@ -2364,11 +2364,11 @@ async function loadFoilsSentiment(symbol){
   window.__foilsPromise = (async()=>{
     try{
       const [premium, oi, oiHist, lsRatio, fng] = await Promise.all([
-        fetch(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`).then(r=>r.json()).catch(()=>null),
-        fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${symbol}`).then(r=>r.json()).catch(()=>null),
-        fetch(`https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=8`).then(r=>r.json()).catch(()=>null),
-        fetch(`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=1h&limit=1`).then(r=>r.json()).catch(()=>null),
-        fetch('https://api.alternative.me/fng/?limit=1').then(r=>r.json()).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`]).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/fapi/v1/openInterest?symbol=${symbol}`]).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=8`]).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=1h&limit=1`]).catch(()=>null),
+        fetchJsonRace(['https://api.alternative.me/fng/?limit=1']).catch(()=>null),
       ]);
       const fundingPct = premium?.lastFundingRate!=null ? parseFloat(premium.lastFundingRate)*100 : null;
       const oiNow = oi?.openInterest!=null ? parseFloat(oi.openInterest) : null;
