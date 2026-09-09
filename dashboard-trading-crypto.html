@@ -13,38 +13,50 @@
     --radius:6px;
   }
   body{
-    /* ---- DARK THEME (default) — Binance-style charcoal + yellow ---- */
-    --bg:#0b0e11;
-    --panel:#181a20;
-    --panel-2:#1e2329;
-    --line:#333b44;
-    --ink:#eaecef;
-    --ink-dim:#848e9c;
-    --accent:#f0b90b;
-    --accent-deep:#d9a406;
-    --accent-ink:#202020;
-    --accent-glow:rgba(240,185,11,0.14);
-    --buy:#0ecb81;
-    --sell:#f6465d;
-    --buy-glow:rgba(14,203,129,0.12);
-    --sell-glow:rgba(246,70,93,0.12);
+    /* ---- DARK THEME (default) — Binance-style charcoal + gold, tuned for stronger
+       contrast: deeper background, brighter ink, more saturated accent/buy/sell so
+       every color reads clearly at a glance instead of sitting close together. ---- */
+    --bg:#0a0c0f;
+    --panel:#14171c;
+    --panel-2:#1c2128;
+    --line:#3d4653;
+    --ink:#f5f7fa;
+    --ink-dim:#9aa5b1;
+    --accent:#ffb800;
+    --accent-deep:#e0a100;
+    --accent-ink:#1a1a1a;
+    --accent-glow:rgba(255,184,0,0.18);
+    --buy:#00e08f;
+    --sell:#ff3b5c;
+    --buy-glow:rgba(0,224,143,0.16);
+    --sell-glow:rgba(255,59,92,0.16);
+    --buy-border:rgba(0,224,143,0.4);
+    --sell-border:rgba(255,59,92,0.4);
+    --buy-flash:rgba(0,224,143,0.42);
+    --sell-flash:rgba(255,59,92,0.42);
   }
   body.light{
-    /* ---- LIGHT THEME — Binance-style, same yellow accent on white ---- */
+    /* ---- LIGHT THEME — same identity, deepened for AA-level contrast on white:
+       near-black ink, firmer borders, and richer accent/buy/sell tones that stay bold
+       instead of washing out against a bright background. ---- */
     --bg:#ffffff;
     --panel:#ffffff;
-    --panel-2:#f1f2f4;
-    --line:#c4c9d0;
-    --ink:#14161a;
-    --ink-dim:#5b6472;
-    --accent:#dba100;
-    --accent-deep:#b58500;
+    --panel-2:#eef0f3;
+    --line:#b6bec8;
+    --ink:#0d1117;
+    --ink-dim:#4b5866;
+    --accent:#a86a00;
+    --accent-deep:#8a5700;
     --accent-ink:#171717;
-    --accent-glow:rgba(219,161,0,0.30);
-    --buy:#02975f;
-    --sell:#c8123a;
-    --buy-glow:rgba(2,151,95,0.22);
-    --sell-glow:rgba(200,18,58,0.20);
+    --accent-glow:rgba(168,106,0,0.22);
+    --buy:#00875f;
+    --sell:#d61947;
+    --buy-glow:rgba(0,135,95,0.18);
+    --sell-glow:rgba(214,25,71,0.18);
+    --buy-border:rgba(0,135,95,0.4);
+    --sell-border:rgba(214,25,71,0.4);
+    --buy-flash:rgba(0,135,95,0.30);
+    --sell-flash:rgba(214,25,71,0.30);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -93,7 +105,7 @@
   /* ---- WhatsApp floating button ---- */
   .wa-float{
     position:fixed; right:18px; bottom:18px; z-index:150;
-    display:flex; align-items:center; gap:8px; background:#25D366; color:#0b0e11;
+    display:flex; align-items:center; gap:8px; background:#25D366; color:#0a1f14;
     padding:12px; border-radius:999px; text-decoration:none; box-shadow:0 6px 20px rgba(0,0,0,0.35);
     transition:padding .2s, box-shadow .2s; overflow:hidden;
   }
@@ -145,14 +157,14 @@
     transition:color .15s, transform .1s;
   }
   .pair-fav:hover{color:var(--ink-dim); transform:scale(1.15);}
-  .pair-fav.active{color:#f0b90b;}
+  .pair-fav.active{color:var(--accent);}
   .search-box{display:flex; gap:8px; align-items:center;}
   .search-box input{flex:1;}
   .fav-filter-btn{
     flex-shrink:0; width:34px; height:34px; border-radius:6px; border:1.5px solid var(--line); background:var(--panel-2);
     color:var(--ink-dim); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;
   }
-  .fav-filter-btn.active{border-color:#f0b90b; background:rgba(240,185,11,0.12); color:#f0b90b;}
+  .fav-filter-btn.active{border-color:var(--accent); background:var(--accent-glow); color:var(--accent);}
   .pair-list-empty{padding:16px; font-size:11.5px; color:var(--ink-dim); text-align:center; line-height:1.6;}
   .pair-name{font-weight:600; font-size:13px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .pair-name span{color:var(--ink-dim); font-weight:400;}
@@ -473,8 +485,8 @@
 
   /* ---- Supply/Demand, Fibonacci, Pattern cards ---- */
   .zone-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; border-radius:8px; margin-bottom:8px; border:1.5px solid var(--line);}
-  .zone-row.demand{background:var(--buy-glow); border-color:rgba(14,203,129,0.3);}
-  .zone-row.supply{background:var(--sell-glow); border-color:rgba(246,70,93,0.3);}
+  .zone-row.demand{background:var(--buy-glow); border-color:var(--buy-border);}
+  .zone-row.supply{background:var(--sell-glow); border-color:var(--sell-border);}
   .zone-tag{font-size:10px; font-weight:800; letter-spacing:0.5px; text-transform:uppercase; padding:2px 8px; border-radius:4px;}
   .zone-tag.fresh{background:var(--accent-glow); color:var(--accent);}
   .zone-tag.tested{background:rgba(132,142,156,0.15); color:var(--ink-dim);}
@@ -500,8 +512,8 @@
   /* ===================== PROFESSIONAL TERMINAL CHROME ===================== */
 
   /* ---- Price flash (tick up/down) ---- */
-  @keyframes flashUp{0%{background:rgba(14,203,129,0.38);}100%{background:transparent;}}
-  @keyframes flashDown{0%{background:rgba(246,70,93,0.38);}100%{background:transparent;}}
+  @keyframes flashUp{0%{background:var(--buy-flash);}100%{background:transparent;}}
+  @keyframes flashDown{0%{background:var(--sell-flash);}100%{background:transparent;}}
   .flash-up{animation:flashUp .7s ease-out;}
   .flash-down{animation:flashDown .7s ease-out;}
 
@@ -621,9 +633,9 @@
 </head>
 <body>
 
-<div id="authGate" style="position:fixed; inset:0; z-index:9999; background:#0b0e11; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; font-family:'Inter',sans-serif;">
-  <div style="width:40px; height:40px; border-radius:50%; border:3px solid #2b3139; border-top-color:#f0b90b; animation:authSpin .8s linear infinite;"></div>
-  <div style="color:#848e9c; font-size:13px; font-family:'JetBrains Mono',monospace;" id="authGateText">Memeriksa akses akun…</div>
+<div id="authGate" style="position:fixed; inset:0; z-index:9999; background:var(--bg); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; font-family:'Inter',sans-serif;">
+  <div style="width:40px; height:40px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--accent); animation:authSpin .8s linear infinite;"></div>
+  <div style="color:var(--ink-dim); font-size:13px; font-family:'JetBrains Mono',monospace;" id="authGateText">Memeriksa akses akun…</div>
   <style>@keyframes authSpin{to{transform:rotate(360deg);}}</style>
 </div>
 
@@ -1952,17 +1964,20 @@ async function loadSignalChart(symbol){
   container.innerHTML = '';
   if(sigChartInstance){ try{ sigChartInstance.remove(); }catch(e){} sigChartInstance=null; }
   const light = document.body.classList.contains('light');
+  const cs = getComputedStyle(document.body);
+  const buyColor = cs.getPropertyValue('--buy').trim(), sellColor = cs.getPropertyValue('--sell').trim();
+  const inkDimColor = cs.getPropertyValue('--ink-dim').trim();
   sigChartInstance = LightweightCharts.createChart(container, {
     width: container.clientWidth, height: 360,
-    layout: { background:{color:'transparent'}, textColor: light?'#33384a':'#c8ccd6' },
+    layout: { background:{color:'transparent'}, textColor: inkDimColor },
     grid: { vertLines:{color:'rgba(150,150,150,0.08)'}, horzLines:{color:'rgba(150,150,150,0.08)'} },
     timeScale: { timeVisible:true, secondsVisible:false, borderColor:'rgba(150,150,150,0.25)' },
     rightPriceScale: { borderColor:'rgba(150,150,150,0.25)' },
     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
   });
   sigChartSeries = sigChartInstance.addCandlestickSeries({
-    upColor:'#22c55e', downColor:'#ef4444', borderVisible:false,
-    wickUpColor:'#22c55e', wickDownColor:'#ef4444',
+    upColor:buyColor, downColor:sellColor, borderVisible:false,
+    wickUpColor:buyColor, wickDownColor:sellColor,
   });
   // De-dupe/sort in case the source has any repeated timestamps (resampled data can).
   const seen = new Set();
@@ -1986,7 +2001,7 @@ async function loadSignalChart(symbol){
       markers.push({
         time: times[i],
         position: sig.bias==='buy' ? 'belowBar' : 'aboveBar',
-        color: sig.bias==='buy' ? '#22c55e' : '#ef4444',
+        color: sig.bias==='buy' ? buyColor : sellColor,
         shape: sig.bias==='buy' ? 'arrowUp' : 'arrowDown',
         text: sig.bias==='buy' ? 'BUY' : 'SELL',
       });
