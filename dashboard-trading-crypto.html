@@ -380,6 +380,14 @@
     padding:9px 14px; font-weight:700; font-size:12.5px; cursor:pointer;
   }
   .fsig-rescan-btn:hover{background:var(--accent-glow);}
+  .fsig-autoscan-pill{
+    display:inline-flex; align-items:center; gap:6px; cursor:pointer; user-select:none;
+    background:var(--buy-glow); color:var(--buy); border:1px solid var(--buy);
+    padding:6px 12px; border-radius:999px; font-size:11px; font-weight:600; font-family:'JetBrains Mono',monospace;
+    white-space:nowrap; transition:opacity .15s;
+  }
+  .fsig-autoscan-pill:hover{opacity:0.8;}
+  .fsig-autoscan-pill.off{background:rgba(132,142,156,0.12); color:var(--ink-dim); border-color:var(--line);}
   .fsig-style-tabs{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;}
   .fsig-style-tab{
     flex:1; min-width:120px; text-align:center; padding:10px 10px; border-radius:10px; cursor:pointer;
@@ -739,7 +747,8 @@
   <div class="fsig-style-desc" id="fsigStyleDesc" data-i18n="fsig_style_scalping_desc"></div>
   <div class="fsig-toolbar">
     <div class="fsig-title"><span id="fsigTitle" data-i18n="futures_signal_title">Futures Signal</span> <span class="fsig-count mono" id="fsigCount">(0)</span> <span class="mono" id="fsigLastScan" style="font-size:10px; color:var(--ink-dim); margin-left:6px;">–</span></div>
-    <div style="display:flex; gap:8px;">
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <div class="fsig-autoscan-pill" id="fsigAutoscanPill" onclick="toggleAutoScan()" title="Klik untuk mengaktifkan/menonaktifkan auto-scan latar belakang">⏱ Auto-scan ON · sinyal baru dalam –:–</div>
       <button class="fsig-rescan-btn" onclick="scanSignals(signalScannerMode)" data-i18n="rescan_btn">↻ Pindai Ulang</button>
       <button class="fsig-results-btn" id="fsigResultsBtn" onclick="toggleFsigResults()" data-i18n="results_btn">Results</button>
     </div>
@@ -1620,6 +1629,7 @@ function selectPair(p){
   loadSignals(p);
   loadNews(p);
   loadFoilsSentiment(p);
+  loadAdvancedTAStandalone(p); // independen dari FOILS & dari loop 10-timeframe di loadSignals
   runEntryAnalysis();
 }
 
@@ -1827,11 +1837,16 @@ async function loadIndicators(symbol){
 async function loadSignals(symbol){
   const body = document.getElementById('signalBody');
   body.innerHTML = `<tr><td colspan="5" class="mono">${t('loading_signals')}</td></tr>`;
-  const rows = [];
-  for(const tf of TFS){
-    try{ const ohlc = await getOHLC(symbol, tf); rows.push({tf:tf.label, sig:computeSignal(ohlc), ohlc}); }
-    catch(e){ rows.push({tf:tf.label, sig:null, ohlc:null}); }
-  }
+  // FIX: this used to fetch all 10 timeframes (M1..W1) one-by-one with `await` inside a
+  // for-loop — if any single timeframe was slow, every timeframe after it (and anything
+  // downstream, like Supply/Demand + Struktur Pasar) had to wait for it in turn, up to
+  // 8s×10 in the worst case. Fetching them in parallel means the whole batch only ever
+  // waits as long as the single slowest request (max 8s per fetchKlinesCrypto attempt),
+  // and a failure in one timeframe no longer stalls the rest.
+  const rows = await Promise.all(TFS.map(async tf=>{
+    try{ const ohlc = await getOHLC(symbol, tf); return {tf:tf.label, sig:computeSignal(ohlc), ohlc}; }
+    catch(e){ return {tf:tf.label, sig:null, ohlc:null}; }
+  }));
   currentSignalRows = rows;
   body.innerHTML = "";
   rows.forEach(r=>{
@@ -2181,6 +2196,34 @@ function detectPatterns(highs, lows, closes){
   }
   return patterns;
 }
+// FIX: Supply & Demand Zones and Struktur Pasar & Pola Chart used to only get computed
+// as the LAST step of computeSetupRecommendation(), which itself only runs after
+// loadSignals() sequentially fetches all 10 timeframes (M1..W1) one-by-one. If any of
+// those requests was slow, both cards sat on "Memuat analisis…" far longer than
+// necessary, which looked like they were waiting on FOILS (loaded around the same time)
+// even though there was no real code dependency between them. This standalone loader
+// fetches ONLY the H4 candles it actually needs and renders immediately — fully
+// decoupled from both loadFoilsSentiment() and the multi-timeframe signal loop.
+let advancedTAToken = 0;
+async function loadAdvancedTAStandalone(symbol){
+  const myToken = ++advancedTAToken; // guards against a stale/slow response overwriting a newer pair selection
+  const zonesEl = document.getElementById('sdZonesBody'), fibEl = document.getElementById('fibBody'), patEl = document.getElementById('patternBody');
+  const loadingMsg = '<div class="ind-note" data-i18n="loading_analysis">Memuat analisis…</div>';
+  if(zonesEl) zonesEl.innerHTML = loadingMsg; if(fibEl) fibEl.innerHTML = loadingMsg; if(patEl) patEl.innerHTML = loadingMsg;
+  try{
+    const h4tf = TFS.find(t=>t.label==='H4');
+    const h4ohlc = await getOHLC(symbol, h4tf); // getOHLC -> fetchKlinesCrypto -> fetchJsonRace already times out at 8s per attempt
+    if(myToken!==advancedTAToken) return; // a newer pair was selected while this was in flight
+    computeAdvancedTA(symbol, [{tf:'H4', ohlc:h4ohlc}]);
+  }catch(e){
+    if(myToken!==advancedTAToken) return;
+    console.error('Gagal memuat data H4 untuk Supply/Demand & Struktur Pasar', e);
+    const errMsg = '<div class="ind-note">Data H4 belum cukup untuk analisis ini — coba pair lain atau refresh.</div>';
+    if(zonesEl) zonesEl.innerHTML = errMsg; if(fibEl) fibEl.innerHTML = errMsg; if(patEl) patEl.innerHTML = errMsg;
+    window.__lastAdvancedTA = null;
+    renderEntryWhy();
+  }
+}
 function computeAdvancedTA(symbol, rows){
   const zonesEl = document.getElementById('sdZonesBody'), fibEl = document.getElementById('fibBody'), patEl = document.getElementById('patternBody');
   const h4 = rows.find(r=>r.tf==='H4')?.ohlc;
@@ -2363,12 +2406,17 @@ async function loadFoilsSentiment(symbol){
   body.innerHTML = `<div class="ind-box"><div class="ind-label">${t('loading_derivatives')}</div></div>`;
   window.__foilsPromise = (async()=>{
     try{
+      // FIX: explicit 8000ms (8s) timeout on every FOILS request — each is wrapped so a
+      // slow/unreachable endpoint fails gracefully (resolves to null via .catch) instead
+      // of hanging indefinitely. Promise.all means the whole batch never waits longer
+      // than the slowest single 8s timeout, not the sum of all five.
+      const FOILS_TIMEOUT_MS = 8000;
       const [premium, oi, oiHist, lsRatio, fng] = await Promise.all([
-        fetchJsonRace([`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`]).catch(()=>null),
-        fetchJsonRace([`https://fapi.binance.com/fapi/v1/openInterest?symbol=${symbol}`]).catch(()=>null),
-        fetchJsonRace([`https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=8`]).catch(()=>null),
-        fetchJsonRace([`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=1h&limit=1`]).catch(()=>null),
-        fetchJsonRace(['https://api.alternative.me/fng/?limit=1']).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`], FOILS_TIMEOUT_MS).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/fapi/v1/openInterest?symbol=${symbol}`], FOILS_TIMEOUT_MS).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=8`], FOILS_TIMEOUT_MS).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=1h&limit=1`], FOILS_TIMEOUT_MS).catch(()=>null),
+        fetchJsonRace(['https://api.alternative.me/fng/?limit=1'], FOILS_TIMEOUT_MS).catch(()=>null),
       ]);
       const fundingPct = premium?.lastFundingRate!=null ? parseFloat(premium.lastFundingRate)*100 : null;
       const oiNow = oi?.openInterest!=null ? parseFloat(oi.openInterest) : null;
@@ -2486,22 +2534,71 @@ let signalScannerMode = 'futures';     // 'futures' | 'spot'
 let signalScannerStyle = 'scalping';   // 'scalping' | 'daytrading' | 'swing' (futures only)
 let futuresSignalResultsByStyle = { scalping: [], daytrading: [], swing: [] };
 let spotSignalResults = [];
-let signalScanRunning = false;
-let signalPriceTimer = null;
-// FIX: previously scanSignals() (which looks for NEW confluent setups on pairs
-// that don't already have a locked signal) only ever ran on manual "Pindai Ulang"
-// clicks or when switching mode/style tabs — never on its own. So Scalping / Day
-// Trading / Swing Trading lists looked "stuck" for hours until you touched them.
-// This timer re-scans automatically every 3 minutes (scanning is heavier than a
-// price tick — 30 pairs x klines/order-book — so it's slower than the 30s price
-// loop). Already-locked signals are never altered by a re-scan, only new slots
-// get filled and closures get checked, per scanSignals()'s existing contract.
-let signalScanTimer = null;
-function startSignalScanLoop(){
-  if(signalScanTimer) clearInterval(signalScanTimer);
-  signalScanTimer = setInterval(()=>{
-    if(!signalScanRunning) scanSignals(signalScannerMode);
-  }, 180000);
+
+/* ---- Background engine: scans/checks ALL 4 buckets (Scalping, Day Trading, Swing,
+   Spot) on their own global timers, independent of which page/tab is currently open,
+   so signals stay fresh even if the user never opens the Futures Signal page. ---- */
+const FSIG_BUCKETS = [
+  {mode:'futures', style:'scalping'},
+  {mode:'futures', style:'daytrading'},
+  {mode:'futures', style:'swing'},
+  {mode:'spot', style:null},
+];
+// Signals that sit "active" (never hit TP or SL) for more than 3 days are considered
+// stale/no-longer-relevant and are deleted outright on the next check — they don't
+// just get closed, the slot frees up for a fresh setup on that pair.
+const SIGNAL_STALE_MS = 3*24*60*60*1000;
+const SIGNAL_SCAN_INTERVAL_MS = 60*60*1000;   // background rescan (all 4 buckets): every 1 hour
+const SIGNAL_CLOSE_CHECK_INTERVAL_MS = 30*1000; // SL/TP + staleness check (all 4 buckets): every 30s
+let scanningBuckets = new Set();  // per-bucket "currently scanning" lock (mode|style)
+let globalScanRunning = false;
+let autoScanEnabled = (localStorage.getItem('tiaa_autoscan_enabled') ?? '1') === '1';
+let nextAutoScanAt = Date.now() + SIGNAL_SCAN_INTERVAL_MS;
+let globalScanTimer = null, globalCloseTimer = null, autoscanPillTimer = null;
+
+async function runGlobalScanCycle(){
+  if(globalScanRunning) return;
+  globalScanRunning = true;
+  try{
+    for(const b of FSIG_BUCKETS){ await scanSignals(b.mode, b.style); }
+  } finally {
+    globalScanRunning = false;
+    nextAutoScanAt = Date.now() + SIGNAL_SCAN_INTERVAL_MS;
+    updateAutoscanPill();
+  }
+}
+function startGlobalScanLoop(){
+  if(globalScanTimer) clearInterval(globalScanTimer);
+  if(!autoScanEnabled) return;
+  nextAutoScanAt = Date.now() + SIGNAL_SCAN_INTERVAL_MS;
+  globalScanTimer = setInterval(()=>{ if(autoScanEnabled) runGlobalScanCycle(); }, SIGNAL_SCAN_INTERVAL_MS);
+}
+function stopGlobalScanLoop(){
+  if(globalScanTimer) clearInterval(globalScanTimer);
+  globalScanTimer = null;
+}
+// Runs every 30s for ALL 4 buckets at once (not just the one currently on screen) —
+// pulls fresh tickers once, then checks SL/TP + 3-day staleness per bucket.
+function startGlobalCloseLoop(){
+  if(globalCloseTimer) clearInterval(globalCloseTimer);
+  globalCloseTimer = setInterval(()=>refreshSignalTickers(true), SIGNAL_CLOSE_CHECK_INTERVAL_MS);
+}
+function toggleAutoScan(){
+  autoScanEnabled = !autoScanEnabled;
+  try{ localStorage.setItem('tiaa_autoscan_enabled', autoScanEnabled?'1':'0'); }catch(e){}
+  if(autoScanEnabled){ startGlobalScanLoop(); runGlobalScanCycle(); }
+  else { stopGlobalScanLoop(); }
+  updateAutoscanPill();
+}
+function updateAutoscanPill(){
+  const pill = document.getElementById('fsigAutoscanPill');
+  if(!pill) return;
+  if(!autoScanEnabled){ pill.textContent = '⏱ Auto-scan OFF · klik untuk aktifkan'; pill.classList.add('off'); return; }
+  pill.classList.remove('off');
+  const remain = Math.max(0, nextAutoScanAt - Date.now());
+  const mm = String(Math.floor(remain/60000)).padStart(2,'0');
+  const ss = String(Math.floor((remain%60000)/1000)).padStart(2,'0');
+  pill.textContent = globalScanRunning ? '⏱ Auto-scan ON · memindai…' : `⏱ Auto-scan ON · sinyal baru dalam ${mm}:${ss}`;
 }
 
 async function mapLimit(items, limit, fn){
@@ -2851,15 +2948,22 @@ async function computeStyleSignal(pairSymbol, style){
 // any new confluent setup found. Pairs that already have an active signal are skipped
 // entirely (their entry/SL/TP/date must never change once set) — we only refresh their
 // live price (via refreshSignalTickers) to check if SL/TP has since been hit.
-async function scanSignals(mode){
-  if(signalScanRunning) return;
-  signalScanRunning = true;
+// `mode`/`style` are explicit params (not read from the global signalScannerMode/Style)
+// so the background engine can scan buckets the user isn't currently looking at —
+// omit `style` to fall back to the currently-viewed style for manual/button calls.
+async function scanSignals(mode, style){
+  style = mode==='futures' ? (style || signalScannerStyle) : null;
+  const bucketKey = mode+'|'+(style||'');
+  if(scanningBuckets.has(bucketKey)) return;
+  scanningBuckets.add(bucketKey);
   const isFutures = mode==='futures';
-  const style = isFutures ? signalScannerStyle : null;
-  const listEl = document.getElementById('fsigList');
+  // Re-checked on demand (not cached) so a mid-scan tab switch still gets rendered.
+  const isCurrentView = ()=> mode===signalScannerMode && (mode!=='futures' || style===signalScannerStyle);
+  const listEl = ()=> isCurrentView() ? document.getElementById('fsigList') : null;
   const store = loadStoredSignals(mode, style);
+  pruneStaleSignals(store); // drop >3-day-old signals that never hit TP/SL before filling gaps
   const hasExisting = Object.values(store).some(s=>s.status==='active');
-  if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_market_data')}…</div>`;
+  if(!hasExisting && listEl()) listEl().innerHTML = `<div class="sidebar-loading">${t('loading_market_data')}…</div>`;
   try{
     const {pairs} = await fetchAllPerpetualPairs();
     const universe = pairs.slice(0, SIGNAL_SCAN_TOP_N).map(p=>p.pair);
@@ -2868,26 +2972,23 @@ async function scanSignals(mode){
     await mapLimit(toScan, 6, async(sym)=>{
       const r = isFutures ? await computeStyleSignal(sym, style) : await computeConfirmedSignal(sym, isFutures);
       done++;
-      if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${toScan.length})</div>`;
+      if(!hasExisting && listEl()) listEl().innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${toScan.length})</div>`;
       // Spot can only ever BUY (no shorting on spot) — drop SHORT-direction results there.
       if(r && !isFutures && r.direction==='SHORT') return;
       if(r) store[sym] = { ...r, status:'active' }; // LOCKED here — never overwritten again
     });
     saveStoredSignals(mode, style, store);
     applyStoreToState(mode, style, store);
-    await refreshSignalTickers(false);
     checkSignalClosures(mode, style);
-    renderSignalList(mode);
-    startSignalPriceLoop();
-    startSignalScanLoop();
+    if(isCurrentView()) renderSignalList(mode);
   }catch(e){
     console.error(e);
-    if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">
+    if(!hasExisting && listEl()) listEl().innerHTML = `<div class="sidebar-loading">
         ${t('failed_load_market')}<br>
-        <button class="retry-btn" onclick="scanSignals('${mode}')">↻ ${t('retry')}</button>
+        <button class="retry-btn" onclick="scanSignals('${mode}','${style||''}')">↻ ${t('retry')}</button>
       </div>`;
   }
-  signalScanRunning = false;
+  scanningBuckets.delete(bucketKey);
 }
 
 function applyStoreToState(mode, style, store){
@@ -2895,12 +2996,28 @@ function applyStoreToState(mode, style, store){
   if(mode==='futures') futuresSignalResultsByStyle[style] = active; else spotSignalResults = active;
 }
 
+// Signals still "active" (no TP/SL hit) after 3 days are considered stale and are
+// deleted outright — not just closed — so the pair frees up for a fresh setup.
+function pruneStaleSignals(store){
+  const cutoff = Date.now() - SIGNAL_STALE_MS;
+  let changed = false;
+  Object.keys(store).forEach(sym=>{
+    const s = store[sym];
+    if(s.status==='active' && s.openTime && s.openTime < cutoff){
+      delete store[sym];
+      changed = true;
+    }
+  });
+  return changed;
+}
+
 // Once a locked signal's live price crosses its stoploss or final target, close it out
 // so the pair frees up for a fresh signal on the next scan. Everything about the closed
 // signal (entry/SL/TP/date) still never changes retroactively — only its status flips.
+// Also prunes >3-day-old still-active signals (see pruneStaleSignals) on every call.
 function checkSignalClosures(mode, style){
   const store = loadStoredSignals(mode, style);
-  let changed = false;
+  let changed = pruneStaleSignals(store);
   Object.keys(store).forEach(sym=>{
     const s = store[sym];
     if(s.status!=='active') return;
@@ -2935,9 +3052,7 @@ function switchSignalScanner(mode){
   const style = mode==='futures' ? signalScannerStyle : null;
   applyStoreToState(mode, style, loadStoredSignals(mode, style));
   renderSignalList(mode);
-  startSignalPriceLoop();
-  startSignalScanLoop();
-  scanSignals(mode); // fills in any newly-forming signals; already-locked ones are untouched
+  scanSignals(mode, style); // fills in any newly-forming signals; already-locked ones are untouched
 }
 
 // Switches which of the 3 Futures Signal strategies (Scalping / Day Trading / Swing
@@ -2952,24 +3067,20 @@ function switchSignalStyle(style){
   document.getElementById('fsigResultsPanel').style.display = 'none';
   applyStoreToState('futures', style, loadStoredSignals('futures', style));
   renderSignalList('futures');
-  startSignalPriceLoop();
-  startSignalScanLoop();
-  scanSignals('futures');
+  scanSignals('futures', style);
 }
 
-// Pulls fresh 24h tickers so target/stoploss checkmarks reflect the live price —
-// reuses the same ticker map the rest of the dashboard uses.
+// Pulls fresh 24h tickers once, then checks SL/TP + 3-day staleness for ALL 4 buckets
+// (Scalping, Day Trading, Swing, Spot) at once — not just whichever one is on screen —
+// so a signal closes out / expires on schedule even if you're looking at another tab
+// or a different page entirely. Only the currently-viewed list is re-rendered.
 async function refreshSignalTickers(rerender=true){
   try{
     const tickers = await fetchAllBinanceTickers();
     tickers.forEach(tk=>{ tickerMap[tk.symbol] = tk; });
   }catch(e){ /* keep last known prices on failure */ }
-  checkSignalClosures(signalScannerMode, signalScannerMode==='futures' ? signalScannerStyle : null);
+  FSIG_BUCKETS.forEach(b=> checkSignalClosures(b.mode, b.style));
   if(rerender) renderSignalList(signalScannerMode);
-}
-function startSignalPriceLoop(){
-  if(signalPriceTimer) clearInterval(signalPriceTimer);
-  signalPriceTimer = setInterval(()=>refreshSignalTickers(true), 30000);
 }
 
 function pctFrom(entry, val){ return (val-entry)/entry*100; }
@@ -3619,6 +3730,16 @@ setInterval(()=>loadIndicators(currentPair), 60000);
 setInterval(refreshSignalsIfIdle, 60000);
 // Entry-signal card (S/R × Volume × Pola Chart) refreshes on its own 60s cadence too.
 setInterval(()=>{ if(!entryAnalysisInFlight) runEntryAnalysis(); }, 60000);
+
+// Futures Signal background engine — starts on page load regardless of which page is
+// open, so Scalping/Day Trading/Swing/Spot signals stay fresh even if you never visit
+// the Futures Signal page: SL/TP + 3-day staleness check every 30s across all 4
+// buckets, full rescan for new setups every 1 hour (toggle via the on-screen pill).
+startGlobalCloseLoop();
+if(autoScanEnabled) startGlobalScanLoop();
+runGlobalScanCycle();
+updateAutoscanPill();
+autoscanPillTimer = setInterval(updateAutoscanPill, 1000);
 </script>
 
 </body>
