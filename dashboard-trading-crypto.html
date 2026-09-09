@@ -78,6 +78,31 @@
     background:var(--panel-2); border:1.5px solid var(--line); border-radius:20px;
     width:40px; height:24px; position:relative; cursor:pointer; flex-shrink:0;
   }
+
+  /* ---- Ticker tape (scrolling market prices, right under the header) ---- */
+  .ticker-tape{
+    overflow:hidden; white-space:nowrap; background:var(--panel-2);
+    border-bottom:1px solid var(--line); position:relative;
+  }
+  .ticker-track{
+    display:inline-flex; align-items:center; width:max-content;
+    animation: tickerScroll 45s linear infinite;
+    will-change: transform;
+  }
+  .ticker-tape:hover .ticker-track{ animation-play-state:paused; }
+  @keyframes tickerScroll{
+    from{ transform:translateX(-50%); }
+    to{ transform:translateX(0%); }
+  }
+  .ticker-item{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:9px 22px; border-right:1px solid var(--line); flex-shrink:0;
+  }
+  .ticker-sym{ font-size:12px; font-weight:700; color:var(--ink-dim); letter-spacing:0.3px; }
+  .ticker-price{ font-size:13px; font-weight:600; color:var(--ink); }
+  .ticker-chg{ font-size:11px; font-weight:600; padding:1px 6px; border-radius:4px; }
+  .ticker-chg.up{ color:var(--buy); background:var(--buy-glow); }
+  .ticker-chg.down{ color:var(--sell); background:var(--sell-glow); }
   .theme-toggle .knob{
     position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%;
     background:var(--accent); transition:left .2s; display:flex; align-items:center; justify-content:center; font-size:10px;
@@ -538,6 +563,13 @@
     <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()"><div class="knob">☀</div></div>
   </div>
 </header>
+
+<!-- ===== Scrolling market price ticker ===== -->
+<div class="ticker-tape" id="tickerTape">
+  <div class="ticker-track" id="tickerTrack">
+    <div class="ticker-item"><span class="ticker-sym">Memuat harga pasar…</span></div>
+  </div>
+</div>
 
 <!-- ===== Navigation Drawer ===== -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
@@ -1567,6 +1599,7 @@ function connectCryptoWS(){
           cEl.className = 'pair-change mono '+(chg>=0?'up':'down');
         }
         if(sym===currentPair) updateHeaderCrypto(tickerMap[sym]);
+        updateTickerTapeSymbol(sym, tickerMap[sym]);
       }
       updateMoversLive();
     };
@@ -1593,7 +1626,44 @@ function renderPairListCrypto(){
       <div class="pair-change mono ${chg>=0?'up':'down'}" id="chg-${c.pair}">${t?((chg>=0?'+':'')+chg.toFixed(2)+'%'):'–'}</div></div>`;
     list.appendChild(row);
   }
+  renderTickerTape();
 }
+
+/* ================= SCROLLING PRICE TICKER (header strip) ================= */
+// Shows a curated slice of the most-liquid pairs (top of PAIRS, already ranked by 24h
+// volume) scrolling continuously. The item list is duplicated back-to-back so the CSS
+// animation loops seamlessly; live updates (WS / REST refresh) then just patch the text
+// of every element sharing a data-symbol, in both copies, instead of rebuilding the DOM
+// (rebuilding would restart/jank the scroll animation on every tick).
+const TICKER_TAPE_COUNT = 14;
+function tickerItemHTML(c){
+  const t = tickerMap[c.pair];
+  const chg = t ? parseFloat(t.priceChangePercent) : 0;
+  return `<div class="ticker-item" data-symbol="${c.pair}">
+    <span class="ticker-sym">${c.symbol}/USDT</span>
+    <span class="ticker-price mono">${t?'$'+formatPrice(parseFloat(t.lastPrice)):'…'}</span>
+    <span class="ticker-chg mono ${chg>=0?'up':'down'}">${t?((chg>=0?'+':'')+chg.toFixed(2)+'%'):'–'}</span>
+  </div>`;
+}
+function renderTickerTape(){
+  const track = document.getElementById('tickerTrack');
+  if(!track || !PAIRS.length) return;
+  const slice = PAIRS.slice(0, TICKER_TAPE_COUNT);
+  const html = slice.map(tickerItemHTML).join('');
+  track.innerHTML = html + html; // duplicate so the marquee wraps seamlessly
+}
+function updateTickerTapeSymbol(sym, t){
+  const chg = parseFloat(t.priceChangePercent);
+  const priceStr = '$'+formatPrice(parseFloat(t.lastPrice));
+  const chgStr = (chg>=0?'+':'')+chg.toFixed(2)+'%';
+  const chgCls = 'ticker-chg mono '+(chg>=0?'up':'down');
+  document.querySelectorAll(`.ticker-item[data-symbol="${sym}"]`).forEach(el=>{
+    const pEl = el.querySelector('.ticker-price'), cEl = el.querySelector('.ticker-chg');
+    if(pEl) pEl.textContent = priceStr;
+    if(cEl){ cEl.textContent = chgStr; cEl.className = chgCls; }
+  });
+}
+
 
 /* ================= TICKER REFRESH (crypto) ================= */
 async function refreshCurrentMarket(){
@@ -1606,6 +1676,7 @@ async function refreshCurrentMarket(){
       if(pEl){ pEl.textContent=formatPrice(parseFloat(t.lastPrice)); const chg=parseFloat(t.priceChangePercent);
         cEl.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%'; cEl.className='pair-change mono '+(chg>=0?'up':'down'); }
       if(c.pair===currentPair) updateHeaderCrypto(t);
+      updateTickerTapeSymbol(c.pair, t);
     });
   }catch(e){ console.error(e); }
 }
