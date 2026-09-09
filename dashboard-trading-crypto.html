@@ -78,31 +78,6 @@
     background:var(--panel-2); border:1.5px solid var(--line); border-radius:20px;
     width:40px; height:24px; position:relative; cursor:pointer; flex-shrink:0;
   }
-
-  /* ---- Ticker tape (scrolling market prices, right under the header) ---- */
-  .ticker-tape{
-    overflow:hidden; white-space:nowrap; background:var(--panel-2);
-    border-bottom:1px solid var(--line); position:relative;
-  }
-  .ticker-track{
-    display:inline-flex; align-items:center; width:max-content;
-    animation: tickerScroll 45s linear infinite;
-    will-change: transform;
-  }
-  .ticker-tape:hover .ticker-track{ animation-play-state:paused; }
-  @keyframes tickerScroll{
-    from{ transform:translateX(-50%); }
-    to{ transform:translateX(0%); }
-  }
-  .ticker-item{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:9px 22px; border-right:1px solid var(--line); flex-shrink:0;
-  }
-  .ticker-sym{ font-size:12px; font-weight:700; color:var(--ink-dim); letter-spacing:0.3px; }
-  .ticker-price{ font-size:13px; font-weight:600; color:var(--ink); }
-  .ticker-chg{ font-size:11px; font-weight:600; padding:1px 6px; border-radius:4px; }
-  .ticker-chg.up{ color:var(--buy); background:var(--buy-glow); }
-  .ticker-chg.down{ color:var(--sell); background:var(--sell-glow); }
   .theme-toggle .knob{
     position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%;
     background:var(--accent); transition:left .2s; display:flex; align-items:center; justify-content:center; font-size:10px;
@@ -507,6 +482,127 @@
     background:var(--panel-2); border:1.5px solid var(--line); border-radius:9px; padding:12px 15px;
     font-size:12.5px; line-height:1.6; color:var(--ink);
   }
+
+  /* ===================== PROFESSIONAL TERMINAL CHROME ===================== */
+
+  /* ---- Price flash (tick up/down) ---- */
+  @keyframes flashUp{0%{background:rgba(14,203,129,0.38);}100%{background:transparent;}}
+  @keyframes flashDown{0%{background:rgba(246,70,93,0.38);}100%{background:transparent;}}
+  .flash-up{animation:flashUp .7s ease-out;}
+  .flash-down{animation:flashDown .7s ease-out;}
+
+  /* ---- Ticker tape (scrolling live prices, top of page) ---- */
+  .ticker-tape{
+    background:var(--panel); border-bottom:1px solid var(--line); overflow:hidden;
+    white-space:nowrap; position:relative; height:30px; display:flex; align-items:center;
+  }
+  .ticker-tape-track{display:inline-flex; align-items:center; gap:28px; padding-left:100%; animation:tickerScroll 55s linear infinite;}
+  .ticker-tape:hover .ticker-tape-track{animation-play-state:paused;}
+  @keyframes tickerScroll{from{transform:translateX(0);} to{transform:translateX(-100%);}}
+  .ticker-item{display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono',monospace; font-size:11.5px; flex-shrink:0;}
+  .ticker-item b{color:var(--ink); font-weight:700;}
+  .ticker-item .ti-chg.up{color:var(--buy);} .ticker-item .ti-chg.down{color:var(--sell);}
+  .ticker-item .ti-dom{color:var(--accent); font-weight:700;}
+
+  /* ---- Status bar (fixed bottom, terminal-style system readout) ---- */
+  .status-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:120; height:26px;
+    background:var(--panel); border-top:1px solid var(--line);
+    display:flex; align-items:center; gap:16px; padding:0 14px;
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-dim);
+    overflow-x:auto; white-space:nowrap;
+  }
+  .status-bar .sb-item{display:flex; align-items:center; gap:5px; flex-shrink:0;}
+  .status-bar .sb-dot{width:7px; height:7px; border-radius:50%; background:var(--ink-dim); flex-shrink:0;}
+  .status-bar .sb-dot.live{background:var(--buy); box-shadow:0 0 6px var(--buy); animation:sbPulse 1.6s ease-in-out infinite;}
+  .status-bar .sb-dot.down{background:var(--sell);}
+  @keyframes sbPulse{0%,100%{opacity:1;} 50%{opacity:0.35;}}
+  .status-bar .sb-sep{color:var(--line); flex-shrink:0;}
+  .status-bar .sb-link{cursor:pointer; color:var(--accent); text-decoration:none;}
+  .status-bar .sb-link:hover{text-decoration:underline;}
+  body{padding-bottom:26px;}
+
+  /* ---- Activity log (docked, collapsible, bottom-right) ---- */
+  .activity-log{
+    position:fixed; right:14px; bottom:34px; z-index:110; width:320px; max-height:0; overflow:hidden;
+    background:var(--panel); border:1px solid var(--line); border-radius:10px 10px 0 0;
+    box-shadow:0 -4px 24px rgba(0,0,0,0.25); transition:max-height .25s ease;
+  }
+  .activity-log.open{max-height:320px;}
+  .activity-log-head{
+    display:flex; align-items:center; justify-content:space-between; padding:9px 12px;
+    border-bottom:1px solid var(--line); cursor:pointer; font-size:11px; font-weight:700;
+    letter-spacing:0.4px; text-transform:uppercase; color:var(--ink-dim);
+  }
+  .activity-log-body{max-height:270px; overflow-y:auto; padding:6px 0;}
+  .al-row{display:flex; gap:8px; padding:6px 12px; font-size:11.5px; line-height:1.5; align-items:flex-start;}
+  .al-row .al-time{color:var(--ink-dim); font-family:'JetBrains Mono',monospace; font-size:10px; flex-shrink:0; padding-top:1px;}
+  .al-row .al-dot{width:6px; height:6px; border-radius:50%; margin-top:5px; flex-shrink:0;}
+  .al-row .al-dot.buy{background:var(--buy);} .al-row .al-dot.sell{background:var(--sell);} .al-row .al-dot.info{background:var(--accent);}
+  .activity-log-toggle{
+    position:fixed; right:14px; bottom:34px; z-index:109; background:var(--panel); border:1px solid var(--line);
+    border-radius:8px 8px 0 0; padding:7px 12px; font-size:11px; font-weight:700; color:var(--ink-dim);
+    cursor:pointer; display:flex; align-items:center; gap:6px; letter-spacing:0.3px;
+  }
+  .activity-log-toggle .al-badge{background:var(--accent); color:var(--accent-ink); border-radius:999px; padding:0 6px; font-size:10px; font-weight:800;}
+
+  /* ---- Command palette (Ctrl+K) ---- */
+  .cmdk-overlay{
+    position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.55); display:none;
+    align-items:flex-start; justify-content:center; padding-top:12vh;
+  }
+  .cmdk-overlay.open{display:flex;}
+  .cmdk-box{width:100%; max-width:560px; background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.5); overflow:hidden;}
+  .cmdk-input{
+    width:100%; border:none; background:transparent; color:var(--ink); font-size:16px; padding:16px 18px;
+    border-bottom:1px solid var(--line); font-family:'Inter',sans-serif; outline:none;
+  }
+  .cmdk-list{max-height:360px; overflow-y:auto; padding:6px;}
+  .cmdk-item{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:8px; cursor:pointer; font-size:13px;}
+  .cmdk-item.active{background:var(--panel-2);}
+  .cmdk-item .cmdk-tag{font-size:10px; color:var(--ink-dim); font-family:'JetBrains Mono',monospace; text-transform:uppercase;}
+  .cmdk-empty{padding:24px; text-align:center; color:var(--ink-dim); font-size:12.5px;}
+  .cmdk-hint{padding:8px 14px; border-top:1px solid var(--line); font-size:10.5px; color:var(--ink-dim); display:flex; gap:14px;}
+
+  /* ---- Skeleton loading ---- */
+  @keyframes skPulse{0%,100%{opacity:0.5;} 50%{opacity:1;}}
+  .skeleton-row{display:flex; align-items:center; gap:10px; padding:10px 16px;}
+  .skeleton-bar{height:11px; border-radius:4px; background:var(--panel-2); animation:skPulse 1.1s ease-in-out infinite;}
+
+  /* ---- Alerts panel (price alerts + notification/sound settings) ---- */
+  .alerts-btn{position:relative; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:8px; color:var(--ink-dim);}
+  .alerts-btn:hover{background:var(--panel-2); color:var(--ink);}
+  .alerts-btn .al-count{position:absolute; top:2px; right:2px; background:var(--sell); color:#fff; font-size:9px; font-weight:800; border-radius:999px; min-width:14px; height:14px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
+  .alerts-panel{
+    position:fixed; top:56px; right:14px; z-index:200; width:300px; background:var(--panel);
+    border:1px solid var(--line); border-radius:10px; box-shadow:0 12px 40px rgba(0,0,0,0.4); display:none;
+  }
+  .alerts-panel.open{display:block;}
+  .alerts-panel-head{padding:12px 14px; border-bottom:1px solid var(--line); font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
+  .alerts-panel-body{padding:10px 14px; display:flex; flex-direction:column; gap:10px;}
+  .alerts-toggle-row{display:flex; align-items:center; justify-content:space-between; font-size:12px;}
+  .mini-switch{width:34px; height:19px; border-radius:999px; background:var(--panel-2); border:1px solid var(--line); position:relative; cursor:pointer; flex-shrink:0;}
+  .mini-switch .knob2{position:absolute; top:2px; left:2px; width:13px; height:13px; border-radius:50%; background:var(--ink-dim); transition:.15s;}
+  .mini-switch.on{background:var(--accent-glow); border-color:var(--accent);}
+  .mini-switch.on .knob2{left:17px; background:var(--accent);}
+  .alert-form{display:flex; gap:6px;}
+  .alert-form input{flex:1; min-width:0; background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:7px 8px; color:var(--ink); font-size:12px; font-family:'JetBrains Mono',monospace;}
+  .alert-form button{background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px; padding:0 12px; font-size:12px; font-weight:700; cursor:pointer;}
+  .alert-list{display:flex; flex-direction:column; gap:6px; max-height:160px; overflow-y:auto;}
+  .alert-row{display:flex; align-items:center; justify-content:space-between; font-size:12px; background:var(--panel-2); border-radius:6px; padding:7px 9px;}
+  .alert-row .ar-del{cursor:pointer; color:var(--sell); font-weight:700;}
+  .alerts-empty{font-size:11.5px; color:var(--ink-dim); text-align:center; padding:6px 0;}
+
+  /* ---- Performance page ---- */
+  .perf-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px;}
+  .perf-kpi{background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px;}
+  .perf-kpi .pk-label{font-size:10.5px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-dim); margin-bottom:6px;}
+  .perf-kpi .pk-value{font-size:22px; font-weight:800; font-family:'JetBrains Mono',monospace;}
+  .perf-bucket-tabs{display:flex; gap:8px; flex-wrap:wrap;}
+  .perf-bucket-tab{padding:7px 14px; border-radius:999px; font-size:11.5px; font-weight:600; border:1px solid var(--line); cursor:pointer; color:var(--ink-dim);}
+  .perf-bucket-tab.active{background:var(--accent-glow); color:var(--accent); border-color:var(--accent);}
+  .perf-row{display:flex; justify-content:space-between; align-items:center; padding:9px 4px; border-bottom:1px solid var(--line); font-size:12.5px;}
+  .perf-row:last-child{border-bottom:none;}
 </style>
 </head>
 <body>
@@ -559,15 +655,29 @@
   </div>
   <div class="header-right">
     <div class="status"><div class="led"></div><span id="clock" class="mono">--:--:--</span></div>
+    <div class="alerts-btn" id="alertsBtn" onclick="toggleAlertsPanel()" title="Alerts &amp; Price Alerts">🔔<span class="al-count" id="alertsCount" style="display:none;">0</span></div>
     <div class="lang-toggle" id="langToggle" onclick="toggleLang()" title="Switch language / Ganti bahasa">EN</div>
     <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()"><div class="knob">☀</div></div>
   </div>
 </header>
 
-<!-- ===== Scrolling market price ticker ===== -->
 <div class="ticker-tape" id="tickerTape">
-  <div class="ticker-track" id="tickerTrack">
-    <div class="ticker-item"><span class="ticker-sym">Memuat harga pasar…</span></div>
+  <div class="ticker-tape-track" id="tickerTapeTrack"><span class="ticker-item">Memuat ticker…</span></div>
+</div>
+
+<div class="alerts-panel" id="alertsPanel">
+  <div class="alerts-panel-head"><span>Alerts</span><span style="cursor:pointer; color:var(--ink-dim);" onclick="toggleAlertsPanel()">✕</span></div>
+  <div class="alerts-panel-body">
+    <div class="alerts-toggle-row"><span>Notifikasi browser</span><div class="mini-switch" id="notifSwitch" onclick="toggleNotifPermission()"><div class="knob2"></div></div></div>
+    <div class="alerts-toggle-row"><span>Suara ping</span><div class="mini-switch" id="soundSwitch" onclick="toggleSound()"><div class="knob2"></div></div></div>
+    <div style="border-top:1px solid var(--line); padding-top:10px;">
+      <div style="font-size:11px; color:var(--ink-dim); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.4px;">Price Alert · <span id="alertPairLabel" class="mono">–</span></div>
+      <div class="alert-form">
+        <input type="number" id="alertPriceInput" placeholder="Target harga…" step="any">
+        <button onclick="addPriceAlert()">Tambah</button>
+      </div>
+      <div class="alert-list" id="alertList"><div class="alerts-empty">Belum ada price alert.</div></div>
+    </div>
   </div>
 </div>
 
@@ -583,6 +693,7 @@
   <div class="nav-group-label" data-i18n="nav_group_trading">Trading</div>
   <div class="nav-item active" data-page="trading" onclick="switchPage('trading')"><span data-i18n="nav_trading">Trading Signal</span><span class="nav-live">LIVE</span></div>
   <div class="nav-item" data-page="futures-signal" onclick="switchPage('futures-signal')"><span data-i18n="nav_futures_signal">Futures Signal</span></div>
+  <div class="nav-item" data-page="performance" onclick="switchPage('performance')">📈 <span data-i18n="nav_performance">Performance</span></div>
   <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
   <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')"><span data-i18n="nav_heatmap">Market Heatmap</span></div>
   <div class="nav-group-label" data-i18n="nav_group_analysis">Analysis</div>
@@ -860,6 +971,33 @@
 </div>
 
 <!-- ===== Coin Strength ===== -->
+<!-- ===== Performance (win rate riil dari histori sinyal) ===== -->
+<div id="page-performance" class="page">
+  <div class="page-inner">
+    <div class="card">
+      <div class="card-title"><span>Performance — Riwayat Sinyal</span><span style="font-size:10px;">Dihitung dari sinyal yang sudah closed (kena TP/SL)</span></div>
+      <div class="card-body">
+        <div class="perf-bucket-tabs" id="perfBucketTabs" style="margin-bottom:14px;">
+          <div class="perf-bucket-tab active" data-bucket="all" onclick="switchPerfBucket('all')">Semua</div>
+          <div class="perf-bucket-tab" data-bucket="futures|scalping" onclick="switchPerfBucket('futures|scalping')">Scalping</div>
+          <div class="perf-bucket-tab" data-bucket="futures|daytrading" onclick="switchPerfBucket('futures|daytrading')">Day Trading</div>
+          <div class="perf-bucket-tab" data-bucket="futures|swing" onclick="switchPerfBucket('futures|swing')">Swing</div>
+          <div class="perf-bucket-tab" data-bucket="spot|" onclick="switchPerfBucket('spot|')">Spot</div>
+        </div>
+        <div class="perf-kpis" id="perfKpis"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>Kurva Ekuitas (kumulatif R)</span><span style="font-size:10px;">1R = risiko per sinyal (entry → SL)</span></div>
+      <div class="card-body"><svg id="perfEquitySvg" viewBox="0 0 900 260" style="width:100%; height:auto; display:block;"></svg></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>Riwayat Sinyal Closed</span><span id="perfHistCount" class="mono" style="font-size:10px;">0</span></div>
+      <div class="card-body" id="perfHistBody"><div class="sidebar-loading">Belum ada sinyal yang closed.</div></div>
+    </div>
+  </div>
+</div>
+
 <div id="page-strength" class="page">
   <div class="page-inner">
     <div class="card">
@@ -1139,7 +1277,7 @@ let cryptoWS = null;              // persistent Binance Futures all-market ticke
 let cryptoWSRetryTimer = null;
 
 /* ================= CLOCK ================= */
-function tickClock(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString(uiLocale()); }
+function tickClock(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString(uiLocale()); tickStatusBarClock(); }
 setInterval(tickClock, 1000); tickClock();
 
 /* ================= INDICATOR MATH (market-agnostic) ================= */
@@ -1506,6 +1644,8 @@ async function initCryptoMarket(){
   }
   connectCryptoWS();
   scheduleRefresh();
+  renderTickerTape();
+  setInterval(renderTickerTape, 5000); // re-render tape from tickerMap (already kept live by WS)
 }
 let refreshTimer = null;
 function scheduleRefresh(){
@@ -1583,31 +1723,36 @@ function connectCryptoWS(){
     // (Futures REST unreachable), the matching Spot WS host is stream.binance.com.
     const wsUrl = usingSpotFallback ? 'wss://stream.binance.com:9443/ws/!ticker@arr' : 'wss://fstream.binance.com/ws/!ticker@arr';
     cryptoWS = new WebSocket(wsUrl);
+    cryptoWS.onopen = ()=> setWsStatus(true);
     cryptoWS.onmessage = (ev)=>{
       let arr; try{ arr = JSON.parse(ev.data); }catch(e){ return; }
       if(!Array.isArray(arr)) return;
       for(const t of arr){
         const sym = t.s; // ticker payload: s=symbol, c=lastPrice, P=priceChangePercent
         if(!pairMetaMap[sym]) continue; // not one of our tracked pairs
+        const prevPrice = tickerMap[sym] ? parseFloat(tickerMap[sym].lastPrice) : null;
         const prev = tickerMap[sym] || {};
         tickerMap[sym] = { ...prev, lastPrice:t.c, priceChangePercent:t.P };
+        const newPrice = parseFloat(t.c);
         const pEl = document.getElementById('price-'+sym), cEl = document.getElementById('chg-'+sym);
         if(pEl){
-          pEl.textContent = formatPrice(parseFloat(t.c));
+          pEl.textContent = formatPrice(newPrice);
           const chg = parseFloat(t.P);
           cEl.textContent = (chg>=0?'+':'')+chg.toFixed(2)+'%';
           cEl.className = 'pair-change mono '+(chg>=0?'up':'down');
+          if(prevPrice!=null && newPrice!==prevPrice) flashCell(pEl, newPrice>prevPrice);
         }
-        if(sym===currentPair) updateHeaderCrypto(tickerMap[sym]);
-        updateTickerTapeSymbol(sym, tickerMap[sym]);
+        if(sym===currentPair) updateHeaderCrypto(tickerMap[sym], prevPrice);
+        checkPriceAlerts(sym, newPrice);
       }
       updateMoversLive();
     };
     cryptoWS.onclose = ()=>{
       cryptoWS = null;
+      setWsStatus(false);
       cryptoWSRetryTimer = setTimeout(connectCryptoWS, 3000);
     };
-    cryptoWS.onerror = ()=>{ try{ cryptoWS?.close(); }catch(e){} };
+    cryptoWS.onerror = ()=>{ setWsStatus(false); try{ cryptoWS?.close(); }catch(e){} };
   }catch(e){ console.error('WS init gagal, tetap pakai REST polling', e); }
 }
 function disconnectCryptoWS(){
@@ -1626,44 +1771,7 @@ function renderPairListCrypto(){
       <div class="pair-change mono ${chg>=0?'up':'down'}" id="chg-${c.pair}">${t?((chg>=0?'+':'')+chg.toFixed(2)+'%'):'–'}</div></div>`;
     list.appendChild(row);
   }
-  renderTickerTape();
 }
-
-/* ================= SCROLLING PRICE TICKER (header strip) ================= */
-// Shows a curated slice of the most-liquid pairs (top of PAIRS, already ranked by 24h
-// volume) scrolling continuously. The item list is duplicated back-to-back so the CSS
-// animation loops seamlessly; live updates (WS / REST refresh) then just patch the text
-// of every element sharing a data-symbol, in both copies, instead of rebuilding the DOM
-// (rebuilding would restart/jank the scroll animation on every tick).
-const TICKER_TAPE_COUNT = 14;
-function tickerItemHTML(c){
-  const t = tickerMap[c.pair];
-  const chg = t ? parseFloat(t.priceChangePercent) : 0;
-  return `<div class="ticker-item" data-symbol="${c.pair}">
-    <span class="ticker-sym">${c.symbol}/USDT</span>
-    <span class="ticker-price mono">${t?'$'+formatPrice(parseFloat(t.lastPrice)):'…'}</span>
-    <span class="ticker-chg mono ${chg>=0?'up':'down'}">${t?((chg>=0?'+':'')+chg.toFixed(2)+'%'):'–'}</span>
-  </div>`;
-}
-function renderTickerTape(){
-  const track = document.getElementById('tickerTrack');
-  if(!track || !PAIRS.length) return;
-  const slice = PAIRS.slice(0, TICKER_TAPE_COUNT);
-  const html = slice.map(tickerItemHTML).join('');
-  track.innerHTML = html + html; // duplicate so the marquee wraps seamlessly
-}
-function updateTickerTapeSymbol(sym, t){
-  const chg = parseFloat(t.priceChangePercent);
-  const priceStr = '$'+formatPrice(parseFloat(t.lastPrice));
-  const chgStr = (chg>=0?'+':'')+chg.toFixed(2)+'%';
-  const chgCls = 'ticker-chg mono '+(chg>=0?'up':'down');
-  document.querySelectorAll(`.ticker-item[data-symbol="${sym}"]`).forEach(el=>{
-    const pEl = el.querySelector('.ticker-price'), cEl = el.querySelector('.ticker-chg');
-    if(pEl) pEl.textContent = priceStr;
-    if(cEl){ cEl.textContent = chgStr; cEl.className = chgCls; }
-  });
-}
-
 
 /* ================= TICKER REFRESH (crypto) ================= */
 async function refreshCurrentMarket(){
@@ -1673,18 +1781,26 @@ async function refreshCurrentMarket(){
     PAIRS.forEach(c=>{
       const t=tickerMap[c.pair]; if(!t) return;
       const pEl=document.getElementById('price-'+c.pair), cEl=document.getElementById('chg-'+c.pair);
-      if(pEl){ pEl.textContent=formatPrice(parseFloat(t.lastPrice)); const chg=parseFloat(t.priceChangePercent);
-        cEl.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%'; cEl.className='pair-change mono '+(chg>=0?'up':'down'); }
+      if(pEl){
+        const prevPrice = parseFloat(pEl.dataset.lastPrice||'NaN');
+        const newPrice = parseFloat(t.lastPrice);
+        pEl.textContent=formatPrice(newPrice); pEl.dataset.lastPrice = newPrice;
+        const chg=parseFloat(t.priceChangePercent);
+        cEl.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%'; cEl.className='pair-change mono '+(chg>=0?'up':'down');
+        if(!isNaN(prevPrice) && newPrice!==prevPrice) flashCell(pEl, newPrice>prevPrice);
+      }
       if(c.pair===currentPair) updateHeaderCrypto(t);
-      updateTickerTapeSymbol(c.pair, t);
     });
   }catch(e){ console.error(e); }
 }
 
 /* ================= HEADER ================= */
-function updateHeaderCrypto(t){
+function updateHeaderCrypto(t, prevPrice){
   document.getElementById('hPair').textContent = currentPair.replace('USDT','/USDT');
-  document.getElementById('hPrice').textContent = '$'+formatPrice(parseFloat(t.lastPrice));
+  const hPriceEl = document.getElementById('hPrice');
+  const newPrice = parseFloat(t.lastPrice);
+  hPriceEl.textContent = '$'+formatPrice(newPrice);
+  if(prevPrice!=null && newPrice!==prevPrice) flashCell(hPriceEl, newPrice>prevPrice);
   const chg=parseFloat(t.priceChangePercent); const el=document.getElementById('hChange');
   el.textContent=(chg>=0?'▲ +':'▼ ')+chg.toFixed(2)+'%'; el.className='chg mono '+(chg>=0?'up':'down');
 }
@@ -1700,7 +1816,6 @@ function selectPair(p){
   loadSignals(p);
   loadNews(p);
   loadFoilsSentiment(p);
-  loadAdvancedTAStandalone(p); // independen dari FOILS & dari loop 10-timeframe di loadSignals
   runEntryAnalysis();
 }
 
@@ -1908,16 +2023,11 @@ async function loadIndicators(symbol){
 async function loadSignals(symbol){
   const body = document.getElementById('signalBody');
   body.innerHTML = `<tr><td colspan="5" class="mono">${t('loading_signals')}</td></tr>`;
-  // FIX: this used to fetch all 10 timeframes (M1..W1) one-by-one with `await` inside a
-  // for-loop — if any single timeframe was slow, every timeframe after it (and anything
-  // downstream, like Supply/Demand + Struktur Pasar) had to wait for it in turn, up to
-  // 8s×10 in the worst case. Fetching them in parallel means the whole batch only ever
-  // waits as long as the single slowest request (max 8s per fetchKlinesCrypto attempt),
-  // and a failure in one timeframe no longer stalls the rest.
-  const rows = await Promise.all(TFS.map(async tf=>{
-    try{ const ohlc = await getOHLC(symbol, tf); return {tf:tf.label, sig:computeSignal(ohlc), ohlc}; }
-    catch(e){ return {tf:tf.label, sig:null, ohlc:null}; }
-  }));
+  const rows = [];
+  for(const tf of TFS){
+    try{ const ohlc = await getOHLC(symbol, tf); rows.push({tf:tf.label, sig:computeSignal(ohlc), ohlc}); }
+    catch(e){ rows.push({tf:tf.label, sig:null, ohlc:null}); }
+  }
   currentSignalRows = rows;
   body.innerHTML = "";
   rows.forEach(r=>{
@@ -2267,34 +2377,6 @@ function detectPatterns(highs, lows, closes){
   }
   return patterns;
 }
-// FIX: Supply & Demand Zones and Struktur Pasar & Pola Chart used to only get computed
-// as the LAST step of computeSetupRecommendation(), which itself only runs after
-// loadSignals() sequentially fetches all 10 timeframes (M1..W1) one-by-one. If any of
-// those requests was slow, both cards sat on "Memuat analisis…" far longer than
-// necessary, which looked like they were waiting on FOILS (loaded around the same time)
-// even though there was no real code dependency between them. This standalone loader
-// fetches ONLY the H4 candles it actually needs and renders immediately — fully
-// decoupled from both loadFoilsSentiment() and the multi-timeframe signal loop.
-let advancedTAToken = 0;
-async function loadAdvancedTAStandalone(symbol){
-  const myToken = ++advancedTAToken; // guards against a stale/slow response overwriting a newer pair selection
-  const zonesEl = document.getElementById('sdZonesBody'), fibEl = document.getElementById('fibBody'), patEl = document.getElementById('patternBody');
-  const loadingMsg = '<div class="ind-note" data-i18n="loading_analysis">Memuat analisis…</div>';
-  if(zonesEl) zonesEl.innerHTML = loadingMsg; if(fibEl) fibEl.innerHTML = loadingMsg; if(patEl) patEl.innerHTML = loadingMsg;
-  try{
-    const h4tf = TFS.find(t=>t.label==='H4');
-    const h4ohlc = await getOHLC(symbol, h4tf); // getOHLC -> fetchKlinesCrypto -> fetchJsonRace already times out at 8s per attempt
-    if(myToken!==advancedTAToken) return; // a newer pair was selected while this was in flight
-    computeAdvancedTA(symbol, [{tf:'H4', ohlc:h4ohlc}]);
-  }catch(e){
-    if(myToken!==advancedTAToken) return;
-    console.error('Gagal memuat data H4 untuk Supply/Demand & Struktur Pasar', e);
-    const errMsg = '<div class="ind-note">Data H4 belum cukup untuk analisis ini — coba pair lain atau refresh.</div>';
-    if(zonesEl) zonesEl.innerHTML = errMsg; if(fibEl) fibEl.innerHTML = errMsg; if(patEl) patEl.innerHTML = errMsg;
-    window.__lastAdvancedTA = null;
-    renderEntryWhy();
-  }
-}
 function computeAdvancedTA(symbol, rows){
   const zonesEl = document.getElementById('sdZonesBody'), fibEl = document.getElementById('fibBody'), patEl = document.getElementById('patternBody');
   const h4 = rows.find(r=>r.tf==='H4')?.ohlc;
@@ -2477,17 +2559,12 @@ async function loadFoilsSentiment(symbol){
   body.innerHTML = `<div class="ind-box"><div class="ind-label">${t('loading_derivatives')}</div></div>`;
   window.__foilsPromise = (async()=>{
     try{
-      // FIX: explicit 8000ms (8s) timeout on every FOILS request — each is wrapped so a
-      // slow/unreachable endpoint fails gracefully (resolves to null via .catch) instead
-      // of hanging indefinitely. Promise.all means the whole batch never waits longer
-      // than the slowest single 8s timeout, not the sum of all five.
-      const FOILS_TIMEOUT_MS = 8000;
       const [premium, oi, oiHist, lsRatio, fng] = await Promise.all([
-        fetchJsonRace([`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`], FOILS_TIMEOUT_MS).catch(()=>null),
-        fetchJsonRace([`https://fapi.binance.com/fapi/v1/openInterest?symbol=${symbol}`], FOILS_TIMEOUT_MS).catch(()=>null),
-        fetchJsonRace([`https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=8`], FOILS_TIMEOUT_MS).catch(()=>null),
-        fetchJsonRace([`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=1h&limit=1`], FOILS_TIMEOUT_MS).catch(()=>null),
-        fetchJsonRace(['https://api.alternative.me/fng/?limit=1'], FOILS_TIMEOUT_MS).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${symbol}`]).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/fapi/v1/openInterest?symbol=${symbol}`]).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/futures/data/openInterestHist?symbol=${symbol}&period=1h&limit=8`]).catch(()=>null),
+        fetchJsonRace([`https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=1h&limit=1`]).catch(()=>null),
+        fetchJsonRace(['https://api.alternative.me/fng/?limit=1']).catch(()=>null),
       ]);
       const fundingPct = premium?.lastFundingRate!=null ? parseFloat(premium.lastFundingRate)*100 : null;
       const oiNow = oi?.openInterest!=null ? parseFloat(oi.openInterest) : null;
@@ -2662,6 +2739,7 @@ function toggleAutoScan(){
   updateAutoscanPill();
 }
 function updateAutoscanPill(){
+  updateStatusBarAutoscan();
   const pill = document.getElementById('fsigAutoscanPill');
   if(!pill) return;
   if(!autoScanEnabled){ pill.textContent = '⏱ Auto-scan OFF · klik untuk aktifkan'; pill.classList.add('off'); return; }
@@ -3032,7 +3110,7 @@ async function scanSignals(mode, style){
   const isCurrentView = ()=> mode===signalScannerMode && (mode!=='futures' || style===signalScannerStyle);
   const listEl = ()=> isCurrentView() ? document.getElementById('fsigList') : null;
   const store = loadStoredSignals(mode, style);
-  pruneStaleSignals(store); // drop >3-day-old signals that never hit TP/SL before filling gaps
+  pruneStaleSignals(store, mode, style); // drop >3-day-old signals that never hit TP/SL before filling gaps
   const hasExisting = Object.values(store).some(s=>s.status==='active');
   if(!hasExisting && listEl()) listEl().innerHTML = `<div class="sidebar-loading">${t('loading_market_data')}…</div>`;
   try{
@@ -3044,9 +3122,14 @@ async function scanSignals(mode, style){
       const r = isFutures ? await computeStyleSignal(sym, style) : await computeConfirmedSignal(sym, isFutures);
       done++;
       if(!hasExisting && listEl()) listEl().innerHTML = `<div class="sidebar-loading">${t('loading_signals')} (${done}/${toScan.length})</div>`;
-      // Spot can only ever BUY (no shorting on spot) — drop SHORT-direction results there.
       if(r && !isFutures && r.direction==='SHORT') return;
-      if(r) store[sym] = { ...r, status:'active' }; // LOCKED here — never overwritten again
+      if(r){
+        store[sym] = { ...r, status:'active' }; // LOCKED here — never overwritten again
+        const bucketLabel = isFutures ? ({scalping:'Scalping',daytrading:'Day Trading',swing:'Swing'}[style]||style) : 'Spot';
+        logActivity(r.direction==='LONG'?'buy':'sell', `Sinyal baru <b>${sym}</b> ${r.direction} · ${bucketLabel} @ ${formatPrice(r.entry)}`);
+        sendNotification(`Sinyal baru: ${sym} ${r.direction}`, `${bucketLabel} · entry ${formatPrice(r.entry)}`);
+        playPing();
+      }
     });
     saveStoredSignals(mode, style, store);
     applyStoreToState(mode, style, store);
@@ -3069,14 +3152,16 @@ function applyStoreToState(mode, style, store){
 
 // Signals still "active" (no TP/SL hit) after 3 days are considered stale and are
 // deleted outright — not just closed — so the pair frees up for a fresh setup.
-function pruneStaleSignals(store){
+function pruneStaleSignals(store, mode, style){
   const cutoff = Date.now() - SIGNAL_STALE_MS;
   let changed = false;
+  const bucketLabel = mode==='spot' ? 'Spot' : ({scalping:'Scalping',daytrading:'Day Trading',swing:'Swing'}[style]||style||'');
   Object.keys(store).forEach(sym=>{
     const s = store[sym];
     if(s.status==='active' && s.openTime && s.openTime < cutoff){
       delete store[sym];
       changed = true;
+      logActivity('info', `⏱ Sinyal <b>${sym}</b> ${bucketLabel} dihapus otomatis (>3 hari, belum TP/SL)`);
     }
   });
   return changed;
@@ -3088,7 +3173,8 @@ function pruneStaleSignals(store){
 // Also prunes >3-day-old still-active signals (see pruneStaleSignals) on every call.
 function checkSignalClosures(mode, style){
   const store = loadStoredSignals(mode, style);
-  let changed = pruneStaleSignals(store);
+  let changed = pruneStaleSignals(store, mode, style);
+  const bucketLabel = mode==='spot' ? 'Spot' : ({scalping:'Scalping',daytrading:'Day Trading',swing:'Swing'}[style]||style||'');
   Object.keys(store).forEach(sym=>{
     const s = store[sym];
     if(s.status!=='active') return;
@@ -3096,16 +3182,23 @@ function checkSignalClosures(mode, style){
     if(live==null) return;
     const dir = s.direction==='LONG' ? 1 : -1;
     const finalTp = s.targets[s.targets.length-1];
+    let closedStatus = null;
     if(dir>0){
-      if(live<=s.sl){ s.status='sl_hit'; changed=true; }
-      else if(live>=finalTp){ s.status='tp_hit'; changed=true; }
+      if(live<=s.sl) closedStatus='sl_hit'; else if(live>=finalTp) closedStatus='tp_hit';
     } else {
-      if(live>=s.sl){ s.status='sl_hit'; changed=true; }
-      else if(live<=finalTp){ s.status='tp_hit'; changed=true; }
+      if(live>=s.sl) closedStatus='sl_hit'; else if(live<=finalTp) closedStatus='tp_hit';
+    }
+    if(closedStatus){
+      s.status = closedStatus; s.closedAt = Date.now(); changed = true;
+      const win = closedStatus==='tp_hit';
+      logActivity(win?'buy':'sell', `${win?'✅ TP HIT':'❌ SL HIT'} <b>${sym}</b> ${s.direction} · ${bucketLabel}`);
+      sendNotification(`${win?'TP HIT ✅':'SL HIT ❌'}: ${sym}`, `${bucketLabel} · ${s.direction}`);
+      playPing();
     }
   });
   if(changed) saveStoredSignals(mode, style, store);
   applyStoreToState(mode, style, store);
+  updateStatusBarSignalCount();
 }
 
 function switchSignalScanner(mode){
@@ -3251,6 +3344,7 @@ function closeDrawer(){ document.getElementById('drawer').classList.remove('open
 const PAGE_LOADERS = {
   dashboard: ()=>loadDashboardOverview(),
   'futures-signal': ()=>switchSignalScanner('futures'),
+  performance: ()=>loadPerformancePage(),
   livechart: ()=>loadLiveChartPro(),
   heatmap: ()=>loadHeatmap(),
   screener: ()=>loadScreener(),
@@ -3268,7 +3362,7 @@ function switchPage(page){
   // Lazy-load each page's content only the first time it's opened, so switching pages
   // stays instant and we don't fire off widgets/fetches for pages nobody visits.
   if(!loadedPages.has(page) && PAGE_LOADERS[page]){ loadedPages.add(page); PAGE_LOADERS[page](); }
-  if(page==='strength' || page==='movers'){ PAGE_LOADERS[page](); } // these want a fresh render every visit (cheap, uses in-memory tickerMap)
+  if(page==='strength' || page==='movers' || page==='performance'){ PAGE_LOADERS[page](); } // want a fresh render every visit
 }
 
 /* ---- Live Chart Pro: bigger Advanced Chart with full toolbar/drawing tools ---- */
@@ -3790,6 +3884,379 @@ async function runEntryAnalysis(){
 }
 document.getElementById('entryTfSelect').addEventListener('change', runEntryAnalysis);
 
+/* ================= TERMINAL CHROME =================
+   Flash-on-tick, ticker tape, status bar, activity log, command palette,
+   notifications, sound, price alerts, and the Performance (win-rate) page. */
+
+/* ---- Price flash ---- */
+function flashCell(el, up){
+  if(!el) return;
+  el.classList.remove('flash-up','flash-down');
+  void el.offsetWidth; // reflow to restart the CSS animation
+  el.classList.add(up?'flash-up':'flash-down');
+}
+
+/* ---- WS connection status → status bar dot ---- */
+function setWsStatus(connected){
+  const dot = document.getElementById('sbWsDot'), label = document.getElementById('sbWsLabel');
+  if(!dot) return;
+  dot.className = 'sb-dot '+(connected?'live':'down');
+  if(label) label.textContent = connected ? 'Live · WebSocket tersambung' : 'Terputus · mencoba lagi…';
+}
+// Rough round-trip latency to Binance, refreshed periodically for the status bar.
+async function pingLatency(){
+  const el = document.getElementById('sbLatency');
+  if(!el) return;
+  const t0 = performance.now();
+  try{
+    await fetch('https://fapi.binance.com/fapi/v1/ping', {cache:'no-store'});
+    el.textContent = Math.round(performance.now()-t0)+'ms';
+  }catch(e){ el.textContent = 'n/a'; }
+}
+function tickStatusBarClock(){
+  const el = document.getElementById('sbClock');
+  if(el) el.textContent = new Date().toLocaleTimeString('id-ID', {hour12:false});
+}
+function updateStatusBarAutoscan(){
+  const el = document.getElementById('sbAutoscan');
+  if(!el) return;
+  if(!autoScanEnabled){ el.textContent = 'Auto-scan: OFF'; return; }
+  const remain = Math.max(0, nextAutoScanAt - Date.now());
+  const mm = String(Math.floor(remain/60000)).padStart(2,'0');
+  const ss = String(Math.floor((remain%60000)/1000)).padStart(2,'0');
+  el.textContent = globalScanRunning ? 'Auto-scan: memindai…' : `Auto-scan: ${mm}:${ss}`;
+}
+function updateStatusBarSignalCount(){
+  const el = document.getElementById('sbSignalCount');
+  if(!el) return;
+  const n = Object.values(futuresSignalResultsByStyle).reduce((s,arr)=>s+arr.length,0) + spotSignalResults.length;
+  el.textContent = n;
+}
+
+/* ---- Ticker tape (scrolling live prices + BTC dominance) ---- */
+const TICKER_TAPE_SYMBOLS = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','ADAUSDT','DOGEUSDT','AVAXUSDT'];
+function renderTickerTape(){
+  const track = document.getElementById('tickerTapeTrack');
+  if(!track) return;
+  const items = TICKER_TAPE_SYMBOLS.map(sym=>{
+    const t = tickerMap[sym];
+    if(!t) return null;
+    const price = formatPrice(parseFloat(t.lastPrice));
+    const chg = parseFloat(t.priceChangePercent);
+    return `<span class="ticker-item"><b>${sym.replace('USDT','')}</b> ${price} <span class="ti-chg ${chg>=0?'up':'down'}">${(chg>=0?'+':'')+chg.toFixed(2)}%</span></span>`;
+  }).filter(Boolean);
+  if(globalMarketData){
+    items.push(`<span class="ticker-item"><span class="ti-dom">BTC.D ${globalMarketData.btcDominance.toFixed(1)}%</span></span>`);
+    items.push(`<span class="ticker-item">Total Mcap <b>$${(globalMarketData.totalMcap/1e9).toFixed(1)}B</b></span>`);
+  }
+  if(!items.length) return;
+  // Duplicate the sequence so the scroll loop has no visible seam.
+  track.innerHTML = items.join('') + items.join('');
+}
+let globalMarketData = null;
+async function fetchGlobalMarketData(){
+  try{
+    const data = await fetchJsonRace(['https://api.coingecko.com/api/v3/global'], 8000);
+    const d = data.data;
+    globalMarketData = { btcDominance: d.market_cap_percentage.btc, totalMcap: d.total_market_cap.usd };
+    const el = document.getElementById('sbDominance');
+    if(el) el.textContent = `BTC.D: ${globalMarketData.btcDominance.toFixed(1)}% · Mcap $${(globalMarketData.totalMcap/1e12).toFixed(2)}T`;
+    renderTickerTape();
+  }catch(e){ /* keep last known value; non-critical widget */ }
+}
+
+/* ---- Activity log ---- */
+let activityLogEntries = [];
+let activityLogUnread = 0;
+function logActivity(kind, text){
+  // kind: 'buy' | 'sell' | 'info'
+  activityLogEntries.unshift({ time: new Date(), kind, text });
+  if(activityLogEntries.length>60) activityLogEntries.length = 60;
+  const open = document.getElementById('activityLog')?.classList.contains('open');
+  if(!open){
+    activityLogUnread++;
+    const badge = document.getElementById('activityLogBadge');
+    if(badge){ badge.style.display='inline-block'; badge.textContent = activityLogUnread; }
+  }
+  renderActivityLog();
+}
+function renderActivityLog(){
+  const body = document.getElementById('activityLogBody');
+  if(!body) return;
+  if(!activityLogEntries.length){ body.innerHTML = '<div class="al-row"><span class="al-time">–</span><span>Menunggu aktivitas…</span></div>'; return; }
+  body.innerHTML = activityLogEntries.map(e=>{
+    const hh = e.time.toLocaleTimeString('id-ID',{hour12:false});
+    return `<div class="al-row"><span class="al-time">${hh}</span><span class="al-dot ${e.kind}"></span><span>${e.text}</span></div>`;
+  }).join('');
+}
+function toggleActivityLog(){
+  const panel = document.getElementById('activityLog');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+    activityLogUnread = 0;
+    const badge = document.getElementById('activityLogBadge');
+    if(badge) badge.style.display = 'none';
+  }
+}
+function clearActivityLog(){ activityLogEntries = []; renderActivityLog(); }
+
+/* ---- Notifications (Web Notification API) ---- */
+let notifEnabled = (localStorage.getItem('tiaa_notif_enabled') ?? '0') === '1';
+function updateNotifSwitchUI(){
+  document.getElementById('notifSwitch')?.classList.toggle('on', notifEnabled && Notification?.permission==='granted');
+}
+async function toggleNotifPermission(){
+  if(typeof Notification==='undefined'){ alert('Browser ini tidak mendukung notifikasi.'); return; }
+  if(!notifEnabled){
+    const perm = await Notification.requestPermission();
+    notifEnabled = perm==='granted';
+  } else {
+    notifEnabled = false;
+  }
+  localStorage.setItem('tiaa_notif_enabled', notifEnabled?'1':'0');
+  updateNotifSwitchUI();
+}
+function sendNotification(title, body){
+  if(notifEnabled && typeof Notification!=='undefined' && Notification.permission==='granted'){
+    try{ new Notification(title, {body, icon:'https://fapi.binance.com/favicon.ico'}); }catch(e){}
+  }
+}
+
+/* ---- Sound ping ---- */
+let soundEnabled = (localStorage.getItem('tiaa_sound_enabled') ?? '0') === '1';
+function updateSoundSwitchUI(){ document.getElementById('soundSwitch')?.classList.toggle('on', soundEnabled); }
+function toggleSound(){
+  soundEnabled = !soundEnabled;
+  localStorage.setItem('tiaa_sound_enabled', soundEnabled?'1':'0');
+  updateSoundSwitchUI();
+  if(soundEnabled) playPing();
+}
+function playPing(){
+  if(!soundEnabled) return;
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = 'sine'; osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.35);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime+0.35);
+  }catch(e){}
+}
+
+/* ---- Price alerts ---- */
+const PRICE_ALERTS_KEY = 'tiaa_price_alerts_v1';
+function loadPriceAlerts(){ try{ return JSON.parse(localStorage.getItem(PRICE_ALERTS_KEY)||'[]'); }catch(e){ return []; } }
+function savePriceAlerts(list){ try{ localStorage.setItem(PRICE_ALERTS_KEY, JSON.stringify(list)); }catch(e){} }
+function renderAlertList(){
+  const el = document.getElementById('alertList');
+  const countEl = document.getElementById('alertsCount');
+  const alerts = loadPriceAlerts();
+  if(countEl){ countEl.style.display = alerts.length? 'flex':'none'; countEl.textContent = alerts.length; }
+  if(!el) return;
+  if(!alerts.length){ el.innerHTML = '<div class="alerts-empty">Belum ada price alert.</div>'; return; }
+  el.innerHTML = alerts.map(a=>`<div class="alert-row"><span>${a.pair} ${a.dir==='above'?'≥':'≤'} <span class="mono">${formatPrice(a.price)}</span></span><span class="ar-del" onclick="removePriceAlert('${a.id}')">✕</span></div>`).join('');
+}
+function addPriceAlert(){
+  const input = document.getElementById('alertPriceInput');
+  const price = parseFloat(input.value);
+  if(!price || price<=0){ input.focus(); return; }
+  const live = tickerMap[currentPair] ? parseFloat(tickerMap[currentPair].lastPrice) : price;
+  const dir = price>=live ? 'above' : 'below';
+  const alerts = loadPriceAlerts();
+  alerts.push({ id: 'al_'+Date.now(), pair: currentPair, price, dir });
+  savePriceAlerts(alerts);
+  input.value = '';
+  renderAlertList();
+}
+function removePriceAlert(id){
+  savePriceAlerts(loadPriceAlerts().filter(a=>a.id!==id));
+  renderAlertList();
+}
+function checkPriceAlerts(sym, price){
+  const alerts = loadPriceAlerts();
+  if(!alerts.length) return;
+  const remaining = [];
+  let triggered = false;
+  alerts.forEach(a=>{
+    if(a.pair!==sym){ remaining.push(a); return; }
+    const hit = a.dir==='above' ? price>=a.price : price<=a.price;
+    if(hit){
+      triggered = true;
+      logActivity('info', `🔔 Price alert ${a.pair} tersentuh ${formatPrice(price)} (target ${a.dir==='above'?'≥':'≤'} ${formatPrice(a.price)})`);
+      sendNotification('Price Alert: '+a.pair, `Harga menyentuh ${formatPrice(price)}`);
+      playPing();
+    } else remaining.push(a);
+  });
+  if(triggered){ savePriceAlerts(remaining); renderAlertList(); }
+}
+function toggleAlertsPanel(){
+  const panel = document.getElementById('alertsPanel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+    document.getElementById('alertPairLabel').textContent = currentPair;
+    updateNotifSwitchUI(); updateSoundSwitchUI(); renderAlertList();
+  }
+}
+
+/* ---- Command palette (Ctrl+K) ---- */
+let cmdkActiveIndex = 0, cmdkItems = [];
+function buildCommandIndex(){
+  const pages = [
+    {tag:'Halaman', label:'Dashboard', run:()=>switchPage('dashboard')},
+    {tag:'Halaman', label:'Trading Signal', run:()=>switchPage('trading')},
+    {tag:'Halaman', label:'Futures Signal', run:()=>switchPage('futures-signal')},
+    {tag:'Halaman', label:'Performance', run:()=>switchPage('performance')},
+    {tag:'Halaman', label:'Live Chart Pro', run:()=>switchPage('livechart')},
+    {tag:'Halaman', label:'Market Heatmap', run:()=>switchPage('heatmap')},
+    {tag:'Halaman', label:'Screener', run:()=>switchPage('screener')},
+    {tag:'Halaman', label:'Coin Strength', run:()=>switchPage('strength')},
+    {tag:'Halaman', label:'Econ Calendar', run:()=>switchPage('econ')},
+    {tag:'Halaman', label:'Fear & Greed', run:()=>switchPage('feargreed')},
+    {tag:'Halaman', label:'Top Movers', run:()=>switchPage('movers')},
+    {tag:'Halaman', label:'News Feed', run:()=>switchPage('news')},
+  ];
+  const pairs = (PAIRS||[]).map(c=>({tag:'Pair', label:c.symbol+'/USDT', run:()=>{ switchPage('trading'); selectPair(c.pair); }}));
+  const actions = [
+    {tag:'Aksi', label:'Toggle tema terang/gelap', run:()=>toggleTheme()},
+    {tag:'Aksi', label:'Ganti bahasa ID/EN', run:()=>toggleLang()},
+    {tag:'Aksi', label:'Pindai ulang sinyal futures', run:()=>scanSignals(signalScannerMode)},
+    {tag:'Aksi', label:'Buka Alerts', run:()=>toggleAlertsPanel()},
+  ];
+  return [...pairs, ...pages, ...actions];
+}
+function openCommandPalette(){
+  cmdkItems = buildCommandIndex();
+  document.getElementById('cmdkOverlay').classList.add('open');
+  const input = document.getElementById('cmdkInput');
+  input.value = ''; input.focus();
+  cmdkActiveIndex = 0;
+  renderCmdkList('');
+}
+function closeCommandPalette(){ document.getElementById('cmdkOverlay').classList.remove('open'); }
+function renderCmdkList(query){
+  const q = query.trim().toUpperCase();
+  const filtered = q ? cmdkItems.filter(i=>i.label.toUpperCase().includes(q)) : cmdkItems.slice(0,40);
+  cmdkActiveIndex = 0;
+  const list = document.getElementById('cmdkList');
+  if(!filtered.length){ list.innerHTML = '<div class="cmdk-empty">Tidak ada hasil.</div>'; return; }
+  list.innerHTML = filtered.map((item,i)=>`<div class="cmdk-item${i===0?' active':''}" data-idx="${i}" onclick="executeCmdkItem(${i})"><span>${item.label}</span><span class="cmdk-tag">${item.tag}</span></div>`).join('');
+  list.__filtered = filtered;
+}
+function executeCmdkItem(idx){
+  const list = document.getElementById('cmdkList');
+  const item = list.__filtered?.[idx];
+  closeCommandPalette();
+  if(item) item.run();
+}
+document.getElementById('cmdkInput')?.addEventListener('input', e=>renderCmdkList(e.target.value));
+document.getElementById('cmdkInput')?.addEventListener('keydown', e=>{
+  const list = document.getElementById('cmdkList');
+  const items = list.__filtered||[];
+  if(e.key==='ArrowDown'){ e.preventDefault(); cmdkActiveIndex = Math.min(cmdkActiveIndex+1, items.length-1); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); cmdkActiveIndex = Math.max(cmdkActiveIndex-1, 0); }
+  else if(e.key==='Enter'){ e.preventDefault(); executeCmdkItem(cmdkActiveIndex); return; }
+  else if(e.key==='Escape'){ closeCommandPalette(); return; }
+  else return;
+  list.querySelectorAll('.cmdk-item').forEach((el,i)=>el.classList.toggle('active', i===cmdkActiveIndex));
+  list.children[cmdkActiveIndex]?.scrollIntoView({block:'nearest'});
+});
+// Global keyboard shortcuts: Ctrl/Cmd+K opens the palette, "/" focuses pair search,
+// Esc closes whichever overlay is open — all skipped while typing in a text field.
+document.addEventListener('keydown', e=>{
+  const tag = (e.target.tagName||'').toLowerCase();
+  const typing = tag==='input' || tag==='textarea' || e.target.isContentEditable;
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openCommandPalette(); return; }
+  if(e.key==='Escape'){
+    if(document.getElementById('cmdkOverlay').classList.contains('open')) closeCommandPalette();
+    else if(document.getElementById('alertsPanel').classList.contains('open')) toggleAlertsPanel();
+    return;
+  }
+  if(!typing && e.key==='/'){ e.preventDefault(); document.getElementById('pairSearch')?.focus(); }
+});
+
+/* ---- Performance page (real win-rate from closed signals across all buckets) ---- */
+let perfActiveBucket = 'all';
+function collectClosedSignals(bucketFilter){
+  const buckets = bucketFilter==='all' ? FSIG_BUCKETS : [{mode:bucketFilter.split('|')[0], style:bucketFilter.split('|')[1]||null}];
+  let out = [];
+  buckets.forEach(b=>{
+    const store = loadStoredSignals(b.mode, b.style);
+    Object.values(store).forEach(s=>{
+      if(s.status==='tp_hit' || s.status==='sl_hit'){
+        out.push({...s, bucketLabel: b.mode==='spot' ? 'Spot' : ({scalping:'Scalping',daytrading:'Day Trading',swing:'Swing'}[b.style]||b.style)});
+      }
+    });
+  });
+  out.sort((a,b)=> (b.closedAt||b.openTime||0) - (a.closedAt||a.openTime||0));
+  return out;
+}
+function switchPerfBucket(bucket){
+  perfActiveBucket = bucket;
+  document.querySelectorAll('.perf-bucket-tab').forEach(el=>el.classList.toggle('active', el.dataset.bucket===bucket));
+  renderPerformancePage();
+}
+function loadPerformancePage(){ renderPerformancePage(); }
+function renderPerformancePage(){
+  const closed = collectClosedSignals(perfActiveBucket);
+  const wins = closed.filter(s=>s.status==='tp_hit').length;
+  const losses = closed.filter(s=>s.status==='sl_hit').length;
+  const total = closed.length;
+  const winRate = total ? (wins/total*100) : 0;
+  const rMultiples = closed.map(s=>{
+    const risk = Math.abs(s.entry - s.sl);
+    if(!risk) return 0;
+    const finalTp = s.targets[s.targets.length-1];
+    const reward = Math.abs(finalTp - s.entry);
+    const rr = reward/risk;
+    return s.status==='tp_hit' ? rr : -1;
+  });
+  const avgR = rMultiples.length ? (rMultiples.reduce((a,b)=>a+b,0)/rMultiples.length) : 0;
+  const totalR = rMultiples.reduce((a,b)=>a+b,0);
+
+  document.getElementById('perfKpis').innerHTML = `
+    <div class="perf-kpi"><div class="pk-label">Total Sinyal Closed</div><div class="pk-value">${total}</div></div>
+    <div class="perf-kpi"><div class="pk-label">Win Rate</div><div class="pk-value" style="color:${winRate>=50?'var(--buy)':'var(--sell)'};">${winRate.toFixed(1)}%</div></div>
+    <div class="perf-kpi"><div class="pk-label">TP / SL</div><div class="pk-value"><span style="color:var(--buy);">${wins}</span> / <span style="color:var(--sell);">${losses}</span></div></div>
+    <div class="perf-kpi"><div class="pk-label">Avg. R per Sinyal</div><div class="pk-value">${avgR.toFixed(2)}R</div></div>
+    <div class="perf-kpi"><div class="pk-label">Total R (kumulatif)</div><div class="pk-value" style="color:${totalR>=0?'var(--buy)':'var(--sell)'};">${totalR>=0?'+':''}${totalR.toFixed(2)}R</div></div>`;
+
+  renderEquityCurve(rMultiples.slice().reverse()); // chronological order for the curve
+
+  const histEl = document.getElementById('perfHistBody');
+  document.getElementById('perfHistCount').textContent = total;
+  if(!total){ histEl.innerHTML = '<div class="sidebar-loading">Belum ada sinyal yang closed di bucket ini.</div>'; return; }
+  histEl.innerHTML = closed.slice(0,50).map(s=>{
+    const win = s.status==='tp_hit';
+    const dateStr = s.closedAt ? new Date(s.closedAt).toLocaleString('id-ID') : (s.openTime ? new Date(s.openTime).toLocaleString('id-ID') : '–');
+    return `<div class="perf-row">
+      <span><b>${s.pair}</b> <span style="color:var(--ink-dim); font-size:11px;">${s.bucketLabel} · ${s.direction}</span></span>
+      <span class="mono" style="color:${win?'var(--buy)':'var(--sell)'}; font-weight:700;">${win?'TP HIT':'SL HIT'}</span>
+      <span class="mono" style="color:var(--ink-dim); font-size:11px;">${dateStr}</span>
+    </div>`;
+  }).join('');
+}
+function renderEquityCurve(rSeries){
+  const svg = document.getElementById('perfEquitySvg');
+  if(!svg) return;
+  if(!rSeries.length){ svg.innerHTML = '<text x="450" y="130" fill="var(--ink-dim)" font-size="13" text-anchor="middle">Belum ada data untuk kurva ekuitas.</text>'; return; }
+  const W=900,H=260,padL=50,padR=20,padT=20,padB=30;
+  let cum=0; const points=[0]; rSeries.forEach(r=>{ cum+=r; points.push(cum); });
+  const minV=Math.min(...points,0), maxV=Math.max(...points,0);
+  const range=(maxV-minV)||1;
+  const xAt = i => padL + (i/(points.length-1))*(W-padL-padR);
+  const yAt = v => (H-padB) - ((v-minV)/range)*(H-padT-padB);
+  let d = ''; points.forEach((v,i)=>{ d += (i===0?'M':'L')+xAt(i).toFixed(1)+','+yAt(v).toFixed(1)+' '; });
+  const zeroY = yAt(0);
+  const lineColor = cum>=0 ? 'var(--buy)' : 'var(--sell)';
+  svg.innerHTML = `
+    <line x1="${padL}" y1="${zeroY.toFixed(1)}" x2="${W-padR}" y2="${zeroY.toFixed(1)}" stroke="var(--line)" stroke-width="1" stroke-dasharray="4,4"/>
+    <path d="${d}" fill="none" stroke="${lineColor}" stroke-width="2.5"/>
+    <text x="${padL}" y="14" fill="var(--ink-dim)" font-size="11">${maxV.toFixed(1)}R</text>
+    <text x="${padL}" y="${H-16}" fill="var(--ink-dim)" font-size="11">${minV.toFixed(1)}R</text>
+    <text x="${W-padR}" y="${zeroY-6}" fill="var(--ink-dim)" font-size="11" text-anchor="end">0R</text>`;
+}
+
 /* ================= INIT ================= */
 applyI18n();
 initCryptoMarket();
@@ -3811,7 +4278,53 @@ if(autoScanEnabled) startGlobalScanLoop();
 runGlobalScanCycle();
 updateAutoscanPill();
 autoscanPillTimer = setInterval(updateAutoscanPill, 1000);
+
+// Terminal chrome: dominance/mcap strip, latency ping, alert badges, notif/sound UI state.
+fetchGlobalMarketData();
+setInterval(fetchGlobalMarketData, 5*60000);
+pingLatency();
+setInterval(pingLatency, 15000);
+renderAlertList();
+updateNotifSwitchUI();
+updateSoundSwitchUI();
+document.addEventListener('click', e=>{
+  const panel = document.getElementById('alertsPanel'), btn = document.getElementById('alertsBtn');
+  if(panel.classList.contains('open') && !panel.contains(e.target) && !btn.contains(e.target)) panel.classList.remove('open');
+});
 </script>
+
+<!-- ===== Status bar (fixed bottom) ===== -->
+<div class="status-bar" id="statusBar">
+  <div class="sb-item"><span class="sb-dot" id="sbWsDot"></span><span id="sbWsLabel">Menghubungkan…</span></div>
+  <span class="sb-sep">|</span>
+  <div class="sb-item">Latency: <span id="sbLatency" class="mono">–</span></div>
+  <span class="sb-sep">|</span>
+  <div class="sb-item">Server: <span id="sbClock" class="mono">--:--:--</span></div>
+  <span class="sb-sep">|</span>
+  <div class="sb-item" id="sbAutoscan">Auto-scan: –</div>
+  <span class="sb-sep">|</span>
+  <div class="sb-item">Sinyal aktif: <span id="sbSignalCount" class="mono">0</span></div>
+  <span class="sb-sep">|</span>
+  <div class="sb-item" id="sbDominance">BTC.D: –</div>
+  <span class="sb-sep">|</span>
+  <div class="sb-item sb-link" onclick="openCommandPalette()">⌘K Command Palette</div>
+</div>
+
+<!-- ===== Activity log ===== -->
+<div class="activity-log-toggle" id="activityLogToggle" onclick="toggleActivityLog()">📋 Activity Log <span class="al-badge" id="activityLogBadge" style="display:none;">0</span></div>
+<div class="activity-log" id="activityLog">
+  <div class="activity-log-head" onclick="toggleActivityLog()"><span>Activity Log</span><span style="cursor:pointer;" onclick="event.stopPropagation(); clearActivityLog();">Bersihkan</span></div>
+  <div class="activity-log-body" id="activityLogBody"><div class="al-row"><span class="al-time">–</span><span>Menunggu aktivitas…</span></div></div>
+</div>
+
+<!-- ===== Command palette (Ctrl+K / Cmd+K) ===== -->
+<div class="cmdk-overlay" id="cmdkOverlay" onclick="if(event.target===this) closeCommandPalette();">
+  <div class="cmdk-box">
+    <input type="text" class="cmdk-input" id="cmdkInput" placeholder="Cari pair atau ketik perintah… (mis. BTC, heatmap, kalkulator)">
+    <div class="cmdk-list" id="cmdkList"></div>
+    <div class="cmdk-hint"><span>↑↓ navigasi</span><span>↵ pilih</span><span>Esc tutup</span></div>
+  </div>
+</div>
 
 </body>
 </html>
