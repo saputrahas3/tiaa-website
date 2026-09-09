@@ -140,6 +140,20 @@
   .pair-row:hover{background:var(--panel-2);}
   .pair-row.active{background:var(--panel-2); border-left:2px solid var(--accent);}
   .pair-rank{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-dim); width:22px; flex-shrink:0;}
+  .pair-fav{
+    flex-shrink:0; width:18px; text-align:center; font-size:14px; cursor:pointer; color:var(--line);
+    transition:color .15s, transform .1s;
+  }
+  .pair-fav:hover{color:var(--ink-dim); transform:scale(1.15);}
+  .pair-fav.active{color:#f0b90b;}
+  .search-box{display:flex; gap:8px; align-items:center;}
+  .search-box input{flex:1;}
+  .fav-filter-btn{
+    flex-shrink:0; width:34px; height:34px; border-radius:6px; border:1.5px solid var(--line); background:var(--panel-2);
+    color:var(--ink-dim); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .fav-filter-btn.active{border-color:#f0b90b; background:rgba(240,185,11,0.12); color:#f0b90b;}
+  .pair-list-empty{padding:16px; font-size:11.5px; color:var(--ink-dim); text-align:center; line-height:1.6;}
   .pair-name{font-weight:600; font-size:13px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .pair-name span{color:var(--ink-dim); font-weight:400;}
   .pair-price{font-size:12px; text-align:right;}
@@ -496,9 +510,9 @@
     background:var(--panel); border-bottom:1px solid var(--line); overflow:hidden;
     white-space:nowrap; position:relative; height:30px; display:flex; align-items:center;
   }
-  .ticker-tape-track{display:inline-flex; align-items:center; gap:28px; padding-left:100%; animation:tickerScroll 55s linear infinite;}
-  .ticker-tape:hover .ticker-tape-track{animation-play-state:paused;}
-  @keyframes tickerScroll{from{transform:translateX(0);} to{transform:translateX(-100%);}}
+  .ticker-tape-track{display:inline-flex; align-items:center; gap:28px; will-change:transform;}
+  /* animation now driven by JS rAF loop (see startTickerAnimation) for a truly gapless,
+     constant-speed scroll — see comment near startTickerAnimation for why */
   .ticker-item{display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono',monospace; font-size:11.5px; flex-shrink:0;}
   .ticker-item b{color:var(--ink); font-weight:700;}
   .ticker-item .ti-chg.up{color:var(--buy);} .ticker-item .ti-chg.down{color:var(--sell);}
@@ -718,7 +732,10 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-title"><span id="sidebarTitle" data-i18n="sidebar_crypto">Pair · Top Market Cap</span><span class="count mono" id="pairCount">…</span></div>
-    <div class="search-box"><input id="pairSearch" data-i18n-placeholder="search_placeholder" placeholder="Cari pair…"></div>
+    <div class="search-box">
+      <input id="pairSearch" data-i18n-placeholder="search_placeholder" placeholder="Cari pair…">
+      <div class="fav-filter-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="Tampilkan hanya Favorit">★</div>
+    </div>
     <div id="pairList"></div>
   </aside>
 
@@ -1744,6 +1761,7 @@ function connectCryptoWS(){
         }
         if(sym===currentPair) updateHeaderCrypto(tickerMap[sym], prevPrice);
         checkPriceAlerts(sym, newPrice);
+        if(TICKER_TAPE_SYMBOLS.includes(sym)) updateTickerTapeSymbol(sym);
       }
       updateMoversLive();
     };
@@ -1759,18 +1777,62 @@ function disconnectCryptoWS(){
   if(cryptoWSRetryTimer){ clearTimeout(cryptoWSRetryTimer); cryptoWSRetryTimer=null; }
   if(cryptoWS){ cryptoWS.onclose=null; cryptoWS.onerror=null; try{ cryptoWS.close(); }catch(e){} cryptoWS=null; }
 }
+/* ---- Favorite pairs (watchlist) — stored in localStorage, independent of search ---- */
+let favoritePairs = new Set();
+try{ favoritePairs = new Set(JSON.parse(localStorage.getItem('tiaa_favorite_pairs_v1')||'[]')); }catch(e){}
+let favFilterActive = false;
+function saveFavoritePairs(){ try{ localStorage.setItem('tiaa_favorite_pairs_v1', JSON.stringify([...favoritePairs])); }catch(e){} }
+function toggleFavoritePair(pair){
+  if(favoritePairs.has(pair)) favoritePairs.delete(pair); else favoritePairs.add(pair);
+  saveFavoritePairs();
+  const star = document.getElementById('fav-'+pair);
+  if(star) star.classList.toggle('active', favoritePairs.has(pair));
+  if(favFilterActive) applyPairFilter(); // row may need to disappear if unfavorited while filter is on
+}
+function toggleFavFilter(){
+  favFilterActive = !favFilterActive;
+  document.getElementById('favFilterBtn').classList.toggle('active', favFilterActive);
+  applyPairFilter();
+}
+// Combines the text search box + the "only favorites" filter into one pass over the
+// rendered pair rows, so either can be toggled independently without clobbering the other.
+function applyPairFilter(){
+  const q = (document.getElementById('pairSearch')?.value||'').toUpperCase();
+  const list = document.getElementById('pairList');
+  let visibleCount = 0;
+  document.querySelectorAll('.pair-row').forEach(row=>{
+    const pair = row.id.replace('row-','');
+    const matchesSearch = !q || pair.toUpperCase().includes(q) || row.textContent.toUpperCase().includes(q);
+    const matchesFav = !favFilterActive || favoritePairs.has(pair);
+    const show = matchesSearch && matchesFav;
+    row.style.display = show ? 'flex' : 'none';
+    if(show) visibleCount++;
+  });
+  let emptyEl = document.getElementById('pairListEmpty');
+  if(visibleCount===0){
+    if(!emptyEl){
+      emptyEl = document.createElement('div');
+      emptyEl.id = 'pairListEmpty'; emptyEl.className = 'pair-list-empty';
+      list?.appendChild(emptyEl);
+    }
+    emptyEl.textContent = favFilterActive ? '☆ Belum ada pair favorit. Klik ikon bintang di daftar pair untuk menambahkan.' : 'Tidak ada pair yang cocok.';
+  } else if(emptyEl){ emptyEl.remove(); }
+}
 function renderPairListCrypto(){
   const list = document.getElementById('pairList'); list.innerHTML="";
   for(const c of PAIRS){
     const t = tickerMap[c.pair]; const chg = t?parseFloat(t.priceChangePercent):0;
+    const isFav = favoritePairs.has(c.pair);
     const row = document.createElement('div');
     row.className='pair-row'+(c.pair===currentPair?' active':''); row.id='row-'+c.pair;
     row.onclick=()=>selectPair(c.pair);
-    row.innerHTML = `<div class="pair-rank">${c.rank}</div><div class="pair-name">${c.symbol}<span>/USDT</span></div>
+    row.innerHTML = `<span class="pair-fav${isFav?' active':''}" id="fav-${c.pair}" onclick="event.stopPropagation(); toggleFavoritePair('${c.pair}')">${isFav?'★':'☆'}</span>
+      <div class="pair-rank">${c.rank}</div><div class="pair-name">${c.symbol}<span>/USDT</span></div>
       <div><div class="pair-price mono" id="price-${c.pair}">${t?formatPrice(parseFloat(t.lastPrice)):'…'}</div>
       <div class="pair-change mono ${chg>=0?'up':'down'}" id="chg-${c.pair}">${t?((chg>=0?'+':'')+chg.toFixed(2)+'%'):'–'}</div></div>`;
     list.appendChild(row);
   }
+  if(favFilterActive) applyPairFilter();
 }
 
 /* ================= TICKER REFRESH (crypto) ================= */
@@ -1819,12 +1881,7 @@ function selectPair(p){
   runEntryAnalysis();
 }
 
-document.getElementById('pairSearch').addEventListener('input', e=>{
-  const q = e.target.value.toUpperCase();
-  document.querySelectorAll('.pair-row').forEach(row=>{
-    row.style.display = row.id.replace('row-','').toUpperCase().includes(q) || row.textContent.toUpperCase().includes(q) ? 'flex' : 'none';
-  });
-});
+document.getElementById('pairSearch').addEventListener('input', applyPairFilter);
 
 /* ================= TRADINGVIEW CHART ================= */
 function loadChart(symbol){
@@ -3935,23 +3992,88 @@ function updateStatusBarSignalCount(){
 
 /* ---- Ticker tape (scrolling live prices + BTC dominance) ---- */
 const TICKER_TAPE_SYMBOLS = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','ADAUSDT','DOGEUSDT','AVAXUSDT'];
-function renderTickerTape(){
+// FIX (round 2): the CSS `animation: tickerScroll ... translateX(0) -> translateX(-50%)`
+// looked fine at rest, but `-50%` is a percentage of the track's OWN current computed
+// width — every time a price digit count changed width (e.g. price crossing a
+// thousands boundary, or a +/-% flipping sign), the browser silently re-based that
+// percentage against the new width, producing a visible skip/snap mid-scroll. That's
+// the "putus gerak" (broken/interrupted motion) being reported.
+// Fix: drop the CSS keyframe animation entirely and drive the scroll from JS with
+// requestAnimationFrame at a fixed PX/second speed. Position is tracked in raw pixels
+// (never a %), so live text updates elsewhere in the DOM can never perturb it — it only
+// wraps (loops) once it has moved exactly half the track's measured width, which is
+// re-measured on wrap and on resize so it always stays perfectly seamless even if the
+// content's rendered width drifts a little.
+let tickerTapeBuilt = false;
+let tickerRafId = null, tickerOffsetPx = 0, tickerHalfWidthPx = 0, tickerLastTs = null, tickerPaused = false;
+const TICKER_SPEED_PX_S = 45; // constant scroll speed regardless of content length
+
+function measureTickerHalfWidth(){
   const track = document.getElementById('tickerTapeTrack');
   if(!track) return;
-  const items = TICKER_TAPE_SYMBOLS.map(sym=>{
-    const t = tickerMap[sym];
-    if(!t) return null;
-    const price = formatPrice(parseFloat(t.lastPrice));
-    const chg = parseFloat(t.priceChangePercent);
-    return `<span class="ticker-item"><b>${sym.replace('USDT','')}</b> ${price} <span class="ti-chg ${chg>=0?'up':'down'}">${(chg>=0?'+':'')+chg.toFixed(2)}%</span></span>`;
-  }).filter(Boolean);
-  if(globalMarketData){
-    items.push(`<span class="ticker-item"><span class="ti-dom">BTC.D ${globalMarketData.btcDominance.toFixed(1)}%</span></span>`);
-    items.push(`<span class="ticker-item">Total Mcap <b>$${(globalMarketData.totalMcap/1e9).toFixed(1)}B</b></span>`);
+  tickerHalfWidthPx = (track.scrollWidth / 2) || 1;
+}
+function tickerAnimStep(ts){
+  tickerRafId = requestAnimationFrame(tickerAnimStep);
+  if(tickerPaused) { tickerLastTs = null; return; }
+  if(tickerLastTs==null){ tickerLastTs = ts; return; } // first frame after (re)start: just record time, don't jump
+  let dt = (ts - tickerLastTs) / 1000;
+  tickerLastTs = ts;
+  dt = Math.min(dt, 0.1); // clamp so resuming from a throttled/background tab never teleports the tape
+  const track = document.getElementById('tickerTapeTrack');
+  if(!track) return;
+  tickerOffsetPx -= TICKER_SPEED_PX_S * dt;
+  if(-tickerOffsetPx >= tickerHalfWidthPx){ tickerOffsetPx += tickerHalfWidthPx; measureTickerHalfWidth(); }
+  track.style.transform = `translateX(${tickerOffsetPx}px)`;
+}
+function startTickerAnimation(){
+  if(tickerRafId!=null) return; // already running
+  measureTickerHalfWidth();
+  tickerLastTs = null;
+  tickerRafId = requestAnimationFrame(tickerAnimStep);
+  window.addEventListener('resize', measureTickerHalfWidth);
+  const tape = document.getElementById('tickerTape');
+  if(tape){
+    tape.addEventListener('mouseenter', ()=>{ tickerPaused = true; });
+    tape.addEventListener('mouseleave', ()=>{ tickerPaused = false; });
   }
-  if(!items.length) return;
-  // Duplicate the sequence so the scroll loop has no visible seam.
-  track.innerHTML = items.join('') + items.join('');
+}
+function buildTickerTape(){
+  const track = document.getElementById('tickerTapeTrack');
+  if(!track || tickerTapeBuilt) return;
+  if(TICKER_TAPE_SYMBOLS.some(sym=>!tickerMap[sym])) return; // wait for initial prices on all symbols
+  const buildCopy = copy => TICKER_TAPE_SYMBOLS.map(sym=>
+      `<span class="ticker-item"><b>${sym.replace('USDT','')}</b> <span class="mono" id="tt-p-${sym}-${copy}">–</span> <span class="ti-chg" id="tt-c-${sym}-${copy}"></span></span>`
+    ).join('') + `<span class="ticker-item" id="tt-dom-${copy}"></span><span class="ticker-item" id="tt-mcap-${copy}"></span>`;
+  track.innerHTML = buildCopy(0) + buildCopy(1);
+  tickerTapeBuilt = true;
+  TICKER_TAPE_SYMBOLS.forEach(updateTickerTapeSymbol);
+  updateTickerTapeDominance();
+  requestAnimationFrame(()=>{ measureTickerHalfWidth(); startTickerAnimation(); }); // measure after layout settles
+}
+function updateTickerTapeSymbol(sym){
+  if(!tickerTapeBuilt) return;
+  const t = tickerMap[sym]; if(!t) return;
+  const price = formatPrice(parseFloat(t.lastPrice));
+  const chg = parseFloat(t.priceChangePercent);
+  const chgText = (chg>=0?'+':'')+chg.toFixed(2)+'%', chgClass = 'ti-chg '+(chg>=0?'up':'down');
+  [0,1].forEach(copy=>{
+    const pEl = document.getElementById(`tt-p-${sym}-${copy}`), cEl = document.getElementById(`tt-c-${sym}-${copy}`);
+    if(pEl) pEl.textContent = price;
+    if(cEl){ cEl.textContent = chgText; cEl.className = chgClass; }
+  });
+}
+function updateTickerTapeDominance(){
+  if(!tickerTapeBuilt || !globalMarketData) return;
+  [0,1].forEach(copy=>{
+    const domEl = document.getElementById(`tt-dom-${copy}`), mcapEl = document.getElementById(`tt-mcap-${copy}`);
+    if(domEl) domEl.innerHTML = `<span class="ti-dom">BTC.D ${globalMarketData.btcDominance.toFixed(1)}%</span>`;
+    if(mcapEl) mcapEl.innerHTML = `Total Mcap <b>$${(globalMarketData.totalMcap/1e9).toFixed(1)}B</b>`;
+  });
+}
+function renderTickerTape(){
+  if(!tickerTapeBuilt) buildTickerTape();
+  else { TICKER_TAPE_SYMBOLS.forEach(updateTickerTapeSymbol); updateTickerTapeDominance(); }
 }
 let globalMarketData = null;
 async function fetchGlobalMarketData(){
@@ -3961,7 +4083,7 @@ async function fetchGlobalMarketData(){
     globalMarketData = { btcDominance: d.market_cap_percentage.btc, totalMcap: d.total_market_cap.usd };
     const el = document.getElementById('sbDominance');
     if(el) el.textContent = `BTC.D: ${globalMarketData.btcDominance.toFixed(1)}% · Mcap $${(globalMarketData.totalMcap/1e12).toFixed(2)}T`;
-    renderTickerTape();
+    updateTickerTapeDominance();
   }catch(e){ /* keep last known value; non-critical widget */ }
 }
 
