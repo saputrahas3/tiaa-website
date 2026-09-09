@@ -222,6 +222,62 @@
   }
   .setup-apply-btn:hover{background:var(--accent-glow);}
 
+  /* ---- Entry Signal (S/R x Volume x Pattern) ---- */
+  .entry-controls{display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end; margin-bottom:6px;}
+  .entry-field{display:flex; flex-direction:column; gap:6px; min-width:120px;}
+  .entry-field label{font-size:10px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.5px;}
+  .entry-field select, .entry-field input{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:6px; color:var(--ink);
+    font-size:13px; padding:8px 10px; font-family:'JetBrains Mono',monospace;
+  }
+  .entry-field select{font-family:'Inter',sans-serif;}
+  .entry-field select:focus, .entry-field input:focus{outline:none; border-color:var(--accent);}
+  .entry-pair-readout{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:8px 10px;
+    font-size:13px; font-weight:700; color:var(--accent);
+  }
+  .btn-analyze{
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
+    padding:9px 18px; font-size:12.5px; font-weight:700; cursor:pointer; letter-spacing:0.3px;
+  }
+  .btn-analyze:hover{background:var(--accent-deep);}
+  .btn-analyze:disabled{opacity:0.55; cursor:not-allowed;}
+  .entry-error{
+    display:flex; gap:8px; align-items:flex-start; color:var(--sell); font-size:12.5px; margin-top:10px;
+  }
+  .entry-hero{display:flex; flex-wrap:wrap; align-items:center; gap:22px; justify-content:space-between; margin-top:14px;}
+  .entry-hero-left{display:flex; align-items:center; gap:14px;}
+  .entry-signal-circle{
+    width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:var(--panel-2); border:2px solid var(--line); flex-shrink:0; font-size:20px; font-weight:700;
+  }
+  .entry-signal-label{font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:var(--ink-dim); margin-bottom:2px;}
+  .entry-signal-value{font-size:24px; font-weight:700;}
+  .entry-hero-stats{display:flex; flex-wrap:wrap; gap:24px;}
+  .entry-hero-stats .es-label{font-size:11px; color:var(--ink-dim); margin-bottom:2px;}
+  .entry-hero-stats .es-value{font-size:17px; font-weight:600; font-family:'JetBrains Mono',monospace;}
+  .entry-buy, .entry-signal-circle.entry-buy, .entry-signal-value.entry-buy{color:var(--buy); border-color:var(--buy) !important;}
+  .entry-sell, .entry-signal-circle.entry-sell, .entry-signal-value.entry-sell{color:var(--sell); border-color:var(--sell) !important;}
+  .entry-neutral, .entry-signal-circle.entry-neutral, .entry-signal-value.entry-neutral{color:var(--accent); border-color:var(--accent) !important;}
+  .entry-grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:16px;}
+  @media (max-width:760px){ .entry-grid3{grid-template-columns:1fr;} }
+  .entry-subcard{background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:12px 14px;}
+  .entry-subcard h4{font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-dim); margin:0 0 8px; font-weight:600;}
+  .entry-subcard .er{display:flex; justify-content:space-between; align-items:center; padding:5px 0; font-size:12.5px;}
+  .entry-subcard .er + .er{border-top:1px solid var(--line);}
+  .entry-subcard .er .k{color:var(--ink-dim);}
+  .entry-subcard .er .v{font-weight:600; font-family:'JetBrains Mono',monospace;}
+  ul.entry-reasons{list-style:none; margin:0; padding:0;}
+  ul.entry-reasons li{display:flex; gap:9px; align-items:flex-start; font-size:12.5px; padding:7px 0; line-height:1.5;}
+  ul.entry-reasons li + li{border-top:1px solid var(--line);}
+  ul.entry-reasons .ea{flex-shrink:0; margin-top:2px; font-weight:700;}
+  ul.entry-reasons .ea.bullish{color:var(--buy);}
+  ul.entry-reasons .ea.bearish{color:var(--sell);}
+  ul.entry-reasons .ea.netral{color:var(--ink-dim);}
+  .entry-disclaimer{color:var(--ink-dim); font-size:11px; line-height:1.6; margin-top:16px;}
+  #entryChartSvg text{font-family:'JetBrains Mono',monospace;}
+  .hidden{display:none !important;}
+
   /* ---- Calculator ---- */
   .calc-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
   @media (max-width:600px){.calc-grid{grid-template-columns:1fr;}}
@@ -247,37 +303,6 @@
   .result-box .rv{font-size:15px; font-weight:600; margin-top:3px;}
   .result-box.sl .rv{color:var(--sell);}
   .result-box.tp .rv{color:var(--buy);}
-
-  /* ---- Signal Analyzer (standalone per-pair tool) ---- */
-  .sig2-form-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr auto; gap:12px; align-items:end;}
-  @media (max-width:760px){ .sig2-form-grid{grid-template-columns:1fr 1fr;} }
-  .sig2-hint{font-size:11px; color:var(--ink-dim); margin-top:10px; line-height:1.6;}
-  .sig2-manual-toggle{font-size:12px; color:var(--accent); cursor:pointer; margin-top:12px; display:inline-block; user-select:none;}
-  .sig2-manual-toggle:hover{text-decoration:underline;}
-  .sig2-manual-box{margin-top:12px; display:none;}
-  .sig2-manual-box.open{display:block;}
-  .sig2-manual-box textarea{
-    width:100%; min-height:110px; background:var(--panel-2); border:1.5px solid var(--line); border-radius:6px;
-    color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:12px; padding:10px; resize:vertical;
-  }
-  .sig2-manual-box textarea:focus{outline:none; border-color:var(--accent);}
-  .sig2-error{color:var(--sell); font-size:12px; margin-top:10px; display:none;}
-  .sig2-chart-wrap{width:100%; overflow-x:auto;}
-  .sig2-chart-wrap svg{width:100%; height:auto; min-width:480px; display:block;}
-  .sig2-reason-list{display:flex; flex-direction:column; gap:0;}
-  .sig2-reason-item{display:flex; gap:9px; align-items:flex-start; font-size:12.5px; padding:9px 0; line-height:1.55; border-bottom:1px solid var(--line);}
-  .sig2-reason-item:last-child{border-bottom:none;}
-  .sig2-reason-arrow{flex-shrink:0; font-weight:700; margin-top:1px;}
-  .sig2-reason-arrow.bullish{color:var(--buy);}
-  .sig2-reason-arrow.bearish{color:var(--sell);}
-  .sig2-reason-arrow.netral{color:var(--ink-dim);}
-  .sig2-empty{font-size:12px; color:var(--ink-dim); padding:8px 0;}
-  .sig2-refresh-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:12px;}
-  .sig2-auto-pill{
-    font-size:11px; font-weight:700; padding:5px 11px; border-radius:20px; cursor:pointer;
-    background:var(--panel-2); border:1.5px solid var(--line); color:var(--ink-dim);
-  }
-  .sig2-auto-pill.on{border-color:var(--accent); color:var(--accent); background:var(--accent-glow);}
 
   footer{padding:18px; text-align:center; font-size:11px; color:var(--ink-dim); line-height:1.6;}
   .search-box{padding:0 16px 12px;}
@@ -355,13 +380,6 @@
     padding:9px 14px; font-weight:700; font-size:12.5px; cursor:pointer;
   }
   .fsig-rescan-btn:hover{background:var(--accent-glow);}
-  .fsig-autoscan-pill{
-    font-size:11px; font-weight:700; padding:6px 12px; border-radius:20px; cursor:pointer;
-    background:var(--panel-2); border:1.5px solid var(--line); color:var(--ink-dim); white-space:nowrap;
-    transition:all .15s;
-  }
-  .fsig-autoscan-pill.on{border-color:var(--buy); color:var(--buy); background:var(--buy-glow);}
-  .fsig-autoscan-pill:hover{opacity:0.85;}
   .fsig-style-tabs{display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;}
   .fsig-style-tab{
     flex:1; min-width:120px; text-align:center; padding:10px 10px; border-radius:10px; cursor:pointer;
@@ -528,7 +546,6 @@
   <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
   <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')"><span data-i18n="nav_heatmap">Market Heatmap</span></div>
   <div class="nav-group-label" data-i18n="nav_group_analysis">Analysis</div>
-  <div class="nav-item" data-page="signal-analyzer" onclick="switchPage('signal-analyzer')">🧮 <span data-i18n="nav_signal_analyzer">Signal Analyzer</span></div>
   <div class="nav-item" data-page="screener" onclick="switchPage('screener')">🔍 <span data-i18n="nav_screener">Screener</span></div>
   <div class="nav-item" data-page="strength" onclick="switchPage('strength')">💪 <span data-i18n="nav_strength">Coin Strength</span></div>
   <div class="nav-group-label" data-i18n="nav_group_intel">Market Intel</div>
@@ -575,7 +592,7 @@
     </div>
 
     <div class="card">
-      <div class="card-title"><span data-i18n="card_signals">Sinyal Multi-Timeframe</span><span style="font-size:10px;">Trend + MACD + Bollinger/RSI + Stochastic + Fibonacci + S/R</span></div>
+      <div class="card-title"><span data-i18n="card_signals">Sinyal Multi-Timeframe</span><span id="signalsUpdated" class="mono" style="font-size:10px;">–</span></div>
       <div class="card-body" style="padding:0;">
         <table>
           <thead><tr><th data-i18n="th_timeframe">Timeframe</th><th>RSI(14)</th><th>EMA9 / EMA21</th><th>BB %B</th><th data-i18n="th_signal">Sinyal</th></tr></thead>
@@ -585,22 +602,74 @@
     </div>
 
     <div class="card">
-      <div class="card-title"><span data-i18n="card_setup_per_tf">Sinyal & Setup per Timeframe</span><span style="font-size:10px;">M15 · M30 · H1 · H4 · D1 — real-time</span></div>
+      <div class="card-title"><span data-i18n="card_setup_per_tf">Sinyal & Setup per Timeframe</span><span id="tfDetailUpdated" class="mono" style="font-size:10px;">–</span></div>
       <div class="tf-tabs" id="tfTabs"></div>
       <div class="card-body" id="tfDetail"></div>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span data-i18n="card_winrate">Win Rate Score</span><span style="font-size:10px;">Checklist kesiapan open posisi</span></div>
+    <div class="card" id="entryCard">
+      <div class="card-title"><span>Sinyal Entry — S/R × Volume × Pola Chart</span><span id="entryUpdated" class="mono" style="font-size:10px;">–</span></div>
       <div class="card-body">
-        <div class="wr-header">
-          <div class="wr-score mono" id="winrateScore">–/10</div>
-          <div class="confidence-wrap">
-            <div class="confidence-label"><span data-i18n="setup_readiness">Kesiapan Setup</span></div>
-            <div class="confidence-bar"><div class="confidence-fill none" id="winrateFill" style="width:0%;"></div></div>
+        <div class="entry-controls">
+          <div class="entry-field">
+            <label>Pair</label>
+            <div class="entry-pair-readout mono" id="entryPairReadout">BTCUSDT</div>
+          </div>
+          <div class="entry-field">
+            <label>Timeframe</label>
+            <select id="entryTfSelect">
+              <option value="M15">15 menit</option>
+              <option value="H1">1 jam</option>
+              <option value="H4" selected>4 jam</option>
+              <option value="D1">1 hari</option>
+              <option value="W1">1 minggu</option>
+            </select>
+          </div>
+          <div class="entry-field">
+            <label>Jumlah candle</label>
+            <input type="number" id="entryLimitInput" value="150" min="30" max="500">
+          </div>
+          <button class="btn-analyze" id="entryAnalyzeBtn" onclick="runEntryAnalysis()">Analisis Ulang</button>
+        </div>
+        <div id="entryErrorMsg" class="entry-error hidden"></div>
+
+        <div id="entryResults" class="hidden">
+          <div class="entry-hero">
+            <div class="entry-hero-left">
+              <div class="entry-signal-circle" id="entrySignalCircle"></div>
+              <div>
+                <div class="entry-signal-label">Sinyal gabungan</div>
+                <div class="entry-signal-value" id="entrySignalValue">-</div>
+              </div>
+            </div>
+            <div class="entry-hero-stats" id="entryHeroStats"></div>
+          </div>
+
+          <svg id="entryChartSvg" viewBox="0 0 900 360" style="width:100%; height:auto; display:block; margin-top:14px;"></svg>
+
+          <div class="entry-grid3">
+            <div class="entry-subcard">
+              <h4>Support &amp; Resistance</h4>
+              <div id="entrySrBox"></div>
+            </div>
+            <div class="entry-subcard">
+              <h4>Volume</h4>
+              <div id="entryVolBox"></div>
+            </div>
+            <div class="entry-subcard">
+              <h4>Tren (Moving Average)</h4>
+              <div id="entryTrendBox"></div>
+            </div>
+          </div>
+
+          <h4 style="margin:16px 0 8px;">Rincian Alasan Sinyal</h4>
+          <ul class="entry-reasons" id="entryReasonsList"></ul>
+
+          <div class="entry-disclaimer">
+            Analisis berbasis data historis (support/resistance, volume, pola chart) — bukan nasihat keuangan.
+            Selalu gunakan manajemen risiko (stop loss) sendiri.
           </div>
         </div>
-        <div class="wr-checklist" id="winrateChecklist"></div>
       </div>
     </div>
 
@@ -614,11 +683,6 @@
     <div class="card">
       <div class="card-title"><span data-i18n="card_sd_zones">Supply &amp; Demand Zones</span><span style="font-size:10px;">Timeframe H4 · zona akumulasi sebelum breakout kuat</span></div>
       <div class="card-body" id="sdZonesBody"><div class="ind-note" data-i18n="loading_analysis">Memuat analisis…</div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><span>Fibonacci Retracement</span><span style="font-size:10px;">38.2% · 50.0% · 61.8% (golden ratio) · 78.6%</span></div>
-      <div class="card-body" id="fibBody"><div class="ind-note" data-i18n="loading_analysis">Memuat analisis…</div></div>
     </div>
 
     <div class="card">
@@ -655,10 +719,6 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title"><span data-i18n="card_entry_why">Kenapa Sinyal Ini Layak Dipertimbangkan?</span></div>
-      <div class="card-body" id="entryWhyBody"><div class="ind-note" data-i18n="waiting_analysis">Menunggu hasil analisis…</div></div>
-    </div>
   </main>
 </div>
 </div><!-- /page-trading -->
@@ -678,8 +738,7 @@
   </div>
   <div class="fsig-style-desc" id="fsigStyleDesc" data-i18n="fsig_style_scalping_desc"></div>
   <div class="fsig-toolbar">
-    <div class="fsig-title"><span id="fsigTitle" data-i18n="futures_signal_title">Futures Signal</span> <span class="fsig-count mono" id="fsigCount">(0)</span></div>
-    <div class="fsig-autoscan-pill mono on" id="fsigAutoPill" onclick="toggleAutoScan()" title="Klik untuk aktif/nonaktifkan auto-scan per jam">⏱ Auto-scan ON</div>
+    <div class="fsig-title"><span id="fsigTitle" data-i18n="futures_signal_title">Futures Signal</span> <span class="fsig-count mono" id="fsigCount">(0)</span> <span class="mono" id="fsigLastScan" style="font-size:10px; color:var(--ink-dim); margin-left:6px;">–</span></div>
     <div style="display:flex; gap:8px;">
       <button class="fsig-rescan-btn" onclick="scanSignals(signalScannerMode)" data-i18n="rescan_btn">↻ Pindai Ulang</button>
       <button class="fsig-results-btn" id="fsigResultsBtn" onclick="toggleFsigResults()" data-i18n="results_btn">Results</button>
@@ -690,96 +749,6 @@
   <div class="fsig-disclaimer">⚠️ <span data-i18n="fsig_disclaimer">Bukan merupakan suatu ajakan membeli atau menjual suatu instrumen investasi. Keputusan sepenuhnya ada di tangan Anda sendiri.</span></div>
 </main>
 </div><!-- /page-futures-signal -->
-
-<!-- ===== Signal Analyzer (standalone per-pair tool: S/R + Volume + Pola Chart) ===== -->
-<div id="page-signal-analyzer" class="page">
-<main>
-  <div class="back-link" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></div>
-  <div class="pair-header" style="margin-bottom:2px;">
-    <h1 style="font-size:20px;">Signal Analyzer</h1>
-  </div>
-  <div style="font-size:12px; color:var(--ink-dim); max-width:70ch; margin-bottom:4px;">
-    Analisis mandiri per pair: gabungan Support/Resistance, konfirmasi Volume, dan deteksi Pola Chart
-    (Double Top/Bottom, Head &amp; Shoulders, Triangle, Breakout) menjadi satu sinyal entry dengan alasan yang transparan.
-  </div>
-
-  <div class="card">
-    <div class="card-title"><span>Input Data</span></div>
-    <div class="card-body">
-      <div class="sig2-form-grid">
-        <div class="field">
-          <label>Pair</label>
-          <input type="text" id="sig2Pair" value="BTCUSDT" autocomplete="off">
-        </div>
-        <div class="field">
-          <label>Timeframe</label>
-          <select id="sig2Interval">
-            <option value="15m">15 menit</option>
-            <option value="1h">1 jam</option>
-            <option value="4h" selected>4 jam</option>
-            <option value="1d">1 hari</option>
-            <option value="1w">1 minggu</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Jumlah Candle</label>
-          <input type="number" id="sig2Limit" value="150" min="30" max="1000">
-        </div>
-        <button class="calc-btn" style="margin-top:0;" id="sig2AnalyzeBtn" onclick="sig2Analyze()">Analisis</button>
-      </div>
-      <div class="sig2-refresh-row">
-        <div class="sig2-auto-pill" id="sig2AutoPill" onclick="sig2ToggleAuto()" title="Analisis ulang otomatis tiap 5 menit untuk pair ini">↻ Auto-refresh: OFF</div>
-        <span class="sig2-hint" id="sig2LastUpdated" style="margin-top:0;"></span>
-      </div>
-      <div class="sig2-error" id="sig2Error"></div>
-      <div class="sig2-manual-toggle" onclick="sig2ToggleManual()">atau paste data CSV manual (untuk saham/forex) →</div>
-      <div class="sig2-manual-box" id="sig2ManualBox">
-        <textarea id="sig2Csv" placeholder="Tanggal,Open,High,Low,Close,Volume&#10;2026-01-02,1200,1230,1190,1220,1500000&#10;..."></textarea>
-        <button class="fsig-rescan-btn" style="margin-top:10px;" onclick="sig2AnalyzeManual()">Analisis Data CSV</button>
-      </div>
-      <div class="sig2-hint">ⓘ Mode otomatis mengambil data candle asli dari Binance (spot/futures). Ini data historis hingga saat ini, bukan streaming tick-by-tick — cukup untuk basis sinyal teknikal seperti ini.</div>
-    </div>
-  </div>
-
-  <div id="sig2Results" style="display:none;">
-    <div class="card" style="margin-top:16px;">
-      <div class="card-title"><span>Sinyal Gabungan</span><span id="sig2Pct" class="mono"></span></div>
-      <div class="card-body">
-        <div class="setup-top">
-          <div class="setup-badge none" id="sig2Badge">Menunggu data…</div>
-          <div class="confidence-wrap">
-            <div class="confidence-label"><span>Keyakinan Sinyal</span><span class="mono" id="sig2ConfValue">0%</span></div>
-            <div class="confidence-bar"><div class="confidence-fill none" id="sig2ConfFill" style="width:0%;"></div></div>
-          </div>
-        </div>
-        <div class="setup-metrics" id="sig2Metrics"></div>
-        <div class="setup-analysis" id="sig2EntryPlan"></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:16px;">
-      <div class="card-title"><span>Grafik Harga &amp; Volume</span></div>
-      <div class="card-body sig2-chart-wrap"><svg id="sig2Chart" viewBox="0 0 900 360"></svg></div>
-    </div>
-
-    <div class="card" style="margin-top:16px;">
-      <div class="card-title"><span>Support/Resistance, Volume &amp; Tren</span></div>
-      <div class="card-body">
-        <div class="ind-grid" id="sig2IndGrid"></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:16px;">
-      <div class="card-title"><span>Rincian Alasan Sinyal</span></div>
-      <div class="card-body">
-        <div class="sig2-reason-list" id="sig2Reasons"></div>
-      </div>
-    </div>
-
-    <div class="fsig-disclaimer">⚠️ Analisis ini murni berbasis data historis pair yang dipilih dan tidak memperhitungkan berita/fundamental. Alat bantu edukasi teknikal, bukan nasihat keuangan — keputusan entry/exit tetap di tangan Anda, gunakan manajemen risiko (stop loss).</div>
-  </div>
-</main>
-</div><!-- /page-signal-analyzer -->
 
 <!-- ===== Dashboard (overview) ===== -->
 <div id="page-dashboard" class="page">
@@ -943,7 +912,7 @@ const I18N = {
     fsig_style_daytrading_desc: "Timeframe 15m (entry) + 1H (tren) · VWAP + RSI + Volume · holding 4–12 jam",
     fsig_style_swing_desc: "Timeframe 4H · Bollinger Bands + MACD Histogram · holding 1–3 hari",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
-    nav_group_analysis: "Analysis", nav_signal_analyzer: "Signal Analyzer", nav_screener: "Screener", nav_strength: "Coin Strength",
+    nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
     nav_movers: "Top Movers", nav_news: "News Feed", nav_wa: "Bantuan via WhatsApp",
     search_placeholder: "Cari pair…",
@@ -1011,7 +980,7 @@ const I18N = {
     fsig_style_daytrading_desc: "15m (entry) + 1H (trend) timeframe · VWAP + RSI + Volume · 4–12h holding",
     fsig_style_swing_desc: "4H timeframe · Bollinger Bands + MACD Histogram · 1–3 day holding",
     nav_livechart: "Live Chart Pro", nav_heatmap: "Market Heatmap",
-    nav_group_analysis: "Analysis", nav_signal_analyzer: "Signal Analyzer", nav_screener: "Screener", nav_strength: "Coin Strength",
+    nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
     nav_movers: "Top Movers", nav_news: "News Feed", nav_wa: "WhatsApp Support",
     search_placeholder: "Search pair…",
@@ -1651,6 +1620,7 @@ function selectPair(p){
   loadSignals(p);
   loadNews(p);
   loadFoilsSentiment(p);
+  runEntryAnalysis();
 }
 
 document.getElementById('pairSearch').addEventListener('input', e=>{
@@ -1876,8 +1846,23 @@ async function loadSignals(symbol){
     }
     body.appendChild(tr);
   });
+  const nowStr = new Date().toLocaleTimeString(uiLocale());
+  const su = document.getElementById('signalsUpdated'); if(su) su.textContent = nowStr;
   renderTimeframeTabs(rows);
   computeSetupRecommendation(symbol, rows);
+}
+// FIX: loadSignals() — which fills the Sinyal Multi-Timeframe table, the per-tf tabs
+// (scalping M15/M30, day trading H1/H4, swing H4/D1/W1) and the Setup Recommendation
+// card — used to only run once, inside selectPair(). Nothing ever called it again, so
+// those panels looked "stuck" until you clicked another pair or reloaded the page.
+// This guard + the setInterval near the bottom of the file now re-run it automatically.
+let signalsRefreshInFlight = false;
+async function refreshSignalsIfIdle(){
+  if(signalsRefreshInFlight) return;
+  signalsRefreshInFlight = true;
+  try{ await loadSignals(currentPair); }
+  catch(e){ console.error('Auto-refresh sinyal gagal', e); }
+  finally{ signalsRefreshInFlight = false; }
 }
 
 /* ================= PER-TIMEFRAME SIGNAL + MINI SETUP (M15/M30/H1/H4/D1) ================= */
@@ -1886,19 +1871,25 @@ async function loadSignals(symbol){
 // tab's stop-loss reflects H4-scale volatility, not H1's. Data is read from the same
 // `rows` that loadSignals just fetched (real-time on every pair select / refresh cycle),
 // no extra API calls needed.
+// Remembers which tf-tab (scalping M15/M30, day trading H1/H4, swing H4/D1/W1) the
+// user last picked so periodic auto-refreshes update that same tab in place instead
+// of silently snapping back to H1 every cycle.
+let activeTfTab = 'H1';
 function renderTimeframeTabs(rows){
   window.__tfRows = rows;
   // Tabs mirror CRYPTO_TFS: M1..W1 including H2/H3 (see TFS config near the top).
   const labels = TFS.map(tf=>tf.label);
-  const defaultTf = labels.includes('H1') ? 'H1' : labels[0];
+  const defaultTf = labels.includes(activeTfTab) ? activeTfTab : (labels.includes('H1') ? 'H1' : labels[0]);
   const tabsEl = document.getElementById('tfTabs');
   tabsEl.innerHTML = labels.map(l=>`<div class="tf-tab${l===defaultTf?' active':''}" data-tf="${l}" onclick="showTfDetail('${l}')">${l}</div>`).join('');
   showTfDetail(defaultTf);
 }
 function showTfDetail(label){
+  activeTfTab = label;
   document.querySelectorAll('.tf-tab').forEach(t=>t.classList.toggle('active', t.dataset.tf===label));
   const el = document.getElementById('tfDetail');
   const row = (window.__tfRows||[]).find(r=>r.tf===label);
+  const tfu = document.getElementById('tfDetailUpdated'); if(tfu) tfu.textContent = label+' · '+new Date().toLocaleTimeString(uiLocale());
   if(!row || !row.sig || !row.ohlc){ el.innerHTML = '<div class="ind-note">Data tidak tersedia untuk timeframe ini.</div>'; return; }
   const sig = row.sig, ohlc = row.ohlc;
   const price = ohlc.closes[ohlc.closes.length-1];
@@ -2497,6 +2488,21 @@ let futuresSignalResultsByStyle = { scalping: [], daytrading: [], swing: [] };
 let spotSignalResults = [];
 let signalScanRunning = false;
 let signalPriceTimer = null;
+// FIX: previously scanSignals() (which looks for NEW confluent setups on pairs
+// that don't already have a locked signal) only ever ran on manual "Pindai Ulang"
+// clicks or when switching mode/style tabs — never on its own. So Scalping / Day
+// Trading / Swing Trading lists looked "stuck" for hours until you touched them.
+// This timer re-scans automatically every 3 minutes (scanning is heavier than a
+// price tick — 30 pairs x klines/order-book — so it's slower than the 30s price
+// loop). Already-locked signals are never altered by a re-scan, only new slots
+// get filled and closures get checked, per scanSignals()'s existing contract.
+let signalScanTimer = null;
+function startSignalScanLoop(){
+  if(signalScanTimer) clearInterval(signalScanTimer);
+  signalScanTimer = setInterval(()=>{
+    if(!signalScanRunning) scanSignals(signalScannerMode);
+  }, 180000);
+}
 
 async function mapLimit(items, limit, fn){
   const ret = new Array(items.length);
@@ -2845,15 +2851,12 @@ async function computeStyleSignal(pairSymbol, style){
 // any new confluent setup found. Pairs that already have an active signal are skipped
 // entirely (their entry/SL/TP/date must never change once set) — we only refresh their
 // live price (via refreshSignalTickers) to check if SL/TP has since been hit.
-async function scanSignals(mode, styleOverride){
+async function scanSignals(mode){
   if(signalScanRunning) return;
   signalScanRunning = true;
   const isFutures = mode==='futures';
-  const style = isFutures ? (styleOverride || signalScannerStyle) : null;
-  // Only touch the on-screen list/loading-state if this scan is for whatever the user
-  // is currently looking at — background auto-scans of other styles stay silent.
-  const isVisibleScan = mode===signalScannerMode && (!isFutures || style===signalScannerStyle);
-  const listEl = isVisibleScan ? document.getElementById('fsigList') : null;
+  const style = isFutures ? signalScannerStyle : null;
+  const listEl = document.getElementById('fsigList');
   const store = loadStoredSignals(mode, style);
   const hasExisting = Object.values(store).some(s=>s.status==='active');
   if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">${t('loading_market_data')}…</div>`;
@@ -2876,6 +2879,7 @@ async function scanSignals(mode, styleOverride){
     checkSignalClosures(mode, style);
     renderSignalList(mode);
     startSignalPriceLoop();
+    startSignalScanLoop();
   }catch(e){
     console.error(e);
     if(!hasExisting && listEl) listEl.innerHTML = `<div class="sidebar-loading">
@@ -2916,16 +2920,6 @@ function checkSignalClosures(mode, style){
   applyStoreToState(mode, style, store);
 }
 
-// Runs checkSignalClosures across every independent bucket (Spot + the 3 Futures
-// styles), not just whichever one the user currently has open, so a signal sitting
-// in a background tab still gets closed out the moment it hits SL/TP.
-function checkAllSignalClosures(){
-  checkSignalClosures('spot', null);
-  checkSignalClosures('futures', 'scalping');
-  checkSignalClosures('futures', 'daytrading');
-  checkSignalClosures('futures', 'swing');
-}
-
 function switchSignalScanner(mode){
   signalScannerMode = mode;
   document.getElementById('sigTabSpot')?.classList.toggle('active', mode==='spot');
@@ -2942,6 +2936,7 @@ function switchSignalScanner(mode){
   applyStoreToState(mode, style, loadStoredSignals(mode, style));
   renderSignalList(mode);
   startSignalPriceLoop();
+  startSignalScanLoop();
   scanSignals(mode); // fills in any newly-forming signals; already-locked ones are untouched
 }
 
@@ -2958,6 +2953,7 @@ function switchSignalStyle(style){
   applyStoreToState('futures', style, loadStoredSignals('futures', style));
   renderSignalList('futures');
   startSignalPriceLoop();
+  startSignalScanLoop();
   scanSignals('futures');
 }
 
@@ -2968,83 +2964,12 @@ async function refreshSignalTickers(rerender=true){
     const tickers = await fetchAllBinanceTickers();
     tickers.forEach(tk=>{ tickerMap[tk.symbol] = tk; });
   }catch(e){ /* keep last known prices on failure */ }
-  checkAllSignalClosures();
-  if(rerender && document.getElementById('page-futures-signal')?.classList.contains('active')){
-    renderSignalList(signalScannerMode);
-  }
-  // Piggyback the hourly full auto-scan check on this same 30s heartbeat instead of
-  // running a second independent timer — cheap to check, and keeps everything driven
-  // by one clock so a throttled/backgrounded tab can't drift the two out of sync.
-  if(autoScanEnabled && Date.now() >= nextAutoScanAt) runFullAutoScan();
-  updateAutoScanPill();
+  checkSignalClosures(signalScannerMode, signalScannerMode==='futures' ? signalScannerStyle : null);
+  if(rerender) renderSignalList(signalScannerMode);
 }
 function startSignalPriceLoop(){
   if(signalPriceTimer) clearInterval(signalPriceTimer);
   signalPriceTimer = setInterval(()=>refreshSignalTickers(true), 30000);
-}
-
-/* ---- Auto-scan: keeps all 4 signal buckets (Spot + Scalping/Day Trading/Swing)
-   continuously topped up with fresh signals, entirely in the background, without
-   requiring the user to sit on the Futures Signal page or click "Pindai Ulang".
-   IMPORTANT: signals that are still active ("layak dipertahankan") are NEVER
-   touched here — scanSignals() only ever fills pairs that currently have no locked
-   signal, so an existing good setup rides untouched until it hits SL/TP. This timer
-   only runs while this browser tab stays open (no server backend), so if the tab is
-   fully closed the countdown simply resumes/catches up next time it's opened. ---- */
-const AUTO_SCAN_INTERVAL_MS = 60 * 60 * 1000; // 1 jam
-let autoScanEnabled = localStorage.getItem('tiaa_autoscan_enabled') !== '0';
-let nextAutoScanAt = 0;
-let autoScanRunning = false;
-
-function scheduleNextAutoScan(){
-  nextAutoScanAt = Date.now() + AUTO_SCAN_INTERVAL_MS;
-  try{ localStorage.setItem('tiaa_next_autoscan_at', String(nextAutoScanAt)); }catch(e){}
-}
-async function runFullAutoScan(){
-  if(!autoScanEnabled || autoScanRunning) return;
-  autoScanRunning = true;
-  scheduleNextAutoScan(); // reschedule immediately so a slow scan can't cause back-to-back re-triggers
-  updateAutoScanPill();
-  try{
-    await scanSignals('spot');
-    await scanSignals('futures', 'scalping');
-    await scanSignals('futures', 'daytrading');
-    await scanSignals('futures', 'swing');
-  }catch(e){ console.error('Auto-scan error:', e); }
-  autoScanRunning = false;
-  updateAutoScanPill();
-}
-function toggleAutoScan(){
-  autoScanEnabled = !autoScanEnabled;
-  try{ localStorage.setItem('tiaa_autoscan_enabled', autoScanEnabled ? '1' : '0'); }catch(e){}
-  if(autoScanEnabled && Date.now() >= nextAutoScanAt) runFullAutoScan();
-  updateAutoScanPill();
-}
-function updateAutoScanPill(){
-  const pill = document.getElementById('fsigAutoPill');
-  if(!pill) return;
-  if(!autoScanEnabled){ pill.textContent = '⏱ Auto-scan: OFF'; pill.classList.remove('on'); return; }
-  pill.classList.add('on');
-  if(autoScanRunning){ pill.textContent = '⏱ Memindai ulang…'; return; }
-  const remain = Math.max(0, nextAutoScanAt - Date.now());
-  const mm = String(Math.floor(remain/60000)).padStart(2,'0');
-  const ss = String(Math.floor((remain%60000)/1000)).padStart(2,'0');
-  pill.textContent = `⏱ Auto-scan ON · sinyal baru dalam ${mm}:${ss}`;
-}
-function initAutoScan(){
-  const stored = parseInt(localStorage.getItem('tiaa_next_autoscan_at') || '0', 10);
-  if(stored && stored > Date.now()){
-    nextAutoScanAt = stored;
-    updateAutoScanPill();
-  } else if(autoScanEnabled){
-    runFullAutoScan(); // due now (first visit, or the tab was closed past the last scheduled time)
-  }
-  startSignalPriceLoop(); // this same 30s loop now also drives the hourly auto-scan check
-  // Catch up immediately if the tab was backgrounded/minimized past the scheduled time —
-  // don't wait for the next 30s tick once the person comes back to this tab.
-  document.addEventListener('visibilitychange', ()=>{
-    if(!document.hidden && autoScanEnabled && Date.now() >= nextAutoScanAt) runFullAutoScan();
-  });
 }
 
 function pctFrom(entry, val){ return (val-entry)/entry*100; }
@@ -3054,6 +2979,8 @@ function renderSignalList(mode){
   const signals = mode==='futures' ? (futuresSignalResultsByStyle[signalScannerStyle]||[]) : spotSignalResults;
   const countEl = document.getElementById('fsigCount');
   if(countEl) countEl.textContent = `(${signals.length})`;
+  const lastScanEl = document.getElementById('fsigLastScan');
+  if(lastScanEl) lastScanEl.textContent = new Date().toLocaleTimeString(uiLocale());
   const listEl = document.getElementById('fsigList');
   if(!listEl) return;
   if(!signals.length){
@@ -3350,38 +3277,22 @@ function calcTPSL(){
   boxes.forEach(b=>{ const box=document.createElement('div'); box.className='result-box '+b.cls; box.innerHTML=`<div class="rl">${b.label}</div><div class="rv mono">${b.value}</div>`; resultGrid.appendChild(box); });
 }
 
-/* ================= SIGNAL ANALYZER (standalone per-pair tool) =================
-   Fully namespaced with a sig2 prefix so nothing here collides with the dashboard's
-   own indicator engine (ema/rsi/atr/bollinger/detectPatterns/findSupportResistance
-   above are for the Futures Signal scoring system and are left untouched). Reuses
-   fetchKlinesCrypto() and formatPrice() from the shared crypto layer above for
-   consistency and so it benefits from the same Futures→Spot fallback handling. */
+/* ================= ENTRY SIGNAL (S/R × Volume × Chart Pattern) =================
+   Ported from the standalone "Sinyal Entry" analyzer tool. Reuses the dashboard's
+   own fetchKlinesCrypto()/formatPrice() rather than duplicating data-fetch code —
+   only the analysis engine (S/R clustering, volume confirmation, pattern
+   detection) and its own rendering are new. Runs on the currently selected pair
+   (currentPair) + a timeframe/candle-count picked in this card, independent of
+   the multi-timeframe confluence engine above and independent of the Futures
+   Signal scanner page. Function names are prefixed with "entry" / "SR" to avoid
+   clashing with the existing formatPrice()/detectPatterns() used elsewhere. */
 
-function sig2ParseCSV(text){
-  const lines = text.trim().split(/\r?\n/).filter(l=>l.trim().length>0);
-  if(lines.length===0) return {rows:[], error:"Data kosong."};
-  const rows=[]; let start=0;
-  const firstCells = lines[0].split(/[,;\t]/).map(c=>c.trim());
-  if(isNaN(parseFloat(firstCells[1]))) start=1;
-  for(let i=start;i<lines.length;i++){
-    const cells = lines[i].split(/[,;\t]/).map(c=>c.trim());
-    if(cells.length<6) continue;
-    const [date,open,high,low,close,volume]=cells;
-    const o=parseFloat(open),h=parseFloat(high),l=parseFloat(low),c=parseFloat(close),v=parseFloat(volume);
-    if([o,h,l,c,v].some(n=>isNaN(n))) continue;
-    rows.push({date: date || ("#"+i), open:o, high:h, low:l, close:c, volume:v});
-  }
-  if(rows.length<30) return {rows, error:`Data valid hanya ${rows.length} baris. Minimal 30 baris (candle) diperlukan.`};
-  return {rows, error:null};
-}
-
-function sig2Sma(values, period, idx){
+function entrySma(values, period, idx){
   if(idx < period-1) return null;
   let sum=0; for(let i=idx-period+1;i<=idx;i++) sum+=values[i];
   return sum/period;
 }
-
-function sig2FindSwings(rows, window=3){
+function entryFindSwings(rows, window=3){
   const highs=[], lows=[];
   for(let i=window;i<rows.length-window;i++){
     const sliceH=rows.slice(i-window,i+window+1).map(r=>r.high);
@@ -3391,8 +3302,7 @@ function sig2FindSwings(rows, window=3){
   }
   return {highs, lows};
 }
-
-function sig2ClusterLevels(points, currentPrice, tolerancePct=0.02){
+function entryClusterLevels(points, currentPrice, tolerancePct=0.02){
   const sorted=[...points].sort((a,b)=>a.price-b.price);
   const clusters=[];
   for(const p of sorted){
@@ -3410,8 +3320,7 @@ function sig2ClusterLevels(points, currentPrice, tolerancePct=0.02){
     side: c.avg>=currentPrice ? "resistance" : "support"
   })).sort((a,b)=> b.touches-a.touches || b.lastIndex-a.lastIndex);
 }
-
-function sig2DetectPatterns(rows, highs, lows, currentPrice, resistance, support){
+function entryDetectSRPatterns(rows, highs, lows, currentPrice, resistance, support){
   const reasons=[]; let score=0; const tol=0.025;
   const recentHighs=highs.slice(-6), recentLows=lows.slice(-6);
 
@@ -3466,22 +3375,21 @@ function sig2DetectPatterns(rows, highs, lows, currentPrice, resistance, support
     if(lowsFlat && highsFalling){ score-=1.2; reasons.push({type:"bearish",weight:1.2,text:"Pola Descending Triangle: support mendatar, high semakin rendah — bias breakdown turun."});}
   }
   const lastVol=rows[rows.length-1].volume;
-  const volAvg=sig2Sma(rows.map(r=>r.volume),20,rows.length-1) || lastVol;
+  const volAvg=entrySma(rows.map(r=>r.volume),20,rows.length-1) || lastVol;
   const volSpike=lastVol>volAvg*1.3;
-  if(resistance && currentPrice>resistance.level && volSpike){ score+=1.8; reasons.push({type:"bullish",weight:1.8,text:`Harga breakout di atas resistance ${resistance.level.toFixed(2)} disertai volume tinggi.`});}
-  if(support && currentPrice<support.level && volSpike){ score-=1.8; reasons.push({type:"bearish",weight:1.8,text:`Harga breakdown di bawah support ${support.level.toFixed(2)} disertai volume tinggi.`});}
+  if(resistance && currentPrice>resistance.level && volSpike){ score+=1.8; reasons.push({type:"bullish",weight:1.8,text:`Harga breakout di atas resistance ${formatPrice(resistance.level)} disertai volume tinggi.`});}
+  if(support && currentPrice<support.level && volSpike){ score-=1.8; reasons.push({type:"bearish",weight:1.8,text:`Harga breakdown di bawah support ${formatPrice(support.level)} disertai volume tinggi.`});}
 
   return {score, reasons};
 }
-
-function sig2Analyze_(rows){
+function entryAnalyze(rows){
   const closes=rows.map(r=>r.close), volumes=rows.map(r=>r.volume), n=rows.length;
   const last=rows[n-1], prev=rows[n-2];
-  const sma20=sig2Sma(closes,20,n-1), sma50=sig2Sma(closes, Math.min(50,n-1), n-1);
-  const volSma20=sig2Sma(volumes,20,n-1);
-  const {highs,lows}=sig2FindSwings(rows,3);
+  const sma20=entrySma(closes,20,n-1), sma50=entrySma(closes, Math.min(50,n-1), n-1);
+  const volSma20=entrySma(volumes,20,n-1);
+  const {highs,lows}=entryFindSwings(rows,3);
   const allSwings=[...highs,...lows];
-  const clusters=sig2ClusterLevels(allSwings,last.close);
+  const clusters=entryClusterLevels(allSwings,last.close);
   const supports=clusters.filter(c=>c.side==="support").sort((a,b)=>b.level-a.level);
   const resistances=clusters.filter(c=>c.side==="resistance").sort((a,b)=>a.level-b.level);
   const nearestSupport=supports[0]||null, nearestResistance=resistances[0]||null;
@@ -3502,14 +3410,14 @@ function sig2Analyze_(rows){
 
   if(nearestSupport){
     const dist=(last.close-nearestSupport.level)/nearestSupport.level;
-    if(dist>=0 && dist<=0.02 && last.close>prev.close){ score+=1; reasons.push({type:"bullish",weight:1,text:`Harga memantul dari area support kuat ${nearestSupport.level.toFixed(2)} (disentuh ${nearestSupport.touches}x).`});}
+    if(dist>=0 && dist<=0.02 && last.close>prev.close){ score+=1; reasons.push({type:"bullish",weight:1,text:`Harga memantul dari area support kuat ${formatPrice(nearestSupport.level)} (disentuh ${nearestSupport.touches}x).`});}
   }
   if(nearestResistance){
     const dist=(nearestResistance.level-last.close)/nearestResistance.level;
-    if(dist>=0 && dist<=0.02 && last.close<prev.close){ score-=1; reasons.push({type:"bearish",weight:1,text:`Harga ditolak di area resistance kuat ${nearestResistance.level.toFixed(2)} (disentuh ${nearestResistance.touches}x).`});}
+    if(dist>=0 && dist<=0.02 && last.close<prev.close){ score-=1; reasons.push({type:"bearish",weight:1,text:`Harga ditolak di area resistance kuat ${formatPrice(nearestResistance.level)} (disentuh ${nearestResistance.touches}x).`});}
   }
 
-  const patternResult=sig2DetectPatterns(rows, highs, lows, last.close, nearestResistance, nearestSupport);
+  const patternResult=entryDetectSRPatterns(rows, highs, lows, last.close, nearestResistance, nearestSupport);
   score += patternResult.score;
   reasons.push(...patternResult.reasons);
 
@@ -3535,24 +3443,27 @@ function sig2Analyze_(rows){
   return {last, sma20, sma50, volSma20, nearestSupport, nearestResistance, nextSupport, nextResistance,
     reasons: reasons.sort((a,b)=>b.weight-a.weight), score, confidence, signal, entryPlan, rows};
 }
-
-function sig2FormatVol(n){
-  if(n>=1000000) return (n/1000000).toFixed(2)+"jt";
-  if(n>=1000) return (n/1000).toFixed(1)+"rb";
+function entryFormatVol(n){
+  if(n>=1000000) return (n/1000000).toFixed(2)+'jt';
+  if(n>=1000) return (n/1000).toFixed(1)+'rb';
   return String(n);
 }
-
-function sig2RenderChart(rows, nearestSupport, nearestResistance){
-  const n=rows.length;
-  const priceTop=15, priceBottom=230, volTop=245, volBottom=320;
+function entryRenderChart(rows, nearestSupport, nearestResistance){
+  const W=900, H=360;
+  const priceTop=15, priceBottom=230;
+  const volTop=245, volBottom=320;
   const plotLeft=15, plotRight=840;
+  const n=rows.length;
+
   const closes=rows.map(r=>r.close);
   let pMin=Math.min(...closes), pMax=Math.max(...closes);
   if(nearestSupport) pMin=Math.min(pMin, nearestSupport.level);
   if(nearestResistance) pMax=Math.max(pMax, nearestResistance.level);
   const pad=(pMax-pMin)*0.08 || pMax*0.02;
   pMin-=pad; pMax+=pad;
+
   const vMax=Math.max(...rows.map(r=>r.volume)) * 1.1;
+
   const xAt = i => plotLeft + (i/(n-1)) * (plotRight-plotLeft);
   const yPriceAt = v => priceBottom - ((v-pMin)/(pMax-pMin)) * (priceBottom-priceTop);
   const yVolAt = v => volBottom - (v/vMax) * (volBottom-volTop);
@@ -3563,14 +3474,17 @@ function sig2RenderChart(rows, nearestSupport, nearestResistance){
     svg += `<line x1="${plotLeft}" y1="${y}" x2="${plotRight}" y2="${y}" stroke="var(--line)" stroke-width="1"/>`;
   }
   let pathD = "";
-  rows.forEach((r,i)=>{ const x=xAt(i), y=yPriceAt(r.close); pathD += (i===0?"M":"L")+x.toFixed(1)+","+y.toFixed(1)+" "; });
+  rows.forEach((r,i)=>{
+    const x=xAt(i), y=yPriceAt(r.close);
+    pathD += (i===0 ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1) + " ";
+  });
   svg += `<path d="${pathD}" fill="none" stroke="var(--accent)" stroke-width="2"/>`;
 
   const barW = Math.max(1, (plotRight-plotLeft)/n * 0.6);
   rows.forEach((r,i)=>{
     const x=xAt(i)-barW/2, y=yVolAt(r.volume);
     const up = i===0 ? true : r.close>=rows[i-1].close;
-    svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${(volBottom-y).toFixed(1)}" fill="${up?'var(--buy)':'var(--sell)'}" opacity="0.55"/>`;
+    svg += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${(volBottom-y).toFixed(1)}" fill="${up? 'var(--buy)':'var(--sell)'}" opacity="0.55"/>`;
   });
 
   if(nearestSupport){
@@ -3592,115 +3506,119 @@ function sig2RenderChart(rows, nearestSupport, nearestResistance){
   for(let k=0;k<labelCount;k++){
     const idx = Math.round((k/(labelCount-1))*(n-1));
     const x = xAt(idx);
-    svg += `<text x="${x.toFixed(1)}" y="${volBottom+16}" fill="var(--ink-dim)" font-size="11" text-anchor="middle">${String(rows[idx].date).slice(5)}</text>`;
+    svg += `<text x="${x.toFixed(1)}" y="${volBottom+16}" fill="var(--ink-dim)" font-size="11" text-anchor="middle">${rows[idx].date.slice(5)}</text>`;
   }
-  document.getElementById("sig2Chart").innerHTML = svg;
+  document.getElementById("entryChartSvg").innerHTML = svg;
 }
+function entryRenderResults(result){
+  document.getElementById("entryResults").classList.remove("hidden");
+  const circle = document.getElementById("entrySignalCircle");
+  const val = document.getElementById("entrySignalValue");
+  circle.className = "entry-signal-circle";
+  val.className = "entry-signal-value";
 
-function sig2RenderResults(result){
-  document.getElementById("sig2Results").style.display = "block";
-  const cls = result.signal==="BUY" ? "long" : result.signal==="SELL" ? "short" : "none";
-  const badge = document.getElementById("sig2Badge");
-  badge.className = "setup-badge "+cls;
-  badge.textContent = result.signal==="BUY" ? "BUY / LONG" : result.signal==="SELL" ? "SELL / SHORT" : "TUNGGU — Belum Cukup Kuat";
-  document.getElementById("sig2ConfValue").textContent = result.confidence+"%";
-  const fill = document.getElementById("sig2ConfFill");
-  fill.className = "confidence-fill "+cls; fill.style.width = result.confidence+"%";
-  document.getElementById("sig2Pct").textContent = "Harga: "+formatPrice(result.last.close);
+  let cls, label;
+  if(result.signal==="BUY"){ cls="entry-buy"; label="BUY / LONG"; }
+  else if(result.signal==="SELL"){ cls="entry-sell"; label="SELL / SHORT"; }
+  else { cls="entry-neutral"; label="TUNGGU"; }
+  circle.classList.add(cls);
+  val.classList.add(cls);
+  val.textContent = label;
+  circle.innerHTML = result.signal==="BUY" ? "▲" : result.signal==="SELL" ? "▼" : "■";
 
-  let planHtml = `Harga terakhir <strong>${formatPrice(result.last.close)}</strong>. `;
+  let statsHtml = `
+    <div><div class="es-label">Keyakinan sinyal</div><div class="es-value mono">${result.confidence}%</div></div>
+    <div><div class="es-label">Harga terakhir</div><div class="es-value mono">${formatPrice(result.last.close)}</div></div>`;
   if(result.entryPlan){
-    planHtml += `Rencana ${result.signal}: Entry di sekitar <strong>${formatPrice(result.entryPlan.entry)}</strong>, `+
-      `Stop Loss <strong style="color:var(--sell)">${formatPrice(result.entryPlan.stopLoss)}</strong>, `+
-      `Target <strong style="color:var(--buy)">${formatPrice(result.entryPlan.takeProfit)}</strong>`+
-      (result.entryPlan.rr ? `, Risk:Reward sekitar <strong>1:${result.entryPlan.rr}</strong>.` : ".");
-  } else {
-    planHtml += `Belum ada arah yang cukup kuat untuk direkomendasikan entry saat ini — tunggu konfirmasi lebih lanjut.`;
+    statsHtml += `
+      <div><div class="es-label">Stop loss</div><div class="es-value mono entry-sell">${formatPrice(result.entryPlan.stopLoss)}</div></div>
+      <div><div class="es-label">Target</div><div class="es-value mono entry-buy">${formatPrice(result.entryPlan.takeProfit)}</div></div>`;
+    if(result.entryPlan.rr){
+      statsHtml += `<div><div class="es-label">Risk : Reward</div><div class="es-value mono">1 : ${result.entryPlan.rr}</div></div>`;
+    }
   }
-  document.getElementById("sig2EntryPlan").innerHTML = planHtml;
+  document.getElementById("entryHeroStats").innerHTML = statsHtml;
 
-  const metrics = [
-    {label:"Resistance Terdekat", value: result.nearestResistance ? formatPrice(result.nearestResistance.level)+` (${result.nearestResistance.touches}x)` : "–"},
-    {label:"Support Terdekat", value: result.nearestSupport ? formatPrice(result.nearestSupport.level)+` (${result.nearestSupport.touches}x)` : "–"},
-    {label:"Volume Terakhir", value: sig2FormatVol(result.last.volume)},
-    {label:"Volume Rata² 20", value: result.volSma20 ? sig2FormatVol(result.volSma20) : "–"},
-    {label:"SMA 20", value: result.sma20 ? formatPrice(result.sma20) : "–"},
-    {label:"SMA 50", value: result.sma50 ? formatPrice(result.sma50) : "–"},
-  ];
-  document.getElementById("sig2IndGrid").innerHTML = metrics.map(m=>
-    `<div class="ind-box"><div class="ind-label">${m.label}</div><div class="ind-value mono" style="font-size:15px;">${m.value}</div></div>`
-  ).join("");
+  entryRenderChart(result.rows, result.nearestSupport, result.nearestResistance);
 
-  const reasonsEl = document.getElementById("sig2Reasons");
+  document.getElementById("entrySrBox").innerHTML = `
+    <div class="er"><span class="k">Resistance terdekat</span><span class="v entry-sell">${result.nearestResistance ? formatPrice(result.nearestResistance.level)+" ("+result.nearestResistance.touches+"x sentuh)" : "-"}</span></div>
+    <div class="er"><span class="k">Resistance berikut</span><span class="v">${result.nextResistance ? formatPrice(result.nextResistance.level) : "-"}</span></div>
+    <div class="er"><span class="k">Support terdekat</span><span class="v entry-buy">${result.nearestSupport ? formatPrice(result.nearestSupport.level)+" ("+result.nearestSupport.touches+"x sentuh)" : "-"}</span></div>
+    <div class="er"><span class="k">Support berikut</span><span class="v">${result.nextSupport ? formatPrice(result.nextSupport.level) : "-"}</span></div>`;
+
+  document.getElementById("entryVolBox").innerHTML = `
+    <div class="er"><span class="k">Volume terakhir</span><span class="v">${entryFormatVol(result.last.volume)}</span></div>
+    <div class="er"><span class="k">Rata-rata 20 bar</span><span class="v">${result.volSma20 ? entryFormatVol(result.volSma20) : "-"}</span></div>
+    <div class="er"><span class="k">Rasio vs rata-rata</span><span class="v">${result.volSma20 ? (result.last.volume/result.volSma20).toFixed(2)+"x" : "-"}</span></div>`;
+
+  document.getElementById("entryTrendBox").innerHTML = `
+    <div class="er"><span class="k">SMA 20</span><span class="v">${result.sma20 ? formatPrice(result.sma20) : "-"}</span></div>
+    <div class="er"><span class="k">SMA 50</span><span class="v">${result.sma50 ? formatPrice(result.sma50) : "-"}</span></div>
+    <div class="er"><span class="k">Skor mentah</span><span class="v">${result.score.toFixed(2)}</span></div>`;
+
+  const reasonsList = document.getElementById("entryReasonsList");
   if(result.reasons.length===0){
-    reasonsEl.innerHTML = `<div class="sig2-empty">Tidak ada indikasi kuat terdeteksi — kondisi pasar netral.</div>`;
+    reasonsList.innerHTML = `<li style="color:var(--ink-dim);">Tidak ada indikasi kuat terdeteksi — kondisi pasar netral.</li>`;
   } else {
-    reasonsEl.innerHTML = result.reasons.map(r=>
-      `<div class="sig2-reason-item"><span class="sig2-reason-arrow ${r.type}">${r.type==="bullish"?"▲":r.type==="bearish"?"▼":"—"}</span><span>${r.text}</span></div>`
+    reasonsList.innerHTML = result.reasons.map(r =>
+      `<li><span class="ea ${r.type}">${r.type==="bullish"?"▲":r.type==="bearish"?"▼":"—"}</span><span>${r.text}</span></li>`
     ).join("");
   }
-
-  sig2RenderChart(result.rows, result.nearestSupport, result.nearestResistance);
-  document.getElementById("sig2LastUpdated").textContent = "Diperbarui: "+new Date().toLocaleTimeString(uiLocale());
+  const eu = document.getElementById('entryUpdated'); if(eu) eu.textContent = new Date().toLocaleTimeString(uiLocale());
 }
-
-let sig2AutoTimer = null;
-async function sig2Analyze(){
-  const pair = document.getElementById("sig2Pair").value.trim().toUpperCase();
-  const interval = document.getElementById("sig2Interval").value;
-  const limit = parseInt(document.getElementById("sig2Limit").value, 10) || 150;
-  const errEl = document.getElementById("sig2Error");
-  const btn = document.getElementById("sig2AnalyzeBtn");
-  errEl.style.display = "none";
-  if(!pair){ errEl.style.display="block"; errEl.textContent="⚠ Masukkan pair terlebih dahulu, contoh: BTCUSDT"; return; }
-  const originalLabel = btn.textContent;
-  btn.disabled = true; btn.textContent = "Mengambil data…";
+// Fetches OHLCV rows (with readable date labels) for the entry-signal engine.
+// Reuses fetchKlinesCrypto() — same Futures-with-Spot-fallback source as the rest
+// of the dashboard — instead of hitting Binance Spot directly like the standalone tool did.
+async function entryGetRows(symbol, tfLabel, limit){
+  const tf = TFS.find(t=>t.label===tfLabel) || TFS.find(t=>t.label==='H4');
+  const k = await fetchKlinesCrypto(symbol, tf.interval, Math.max(30, Math.min(1000, limit)));
+  return k.map(c=>{
+    const d = new Date(c[0]);
+    const dateMode = (tf.interval==='1d'||tf.interval==='1w') ? 'date' : 'datetime';
+    const label = dateMode==='date' ? d.toISOString().slice(0,10) : d.toISOString().slice(0,16).replace('T',' ');
+    return { date:label, open:parseFloat(c[1]), high:parseFloat(c[2]), low:parseFloat(c[3]), close:parseFloat(c[4]), volume:parseFloat(c[5]) };
+  });
+}
+let entryAnalysisInFlight = false;
+async function runEntryAnalysis(){
+  if(entryAnalysisInFlight) return;
+  entryAnalysisInFlight = true;
+  const btn = document.getElementById('entryAnalyzeBtn');
+  const errBox = document.getElementById('entryErrorMsg');
+  errBox.classList.add('hidden');
+  const originalLabel = btn.innerHTML;
+  btn.disabled = true; btn.textContent = 'Menganalisis…';
   try{
-    const k = await fetchKlinesCrypto(pair, interval, limit);
-    if(!Array.isArray(k) || k.length < 30){
-      throw new Error(`Data yang diterima hanya ${Array.isArray(k)?k.length:0} candle. Coba naikkan jumlah candle atau ganti timeframe.`);
-    }
-    const dateMode = (interval==="1d"||interval==="1w") ? "date" : "datetime";
-    const rows = k.map(c=>{
-      const d = new Date(c[0]);
-      const label = dateMode==="date" ? d.toISOString().slice(0,10) : d.toISOString().slice(0,16).replace("T"," ");
-      return {date:label, open:parseFloat(c[1]), high:parseFloat(c[2]), low:parseFloat(c[3]), close:parseFloat(c[4]), volume:parseFloat(c[5])};
-    });
-    const result = sig2Analyze_(rows);
-    sig2RenderResults(result);
+    document.getElementById('entryPairReadout').textContent = currentPair;
+    const tfLabel = document.getElementById('entryTfSelect').value;
+    const limit = parseInt(document.getElementById('entryLimitInput').value, 10) || 150;
+    const rows = await entryGetRows(currentPair, tfLabel, limit);
+    if(rows.length < 30) throw new Error(`Data hanya ${rows.length} candle — minimal 30 diperlukan untuk deteksi S/R & pola yang akurat.`);
+    const result = entryAnalyze(rows);
+    entryRenderResults(result);
   }catch(e){
-    errEl.style.display = "block";
-    errEl.textContent = "⚠ "+e.message+" — pastikan format pair benar (contoh: BTCUSDT), atau gunakan opsi paste CSV manual di bawah.";
-  }finally{
-    btn.disabled = false; btn.textContent = originalLabel;
+    console.error('Entry analysis gagal', e);
+    errBox.classList.remove('hidden');
+    errBox.textContent = '⚠ '+(e.message||'Gagal mengambil/menganalisis data.');
+  } finally {
+    entryAnalysisInFlight = false;
+    btn.disabled = false; btn.innerHTML = originalLabel;
   }
 }
-function sig2AnalyzeManual(){
-  const {rows, error} = sig2ParseCSV(document.getElementById("sig2Csv").value);
-  const errEl = document.getElementById("sig2Error");
-  if(error){ errEl.style.display="block"; errEl.textContent="⚠ "+error; return; }
-  errEl.style.display = "none";
-  sig2RenderResults(sig2Analyze_(rows));
-}
-function sig2ToggleManual(){ document.getElementById("sig2ManualBox").classList.toggle("open"); }
-function sig2ToggleAuto(){
-  const pill = document.getElementById("sig2AutoPill");
-  if(sig2AutoTimer){
-    clearInterval(sig2AutoTimer); sig2AutoTimer = null;
-    pill.classList.remove("on"); pill.textContent = "↻ Auto-refresh: OFF";
-  } else {
-    sig2Analyze();
-    sig2AutoTimer = setInterval(sig2Analyze, 5*60*1000); // tiap 5 menit
-    pill.classList.add("on"); pill.textContent = "↻ Auto-refresh: ON (5 menit)";
-  }
-}
+document.getElementById('entryTfSelect').addEventListener('change', runEntryAnalysis);
 
 /* ================= INIT ================= */
 applyI18n();
 initCryptoMarket();
 initEconomicCalendar();
-initAutoScan();
 setInterval(()=>loadIndicators(currentPair), 60000);
+// FIX: the futures signal panels on the main trading page (Sinyal Multi-Timeframe
+// table, scalping/day-trading/swing tf-tabs, Setup Recommendation) previously only
+// ran once per pair selection. Now they refresh on the same 60s cadence as price.
+setInterval(refreshSignalsIfIdle, 60000);
+// Entry-signal card (S/R × Volume × Pola Chart) refreshes on its own 60s cadence too.
+setInterval(()=>{ if(!entryAnalysisInFlight) runEntryAnalysis(); }, 60000);
 </script>
 
 </body>
