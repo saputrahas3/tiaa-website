@@ -719,7 +719,7 @@
   <div class="nav-group-label" data-i18n="nav_group_trading">Trading</div>
   <div class="nav-item active" data-page="trading" onclick="switchPage('trading')"><span data-i18n="nav_trading">Trading Signal</span><span class="nav-live">LIVE</span></div>
   <div class="nav-item" data-page="futures-signal" onclick="switchPage('futures-signal')"><span data-i18n="nav_futures_signal">Futures Signal</span></div>
-  <div class="nav-item" data-page="performance" onclick="switchPage('performance')">📈 <span data-i18n="nav_performance">Performance</span></div>
+  <div class="nav-item" data-page="performance" onclick="switchPage('performance')">📈 <span data-i18n="nav_performance">Performa Sinyal</span></div>
   <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
   <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')"><span data-i18n="nav_heatmap">Market Heatmap</span></div>
   <div class="nav-group-label" data-i18n="nav_group_analysis">Analysis</div>
@@ -908,6 +908,7 @@
 <div class="market-tabs" id="fsigMarketTabs">
   <div class="market-tab" onclick="switchPage('trading')">Crypto Perpetual Futures</div>
   <div class="market-tab active" id="sigTabFutures" onclick="switchSignalScanner('futures')">Futures Signal</div>
+  <div class="market-tab" id="sigTabSpot" onclick="switchSignalScanner('spot')" data-i18n="spot_signal_title">Spot Signal</div>
 </div>
 <main>
   <div class="back-link" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></div>
@@ -1004,7 +1005,7 @@
 <div id="page-performance" class="page">
   <div class="page-inner">
     <div class="card">
-      <div class="card-title"><span>Performance — Riwayat Sinyal</span><span style="font-size:10px;">Dihitung dari sinyal yang sudah closed (kena TP/SL)</span></div>
+      <div class="card-title"><span>Performa Sinyal — Riwayat &amp; Rekam Jejak</span><span style="font-size:10px;">Dihitung dari sinyal yang sudah closed (kena TP/SL)</span></div>
       <div class="card-body">
         <div class="perf-bucket-tabs" id="perfBucketTabs" style="margin-bottom:14px;">
           <div class="perf-bucket-tab active" data-bucket="all" onclick="switchPerfBucket('all')">Semua</div>
@@ -1109,6 +1110,7 @@ const I18N = {
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
     nav_group_trading: "Trading", nav_trading: "Trading Signal",
     nav_futures_signal: "Futures Signal", back_to_dashboard: "Kembali ke Dashboard",
+    nav_performance: "Performa Sinyal",
     futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
     fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
     fsig_total_signal: "Total Sinyal", fsig_avg_confidence: "Rata-rata Confidence",
@@ -1177,6 +1179,7 @@ const I18N = {
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
     nav_group_trading: "Trading", nav_trading: "Trading Signal",
     nav_futures_signal: "Futures Signal", back_to_dashboard: "Back to Dashboard",
+    nav_performance: "Signal Performance",
     futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
     fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
     fsig_total_signal: "Total Signals", fsig_avg_confidence: "Avg. Confidence",
@@ -4242,8 +4245,9 @@ function buildCommandIndex(){
   const pages = [
     {tag:'Halaman', label:'Dashboard', run:()=>switchPage('dashboard')},
     {tag:'Halaman', label:'Trading Signal', run:()=>switchPage('trading')},
-    {tag:'Halaman', label:'Futures Signal', run:()=>switchPage('futures-signal')},
-    {tag:'Halaman', label:'Performance', run:()=>switchPage('performance')},
+    {tag:'Halaman', label:'Futures Signal', run:()=>{ switchPage('futures-signal'); switchSignalScanner('futures'); }},
+    {tag:'Halaman', label:'Spot Signal', run:()=>{ switchPage('futures-signal'); switchSignalScanner('spot'); }},
+    {tag:'Halaman', label:'Performa Sinyal', run:()=>switchPage('performance')},
     {tag:'Halaman', label:'Live Chart Pro', run:()=>switchPage('livechart')},
     {tag:'Halaman', label:'Market Heatmap', run:()=>switchPage('heatmap')},
     {tag:'Halaman', label:'Screener', run:()=>switchPage('screener')},
