@@ -904,13 +904,8 @@
 </div>
 </div><!-- /page-trading -->
 
-<!-- ===== Futures / Spot Signal Scanner ===== -->
+<!-- ===== Futures Signal (halaman sendiri, tidak digabung dengan Spot Signal) ===== -->
 <div id="page-futures-signal" class="page">
-<div class="market-tabs" id="fsigMarketTabs">
-  <div class="market-tab" onclick="switchPage('trading')">Crypto Perpetual Futures</div>
-  <div class="market-tab active" id="sigTabFutures" onclick="switchSignalScanner('futures')">Futures Signal</div>
-  <div class="market-tab" id="sigTabSpot" onclick="switchSignalScanner('spot')" data-i18n="spot_signal_title">Spot Signal</div>
-</div>
 <main>
   <div class="back-link" onclick="switchPage('trading')">← <span data-i18n="back_to_trading">Kembali ke Analisis Pasar</span></div>
   <div class="fsig-style-tabs" id="fsigStyleTabs" style="display:flex;">
@@ -920,18 +915,36 @@
   </div>
   <div class="fsig-style-desc" id="fsigStyleDesc" data-i18n="fsig_style_scalping_desc"></div>
   <div class="fsig-toolbar">
-    <div class="fsig-title"><span id="fsigTitle" data-i18n="futures_signal_title">Futures Signal</span> <span class="fsig-count mono" id="fsigCount">(0)</span> <span class="mono" id="fsigLastScan" style="font-size:10px; color:var(--ink-dim); margin-left:6px;">–</span></div>
+    <div class="fsig-title"><span id="fsigTitle_futures" data-i18n="futures_signal_title">Futures Signal</span> <span class="fsig-count mono" id="fsigCount_futures">(0)</span> <span class="mono" id="fsigLastScan_futures" style="font-size:10px; color:var(--ink-dim); margin-left:6px;">–</span></div>
     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-      <div class="fsig-autoscan-pill" id="fsigAutoscanPill" onclick="toggleAutoScan()" title="Klik untuk mengaktifkan/menonaktifkan auto-scan latar belakang">⏱ Auto-scan ON · sinyal baru dalam –:–</div>
-      <button class="fsig-rescan-btn" onclick="scanSignals(signalScannerMode)" data-i18n="rescan_btn">↻ Pindai Ulang</button>
-      <button class="fsig-results-btn" id="fsigResultsBtn" onclick="toggleFsigResults()" data-i18n="results_btn">Results</button>
+      <div class="fsig-autoscan-pill" id="fsigAutoscanPill_futures" onclick="toggleAutoScan()" title="Klik untuk mengaktifkan/menonaktifkan auto-scan latar belakang">⏱ Auto-scan ON · sinyal baru dalam –:–</div>
+      <button class="fsig-rescan-btn" onclick="scanSignals('futures', signalScannerStyle)" data-i18n="rescan_btn">↻ Pindai Ulang</button>
+      <button class="fsig-results-btn" id="fsigResultsBtn_futures" onclick="toggleFsigResults('futures')" data-i18n="results_btn">Results</button>
     </div>
   </div>
-  <div id="fsigResultsPanel" class="fsig-results-panel card card-body" style="display:none;"></div>
-  <div id="fsigList" class="fsig-list"><div class="sidebar-loading" data-i18n="loading_signals">Memuat sinyal…</div></div>
+  <div id="fsigResultsPanel_futures" class="fsig-results-panel card card-body" style="display:none;"></div>
+  <div id="fsigList_futures" class="fsig-list"><div class="sidebar-loading" data-i18n="loading_signals">Memuat sinyal…</div></div>
   <div class="fsig-disclaimer">⚠️ <span data-i18n="fsig_disclaimer">Bukan merupakan suatu ajakan membeli atau menjual suatu instrumen investasi. Keputusan sepenuhnya ada di tangan Anda sendiri.</span></div>
 </main>
 </div><!-- /page-futures-signal -->
+
+<!-- ===== Spot Signal (halaman sendiri, terpisah total dari Futures Signal) ===== -->
+<div id="page-spot-signal" class="page">
+<main>
+  <div class="back-link" onclick="switchPage('trading')">← <span data-i18n="back_to_trading">Kembali ke Analisis Pasar</span></div>
+  <div class="fsig-toolbar">
+    <div class="fsig-title"><span id="fsigTitle_spot" data-i18n="spot_signal_title">Spot Signal</span> <span class="fsig-count mono" id="fsigCount_spot">(0)</span> <span class="mono" id="fsigLastScan_spot" style="font-size:10px; color:var(--ink-dim); margin-left:6px;">–</span></div>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <div class="fsig-autoscan-pill" id="fsigAutoscanPill_spot" onclick="toggleAutoScan()" title="Klik untuk mengaktifkan/menonaktifkan auto-scan latar belakang">⏱ Auto-scan ON · sinyal baru dalam –:–</div>
+      <button class="fsig-rescan-btn" onclick="scanSignals('spot')" data-i18n="rescan_btn">↻ Pindai Ulang</button>
+      <button class="fsig-results-btn" id="fsigResultsBtn_spot" onclick="toggleFsigResults('spot')" data-i18n="results_btn">Results</button>
+    </div>
+  </div>
+  <div id="fsigResultsPanel_spot" class="fsig-results-panel card card-body" style="display:none;"></div>
+  <div id="fsigList_spot" class="fsig-list"><div class="sidebar-loading" data-i18n="loading_signals">Memuat sinyal…</div></div>
+  <div class="fsig-disclaimer">⚠️ <span data-i18n="fsig_disclaimer">Bukan merupakan suatu ajakan membeli atau menjual suatu instrumen investasi. Keputusan sepenuhnya ada di tangan Anda sendiri.</span></div>
+</main>
+</div><!-- /page-spot-signal -->
 
 <!-- ===== Dashboard (overview) ===== -->
 <div id="page-dashboard" class="page">
@@ -1260,10 +1273,12 @@ function applyI18n(){
     if(document.getElementById('page-movers')?.classList.contains('active')) renderTopMovers();
     if(loadedPages.has('feargreed')) loadFearGreedPage();
     if(document.getElementById('page-futures-signal')?.classList.contains('active')){
-      document.getElementById('fsigTitle').textContent = signalScannerMode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
       const descEl = document.getElementById('fsigStyleDesc');
       if(descEl && descEl.dataset.i18n) descEl.textContent = t(descEl.dataset.i18n);
-      renderSignalList(signalScannerMode);
+      renderSignalList('futures');
+    }
+    if(document.getElementById('page-spot-signal')?.classList.contains('active')){
+      renderSignalList('spot');
     }
   }
 }
@@ -2816,14 +2831,19 @@ function toggleAutoScan(){
 }
 function updateAutoscanPill(){
   updateStatusBarAutoscan();
-  const pill = document.getElementById('fsigAutoscanPill');
-  if(!pill) return;
-  if(!autoScanEnabled){ pill.textContent = '⏱ Auto-scan OFF · klik untuk aktifkan'; pill.classList.add('off'); return; }
-  pill.classList.remove('off');
-  const remain = Math.max(0, nextAutoScanAt - Date.now());
-  const mm = String(Math.floor(remain/60000)).padStart(2,'0');
-  const ss = String(Math.floor((remain%60000)/1000)).padStart(2,'0');
-  pill.textContent = globalScanRunning ? '⏱ Auto-scan ON · memindai…' : `⏱ Auto-scan ON · sinyal baru dalam ${mm}:${ss}`;
+  // Both pages (Futures Signal and Spot Signal) have their own pill now — update
+  // whichever exist in the DOM, since the background scan covers both simultaneously
+  // regardless of which one the user currently has open.
+  const pills = document.querySelectorAll('.fsig-autoscan-pill');
+  if(!pills.length) return;
+  pills.forEach(pill=>{
+    if(!autoScanEnabled){ pill.textContent = '⏱ Auto-scan OFF · klik untuk aktifkan'; pill.classList.add('off'); return; }
+    pill.classList.remove('off');
+    const remain = Math.max(0, nextAutoScanAt - Date.now());
+    const mm = String(Math.floor(remain/60000)).padStart(2,'0');
+    const ss = String(Math.floor((remain%60000)/1000)).padStart(2,'0');
+    pill.textContent = globalScanRunning ? '⏱ Auto-scan ON · memindai…' : `⏱ Auto-scan ON · sinyal baru dalam ${mm}:${ss}`;
+  });
 }
 
 async function mapLimit(items, limit, fn){
@@ -3184,7 +3204,7 @@ async function scanSignals(mode, style){
   const isFutures = mode==='futures';
   // Re-checked on demand (not cached) so a mid-scan tab switch still gets rendered.
   const isCurrentView = ()=> mode===signalScannerMode && (mode!=='futures' || style===signalScannerStyle);
-  const listEl = ()=> isCurrentView() ? document.getElementById('fsigList') : null;
+  const listEl = ()=> isCurrentView() ? document.getElementById('fsigList_'+mode) : null;
   const store = loadStoredSignals(mode, style);
   pruneStaleSignals(store, mode, style); // drop >3-day-old signals that never hit TP/SL before filling gaps
   const hasExisting = Object.values(store).some(s=>s.status==='active');
@@ -3279,20 +3299,13 @@ function checkSignalClosures(mode, style){
 
 function switchSignalScanner(mode){
   signalScannerMode = mode;
-  document.getElementById('sigTabSpot')?.classList.toggle('active', mode==='spot');
-  document.getElementById('sigTabFutures')?.classList.toggle('active', mode==='futures');
-  // Keep the sidebar's active nav item in sync even when the mode is switched via the
-  // in-page tab (not the sidebar) — Futures Signal and Spot Signal are separate menu
-  // entries even though they share this one page shell.
+  // No more shared tab bar to toggle between modes — Futures Signal and Spot Signal are
+  // now two fully separate <div class="page"> containers, switched purely via the
+  // sidebar (like any other page). This just keeps the sidebar highlight correct when
+  // this is called from PAGE_LOADERS during navigation.
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===(mode==='spot'?'spot-signal':'futures-signal')));
-  document.getElementById('fsigTitle').textContent = mode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
-  document.getElementById('fsigResultsPanel').style.display = 'none';
-  // The Scalping/Day Trading/Swing Trading branch tabs only apply to Futures Signal —
-  // Spot Signal keeps its original single-list behaviour.
-  const styleTabs = document.getElementById('fsigStyleTabs');
-  const styleDesc = document.getElementById('fsigStyleDesc');
-  if(styleTabs) styleTabs.style.display = mode==='futures' ? 'flex' : 'none';
-  if(styleDesc) styleDesc.style.display = mode==='futures' ? 'block' : 'none';
+  const panel = document.getElementById('fsigResultsPanel_'+mode);
+  if(panel) panel.style.display = 'none';
   const style = mode==='futures' ? signalScannerStyle : null;
   applyStoreToState(mode, style, loadStoredSignals(mode, style));
   renderSignalList(mode);
@@ -3301,14 +3314,15 @@ function switchSignalScanner(mode){
 
 // Switches which of the 3 Futures Signal strategies (Scalping / Day Trading / Swing
 // Trading) is showing. Each keeps a fully separate, independently-locked signal list.
+// (Futures-only — Spot Signal has its own separate page with no style tabs.)
 function switchSignalStyle(style){
-  if(signalScannerStyle===style && signalScannerMode==='futures') { /* still refresh below */ }
   signalScannerStyle = style;
   document.querySelectorAll('.fsig-style-tab').forEach(el=> el.classList.toggle('active', el.dataset.style===style));
   const descKey = style==='daytrading' ? 'fsig_style_daytrading_desc' : style==='swing' ? 'fsig_style_swing_desc' : 'fsig_style_scalping_desc';
   const descEl = document.getElementById('fsigStyleDesc');
   if(descEl){ descEl.dataset.i18n = descKey; descEl.textContent = t(descKey); }
-  document.getElementById('fsigResultsPanel').style.display = 'none';
+  const panel = document.getElementById('fsigResultsPanel_futures');
+  if(panel) panel.style.display = 'none';
   applyStoreToState('futures', style, loadStoredSignals('futures', style));
   renderSignalList('futures');
   scanSignals('futures', style);
@@ -3332,19 +3346,23 @@ function pctFrom(entry, val){ return (val-entry)/entry*100; }
 function renderSignalList(mode){
   if(mode!==signalScannerMode) return;
   const signals = mode==='futures' ? (futuresSignalResultsByStyle[signalScannerStyle]||[]) : spotSignalResults;
-  const countEl = document.getElementById('fsigCount');
+  const countEl = document.getElementById('fsigCount_'+mode);
   if(countEl) countEl.textContent = `(${signals.length})`;
-  const lastScanEl = document.getElementById('fsigLastScan');
+  const lastScanEl = document.getElementById('fsigLastScan_'+mode);
   if(lastScanEl) lastScanEl.textContent = new Date().toLocaleTimeString(uiLocale());
-  const listEl = document.getElementById('fsigList');
+  const listEl = document.getElementById('fsigList_'+mode);
   if(!listEl) return;
   if(!signals.length){
     listEl.innerHTML = `<div class="sidebar-loading">${t('fsig_no_signal')}<br>
         <button class="retry-btn" onclick="scanSignals('${mode}')">↻ ${t('retry')}</button></div>`;
     return;
   }
+  // Card ids are namespaced by mode (fsigCard_futures_0 vs fsigCard_spot_0) since both
+  // pages' lists can hold previously-rendered cards in the DOM at the same time (only
+  // one page is visible, but the other isn't destroyed, just hidden) — without the
+  // mode prefix, two different signals could collide on the same id.
   const openCards = new Set([...listEl.querySelectorAll('.fsig-card.open')].map(c=>c.id));
-  listEl.innerHTML = signals.map((s,i)=>renderSignalCard(s,i,mode, openCards.has('fsigCard'+i))).join('');
+  listEl.innerHTML = signals.map((s,i)=>renderSignalCard(s,i,mode, openCards.has('fsigCard_'+mode+'_'+i))).join('');
 }
 
 const FSIG_STYLE_LABEL = { scalping:'Scalping', daytrading:'Day Trading', swing:'Swing Trading' };
@@ -3370,8 +3388,8 @@ function renderSignalCard(s, i, mode, wasOpen){
   const styleBadge = (mode==='futures' && s.style)
     ? `<span class="fsig-style-badge">${FSIG_STYLE_LABEL[s.style]||s.style} · ${s.timeframe||''}</span>` : '';
   const reasonText = s.reason || `Confidence ${s.confidence}%`;
-  return `<div class="fsig-card${wasOpen?' open':''}" id="fsigCard${i}">
-    <div class="fsig-head" onclick="toggleFsigCard(${i})">
+  return `<div class="fsig-card${wasOpen?' open':''}" id="fsigCard_${mode}_${i}">
+    <div class="fsig-head" onclick="toggleFsigCard('${mode}', ${i})">
       <div class="fsig-avatar ${dirClass}">${s.symbol.slice(0,1)}</div>
       <div class="fsig-title-col">
         <div class="fsig-pair">${s.symbol} / USDT</div>
@@ -3383,7 +3401,7 @@ function renderSignalCard(s, i, mode, wasOpen){
       ${levBadge}
       <div class="fsig-badge fsig-badge-cap">${t('fsig_capital')}: ${s.capitalPct}%</div>
     </div>
-    <div class="fsig-body" id="fsigBody${i}" style="display:${wasOpen?'flex':'none'};">
+    <div class="fsig-body" id="fsigBody_${mode}_${i}" style="display:${wasOpen?'flex':'none'};">
       ${styleBadge ? `<div>${styleBadge}</div>` : ''}
       <div class="fsig-entry">${t('entry')}: <span class="mono">${formatPrice(s.entry)}</span></div>
       ${targetsHtml}
@@ -3393,19 +3411,19 @@ function renderSignalCard(s, i, mode, wasOpen){
   </div>`;
 }
 
-function toggleFsigCard(i){
-  const body = document.getElementById('fsigBody'+i);
-  const card = document.getElementById('fsigCard'+i);
+function toggleFsigCard(mode, i){
+  const body = document.getElementById('fsigBody_'+mode+'_'+i);
+  const card = document.getElementById('fsigCard_'+mode+'_'+i);
   const open = body.style.display!=='none';
   body.style.display = open ? 'none' : 'flex';
   card.classList.toggle('open', !open);
 }
 
-function toggleFsigResults(){
-  const panel = document.getElementById('fsigResultsPanel');
+function toggleFsigResults(mode){
+  const panel = document.getElementById('fsigResultsPanel_'+mode);
   const visible = panel.style.display!=='none';
   if(visible){ panel.style.display='none'; return; }
-  const signals = signalScannerMode==='futures' ? (futuresSignalResultsByStyle[signalScannerStyle]||[]) : spotSignalResults;
+  const signals = mode==='futures' ? (futuresSignalResultsByStyle[signalScannerStyle]||[]) : spotSignalResults;
   const longs = signals.filter(s=>s.direction==='LONG').length;
   const shorts = signals.filter(s=>s.direction==='SHORT').length;
   const avgConf = signals.length ? Math.round(signals.reduce((a,s)=>a+s.confidence,0)/signals.length) : 0;
@@ -3436,21 +3454,16 @@ const PAGE_LOADERS = {
   news: ()=>loadNews(currentPair),
 };
 const loadedPages = new Set(['trading']);
-// Futures Signal and Spot Signal are two separate menu entries, each with its own signal
-// list/storage/history, but they still share one underlying page shell (toolbar, list,
-// results panel) built for the scanner. This maps the nav's "page" key to the actual
-// DOM container to show, so the sidebar can treat them as fully separate destinations
-// (separate active state, separate direct links) while the markup stays a single page.
-const PAGE_DOM_ALIASES = { 'spot-signal': 'futures-signal' };
-// These pages must re-sync their content on every visit, not just the first time —
-// Futures/Spot Signal in particular, since without this, switching between them would
-// still show whichever mode was loaded first (the DOM container is shared, so lazy-load
-// alone can't tell them apart on a second visit).
+// Futures Signal and Spot Signal are now two fully separate <div class="page"> pages
+// (page-futures-signal / page-spot-signal), each with its own toolbar, list, and
+// results panel — they no longer share one DOM container with a tab switcher.
+// They still need to re-sync their content on every visit though (not just the first
+// time), same as Coin Strength / Top Movers / Performance, since their signal store can
+// change in the background (auto-scan) while the user is elsewhere.
 const ALWAYS_REFRESH_PAGES = ['strength','movers','performance','futures-signal','spot-signal'];
 
 function switchPage(page){
-  const domId = PAGE_DOM_ALIASES[page] || page;
-  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+domId));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+page));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
   closeDrawer();
   // Lazy-load each page's content only the first time it's opened, so switching pages
@@ -4280,7 +4293,8 @@ function buildCommandIndex(){
   const actions = [
     {tag:'Aksi', label:'Toggle tema terang/gelap', run:()=>toggleTheme()},
     {tag:'Aksi', label:'Ganti bahasa ID/EN', run:()=>toggleLang()},
-    {tag:'Aksi', label:'Pindai ulang sinyal futures', run:()=>scanSignals(signalScannerMode)},
+    {tag:'Aksi', label:'Pindai ulang sinyal futures', run:()=>scanSignals('futures', signalScannerStyle)},
+    {tag:'Aksi', label:'Pindai ulang sinyal spot', run:()=>scanSignals('spot')},
     {tag:'Aksi', label:'Buka Alerts', run:()=>toggleAlertsPanel()},
   ];
   return [...pairs, ...pages, ...actions];
