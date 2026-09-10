@@ -618,17 +618,6 @@
   .alert-row{display:flex; align-items:center; justify-content:space-between; font-size:12px; background:var(--panel-2); border-radius:6px; padding:7px 9px;}
   .alert-row .ar-del{cursor:pointer; color:var(--sell); font-weight:700;}
   .alerts-empty{font-size:11.5px; color:var(--ink-dim); text-align:center; padding:6px 0;}
-
-  /* ---- Performance page ---- */
-  .perf-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px;}
-  .perf-kpi{background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px;}
-  .perf-kpi .pk-label{font-size:10.5px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-dim); margin-bottom:6px;}
-  .perf-kpi .pk-value{font-size:22px; font-weight:800; font-family:'JetBrains Mono',monospace;}
-  .perf-bucket-tabs{display:flex; gap:8px; flex-wrap:wrap;}
-  .perf-bucket-tab{padding:7px 14px; border-radius:999px; font-size:11.5px; font-weight:600; border:1px solid var(--line); cursor:pointer; color:var(--ink-dim);}
-  .perf-bucket-tab.active{background:var(--accent-glow); color:var(--accent); border-color:var(--accent);}
-  .perf-row{display:flex; justify-content:space-between; align-items:center; padding:9px 4px; border-bottom:1px solid var(--line); font-size:12.5px;}
-  .perf-row:last-child{border-bottom:none;}
 </style>
 </head>
 <body>
@@ -720,7 +709,6 @@
   <div class="nav-item active" data-page="trading" onclick="switchPage('trading')"><span data-i18n="nav_trading">Analisis Pasar</span><span class="nav-live">LIVE</span></div>
   <div class="nav-item" data-page="futures-signal" onclick="switchPage('futures-signal')"><span data-i18n="nav_futures_signal">Futures Signal</span></div>
   <div class="nav-item" data-page="spot-signal" onclick="switchPage('spot-signal')"><span data-i18n="spot_signal_title">Spot Signal</span></div>
-  <div class="nav-item" data-page="performance" onclick="switchPage('performance')">📈 <span data-i18n="nav_performance">Performa Sinyal</span></div>
   <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
   <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')"><span data-i18n="nav_heatmap">Market Heatmap</span></div>
   <div class="nav-group-label" data-i18n="nav_group_analysis">Analysis</div>
@@ -1016,32 +1004,6 @@
 
 <!-- ===== Coin Strength ===== -->
 <!-- ===== Performance (win rate riil dari histori sinyal) ===== -->
-<div id="page-performance" class="page">
-  <div class="page-inner">
-    <div class="card">
-      <div class="card-title"><span>Performa Sinyal — Riwayat &amp; Rekam Jejak</span><span style="font-size:10px;">Dihitung dari sinyal yang sudah closed (kena TP/SL)</span></div>
-      <div class="card-body">
-        <div class="perf-bucket-tabs" id="perfBucketTabs" style="margin-bottom:14px;">
-          <div class="perf-bucket-tab active" data-bucket="all" onclick="switchPerfBucket('all')">Semua</div>
-          <div class="perf-bucket-tab" data-bucket="futures|scalping" onclick="switchPerfBucket('futures|scalping')">Scalping</div>
-          <div class="perf-bucket-tab" data-bucket="futures|daytrading" onclick="switchPerfBucket('futures|daytrading')">Day Trading</div>
-          <div class="perf-bucket-tab" data-bucket="futures|swing" onclick="switchPerfBucket('futures|swing')">Swing</div>
-          <div class="perf-bucket-tab" data-bucket="spot|" onclick="switchPerfBucket('spot|')">Spot</div>
-        </div>
-        <div class="perf-kpis" id="perfKpis"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span>Kurva Ekuitas (kumulatif R)</span><span style="font-size:10px;">1R = risiko per sinyal (entry → SL)</span></div>
-      <div class="card-body"><svg id="perfEquitySvg" viewBox="0 0 900 260" style="width:100%; height:auto; display:block;"></svg></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span>Riwayat Sinyal Closed</span><span id="perfHistCount" class="mono" style="font-size:10px;">0</span></div>
-      <div class="card-body" id="perfHistBody"><div class="sidebar-loading">Belum ada sinyal yang closed.</div></div>
-    </div>
-  </div>
-</div>
-
 <div id="page-strength" class="page">
   <div class="page-inner">
     <div class="card">
@@ -1124,7 +1086,6 @@ const I18N = {
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
     nav_group_trading: "Trading", nav_trading: "Analisis Pasar",
     nav_futures_signal: "Futures Signal", back_to_trading: "Kembali ke Analisis Pasar",
-    nav_performance: "Performa Sinyal",
     futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
     fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
     fsig_total_signal: "Total Sinyal", fsig_avg_confidence: "Rata-rata Confidence",
@@ -1193,7 +1154,6 @@ const I18N = {
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
     nav_group_trading: "Trading", nav_trading: "Market Analysis",
     nav_futures_signal: "Futures Signal", back_to_trading: "Back to Market Analysis",
-    nav_performance: "Signal Performance",
     futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
     fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
     fsig_total_signal: "Total Signals", fsig_avg_confidence: "Avg. Confidence",
@@ -3443,7 +3403,6 @@ const PAGE_LOADERS = {
   dashboard: ()=>loadDashboardOverview(),
   'futures-signal': ()=>switchSignalScanner('futures'),
   'spot-signal': ()=>switchSignalScanner('spot'),
-  performance: ()=>loadPerformancePage(),
   livechart: ()=>loadLiveChartPro(),
   heatmap: ()=>loadHeatmap(),
   screener: ()=>loadScreener(),
@@ -3460,7 +3419,7 @@ const loadedPages = new Set(['trading']);
 // They still need to re-sync their content on every visit though (not just the first
 // time), same as Coin Strength / Top Movers / Performance, since their signal store can
 // change in the background (auto-scan) while the user is elsewhere.
-const ALWAYS_REFRESH_PAGES = ['strength','movers','performance','futures-signal','spot-signal'];
+const ALWAYS_REFRESH_PAGES = ['strength','movers','futures-signal','spot-signal'];
 
 function switchPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+page));
@@ -4279,7 +4238,6 @@ function buildCommandIndex(){
     {tag:'Halaman', label:'Market Analysis', run:()=>switchPage('trading')},
     {tag:'Halaman', label:'Futures Signal', run:()=>switchPage('futures-signal')},
     {tag:'Halaman', label:'Spot Signal', run:()=>switchPage('spot-signal')},
-    {tag:'Halaman', label:'Performa Sinyal', run:()=>switchPage('performance')},
     {tag:'Halaman', label:'Live Chart Pro', run:()=>switchPage('livechart')},
     {tag:'Halaman', label:'Market Heatmap', run:()=>switchPage('heatmap')},
     {tag:'Halaman', label:'Screener', run:()=>switchPage('screener')},
@@ -4348,88 +4306,6 @@ document.addEventListener('keydown', e=>{
   }
   if(!typing && e.key==='/'){ e.preventDefault(); document.getElementById('pairSearch')?.focus(); }
 });
-
-/* ---- Performance page (real win-rate from closed signals across all buckets) ---- */
-let perfActiveBucket = 'all';
-function collectClosedSignals(bucketFilter){
-  const buckets = bucketFilter==='all' ? FSIG_BUCKETS : [{mode:bucketFilter.split('|')[0], style:bucketFilter.split('|')[1]||null}];
-  let out = [];
-  buckets.forEach(b=>{
-    const store = loadStoredSignals(b.mode, b.style);
-    Object.values(store).forEach(s=>{
-      if(s.status==='tp_hit' || s.status==='sl_hit'){
-        out.push({...s, bucketLabel: b.mode==='spot' ? 'Spot' : ({scalping:'Scalping',daytrading:'Day Trading',swing:'Swing'}[b.style]||b.style)});
-      }
-    });
-  });
-  out.sort((a,b)=> (b.closedAt||b.openTime||0) - (a.closedAt||a.openTime||0));
-  return out;
-}
-function switchPerfBucket(bucket){
-  perfActiveBucket = bucket;
-  document.querySelectorAll('.perf-bucket-tab').forEach(el=>el.classList.toggle('active', el.dataset.bucket===bucket));
-  renderPerformancePage();
-}
-function loadPerformancePage(){ renderPerformancePage(); }
-function renderPerformancePage(){
-  const closed = collectClosedSignals(perfActiveBucket);
-  const wins = closed.filter(s=>s.status==='tp_hit').length;
-  const losses = closed.filter(s=>s.status==='sl_hit').length;
-  const total = closed.length;
-  const winRate = total ? (wins/total*100) : 0;
-  const rMultiples = closed.map(s=>{
-    const risk = Math.abs(s.entry - s.sl);
-    if(!risk) return 0;
-    const finalTp = s.targets[s.targets.length-1];
-    const reward = Math.abs(finalTp - s.entry);
-    const rr = reward/risk;
-    return s.status==='tp_hit' ? rr : -1;
-  });
-  const avgR = rMultiples.length ? (rMultiples.reduce((a,b)=>a+b,0)/rMultiples.length) : 0;
-  const totalR = rMultiples.reduce((a,b)=>a+b,0);
-
-  document.getElementById('perfKpis').innerHTML = `
-    <div class="perf-kpi"><div class="pk-label">Total Sinyal Closed</div><div class="pk-value">${total}</div></div>
-    <div class="perf-kpi"><div class="pk-label">Win Rate</div><div class="pk-value" style="color:${winRate>=50?'var(--buy)':'var(--sell)'};">${winRate.toFixed(1)}%</div></div>
-    <div class="perf-kpi"><div class="pk-label">TP / SL</div><div class="pk-value"><span style="color:var(--buy);">${wins}</span> / <span style="color:var(--sell);">${losses}</span></div></div>
-    <div class="perf-kpi"><div class="pk-label">Avg. R per Sinyal</div><div class="pk-value">${avgR.toFixed(2)}R</div></div>
-    <div class="perf-kpi"><div class="pk-label">Total R (kumulatif)</div><div class="pk-value" style="color:${totalR>=0?'var(--buy)':'var(--sell)'};">${totalR>=0?'+':''}${totalR.toFixed(2)}R</div></div>`;
-
-  renderEquityCurve(rMultiples.slice().reverse()); // chronological order for the curve
-
-  const histEl = document.getElementById('perfHistBody');
-  document.getElementById('perfHistCount').textContent = total;
-  if(!total){ histEl.innerHTML = '<div class="sidebar-loading">Belum ada sinyal yang closed di bucket ini.</div>'; return; }
-  histEl.innerHTML = closed.slice(0,50).map(s=>{
-    const win = s.status==='tp_hit';
-    const dateStr = s.closedAt ? new Date(s.closedAt).toLocaleString('id-ID') : (s.openTime ? new Date(s.openTime).toLocaleString('id-ID') : '–');
-    return `<div class="perf-row">
-      <span><b>${s.pair}</b> <span style="color:var(--ink-dim); font-size:11px;">${s.bucketLabel} · ${s.direction}</span></span>
-      <span class="mono" style="color:${win?'var(--buy)':'var(--sell)'}; font-weight:700;">${win?'TP HIT':'SL HIT'}</span>
-      <span class="mono" style="color:var(--ink-dim); font-size:11px;">${dateStr}</span>
-    </div>`;
-  }).join('');
-}
-function renderEquityCurve(rSeries){
-  const svg = document.getElementById('perfEquitySvg');
-  if(!svg) return;
-  if(!rSeries.length){ svg.innerHTML = '<text x="450" y="130" fill="var(--ink-dim)" font-size="13" text-anchor="middle">Belum ada data untuk kurva ekuitas.</text>'; return; }
-  const W=900,H=260,padL=50,padR=20,padT=20,padB=30;
-  let cum=0; const points=[0]; rSeries.forEach(r=>{ cum+=r; points.push(cum); });
-  const minV=Math.min(...points,0), maxV=Math.max(...points,0);
-  const range=(maxV-minV)||1;
-  const xAt = i => padL + (i/(points.length-1))*(W-padL-padR);
-  const yAt = v => (H-padB) - ((v-minV)/range)*(H-padT-padB);
-  let d = ''; points.forEach((v,i)=>{ d += (i===0?'M':'L')+xAt(i).toFixed(1)+','+yAt(v).toFixed(1)+' '; });
-  const zeroY = yAt(0);
-  const lineColor = cum>=0 ? 'var(--buy)' : 'var(--sell)';
-  svg.innerHTML = `
-    <line x1="${padL}" y1="${zeroY.toFixed(1)}" x2="${W-padR}" y2="${zeroY.toFixed(1)}" stroke="var(--line)" stroke-width="1" stroke-dasharray="4,4"/>
-    <path d="${d}" fill="none" stroke="${lineColor}" stroke-width="2.5"/>
-    <text x="${padL}" y="14" fill="var(--ink-dim)" font-size="11">${maxV.toFixed(1)}R</text>
-    <text x="${padL}" y="${H-16}" fill="var(--ink-dim)" font-size="11">${minV.toFixed(1)}R</text>
-    <text x="${W-padR}" y="${zeroY-6}" fill="var(--ink-dim)" font-size="11" text-anchor="end">0R</text>`;
-}
 
 /* ================= INIT ================= */
 applyI18n();
