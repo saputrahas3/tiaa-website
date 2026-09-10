@@ -717,8 +717,9 @@
   <div class="nav-group-label" data-i18n="nav_group_overview">Overview</div>
   <div class="nav-item" data-page="dashboard" onclick="switchPage('dashboard')"><span data-i18n="nav_dashboard">Dashboard</span></div>
   <div class="nav-group-label" data-i18n="nav_group_trading">Trading</div>
-  <div class="nav-item active" data-page="trading" onclick="switchPage('trading')"><span data-i18n="nav_trading">Trading Signal</span><span class="nav-live">LIVE</span></div>
+  <div class="nav-item active" data-page="trading" onclick="switchPage('trading')"><span data-i18n="nav_trading">Analisis Pasar</span><span class="nav-live">LIVE</span></div>
   <div class="nav-item" data-page="futures-signal" onclick="switchPage('futures-signal')"><span data-i18n="nav_futures_signal">Futures Signal</span></div>
+  <div class="nav-item" data-page="spot-signal" onclick="switchPage('spot-signal')"><span data-i18n="spot_signal_title">Spot Signal</span></div>
   <div class="nav-item" data-page="performance" onclick="switchPage('performance')">📈 <span data-i18n="nav_performance">Performa Sinyal</span></div>
   <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
   <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')"><span data-i18n="nav_heatmap">Market Heatmap</span></div>
@@ -911,7 +912,7 @@
   <div class="market-tab" id="sigTabSpot" onclick="switchSignalScanner('spot')" data-i18n="spot_signal_title">Spot Signal</div>
 </div>
 <main>
-  <div class="back-link" onclick="switchPage('dashboard')">← <span data-i18n="back_to_dashboard">Kembali ke Dashboard</span></div>
+  <div class="back-link" onclick="switchPage('trading')">← <span data-i18n="back_to_trading">Kembali ke Analisis Pasar</span></div>
   <div class="fsig-style-tabs" id="fsigStyleTabs" style="display:flex;">
     <div class="fsig-style-tab active" data-style="scalping" onclick="switchSignalStyle('scalping')"><span data-i18n="fsig_style_scalping">Scalping</span></div>
     <div class="fsig-style-tab" data-style="daytrading" onclick="switchSignalStyle('daytrading')"><span data-i18n="fsig_style_daytrading">Day Trading</span></div>
@@ -1032,7 +1033,7 @@
   <div class="page-inner">
     <div class="card">
       <div class="card-title"><span data-i18n="card_strength">Coin Strength Meter</span><span style="font-size:10px;" data-i18n="card_strength_sub">Ranking perubahan 24h — real-time via WebSocket</span></div>
-      <div class="card-body" id="strengthBody"><div class="sidebar-loading" data-i18n="open_crypto_tab">Buka tab Crypto dulu di Trading Signal untuk data real-time.</div></div>
+      <div class="card-body" id="strengthBody"><div class="sidebar-loading" data-i18n="open_crypto_tab">Buka tab Crypto dulu di Analisis Pasar untuk data real-time.</div></div>
     </div>
   </div>
 </div>
@@ -1065,11 +1066,11 @@
     <div class="ov-grid" style="grid-template-columns:1fr 1fr;">
       <div class="card">
         <div class="card-title"><span data-i18n="top_gainers_24h">Top Gainers (24h)</span></div>
-        <div class="card-body" id="moversGainers" style="padding:0;"><div class="sidebar-loading" data-i18n="open_crypto_tab_short">Buka tab Crypto dulu di Trading Signal.</div></div>
+        <div class="card-body" id="moversGainers" style="padding:0;"><div class="sidebar-loading" data-i18n="open_crypto_tab_short">Buka tab Crypto dulu di Analisis Pasar.</div></div>
       </div>
       <div class="card">
         <div class="card-title"><span data-i18n="top_losers_24h">Top Losers (24h)</span></div>
-        <div class="card-body" id="moversLosers" style="padding:0;"><div class="sidebar-loading" data-i18n="open_crypto_tab_short">Buka tab Crypto dulu di Trading Signal.</div></div>
+        <div class="card-body" id="moversLosers" style="padding:0;"><div class="sidebar-loading" data-i18n="open_crypto_tab_short">Buka tab Crypto dulu di Analisis Pasar.</div></div>
       </div>
     </div>
   </div>
@@ -1108,8 +1109,8 @@ const I18N = {
   id: {
     brand_tag: "multi-market signal terminal",
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
-    nav_group_trading: "Trading", nav_trading: "Trading Signal",
-    nav_futures_signal: "Futures Signal", back_to_dashboard: "Kembali ke Dashboard",
+    nav_group_trading: "Trading", nav_trading: "Analisis Pasar",
+    nav_futures_signal: "Futures Signal", back_to_trading: "Kembali ke Analisis Pasar",
     nav_performance: "Performa Sinyal",
     futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
     fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
@@ -1149,8 +1150,8 @@ const I18N = {
     livechart_title: "Live Chart Pro", livechart_sub: "Full toolbar · drawing tools · multi-studies",
     card_heatmap: "Market Heatmap", card_econ: "Kalender Ekonomi",
     card_strength: "Coin Strength Meter", card_strength_sub: "Ranking perubahan 24h — real-time via WebSocket",
-    open_crypto_tab: "Buka tab Crypto dulu di Trading Signal untuk data real-time.",
-    open_crypto_tab_short: "Buka tab Crypto dulu di Trading Signal.",
+    open_crypto_tab: "Buka tab Crypto dulu di Analisis Pasar untuk data real-time.",
+    open_crypto_tab_short: "Buka tab Crypto dulu di Analisis Pasar.",
     top_gainers_24h: "Top Gainers (24h)", top_losers_24h: "Top Losers (24h)",
     footer_text: "TIAA · Multi-Market Signal Terminal", wa_float_label: "Chat Admin WA",
     loading: "Memuat…", loading_analysis: "Memuat analisis…", loading_index: "Memuat indeks…",
@@ -1177,8 +1178,8 @@ const I18N = {
   en: {
     brand_tag: "multi-market signal terminal",
     nav_group_overview: "Overview", nav_dashboard: "Dashboard",
-    nav_group_trading: "Trading", nav_trading: "Trading Signal",
-    nav_futures_signal: "Futures Signal", back_to_dashboard: "Back to Dashboard",
+    nav_group_trading: "Trading", nav_trading: "Market Analysis",
+    nav_futures_signal: "Futures Signal", back_to_trading: "Back to Market Analysis",
     nav_performance: "Signal Performance",
     futures_signal_title: "Futures Signal", spot_signal_title: "Spot Signal", results_btn: "Results",
     fsig_leverage: "Leverage", fsig_capital: "Capital", fsig_target: "Target", fsig_open_on: "Open on",
@@ -1218,8 +1219,8 @@ const I18N = {
     livechart_title: "Live Chart Pro", livechart_sub: "Full toolbar · drawing tools · multi-studies",
     card_heatmap: "Market Heatmap", card_econ: "Economic Calendar",
     card_strength: "Coin Strength Meter", card_strength_sub: "24h change ranking — real-time via WebSocket",
-    open_crypto_tab: "Open the Crypto tab in Trading Signal first for real-time data.",
-    open_crypto_tab_short: "Open the Crypto tab in Trading Signal first.",
+    open_crypto_tab: "Open the Crypto tab in Market Analysis first for real-time data.",
+    open_crypto_tab_short: "Open the Crypto tab in Market Analysis first.",
     top_gainers_24h: "Top Gainers (24h)", top_losers_24h: "Top Losers (24h)",
     footer_text: "TIAA · Multi-Market Signal Terminal", wa_float_label: "Chat WA Support",
     loading: "Loading…", loading_analysis: "Loading analysis…", loading_index: "Loading index…",
@@ -3280,6 +3281,10 @@ function switchSignalScanner(mode){
   signalScannerMode = mode;
   document.getElementById('sigTabSpot')?.classList.toggle('active', mode==='spot');
   document.getElementById('sigTabFutures')?.classList.toggle('active', mode==='futures');
+  // Keep the sidebar's active nav item in sync even when the mode is switched via the
+  // in-page tab (not the sidebar) — Futures Signal and Spot Signal are separate menu
+  // entries even though they share this one page shell.
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===(mode==='spot'?'spot-signal':'futures-signal')));
   document.getElementById('fsigTitle').textContent = mode==='futures' ? t('futures_signal_title') : t('spot_signal_title');
   document.getElementById('fsigResultsPanel').style.display = 'none';
   // The Scalping/Day Trading/Swing Trading branch tabs only apply to Futures Signal —
@@ -3419,6 +3424,7 @@ function closeDrawer(){ document.getElementById('drawer').classList.remove('open
 const PAGE_LOADERS = {
   dashboard: ()=>loadDashboardOverview(),
   'futures-signal': ()=>switchSignalScanner('futures'),
+  'spot-signal': ()=>switchSignalScanner('spot'),
   performance: ()=>loadPerformancePage(),
   livechart: ()=>loadLiveChartPro(),
   heatmap: ()=>loadHeatmap(),
@@ -3430,14 +3436,27 @@ const PAGE_LOADERS = {
   news: ()=>loadNews(currentPair),
 };
 const loadedPages = new Set(['trading']);
+// Futures Signal and Spot Signal are two separate menu entries, each with its own signal
+// list/storage/history, but they still share one underlying page shell (toolbar, list,
+// results panel) built for the scanner. This maps the nav's "page" key to the actual
+// DOM container to show, so the sidebar can treat them as fully separate destinations
+// (separate active state, separate direct links) while the markup stays a single page.
+const PAGE_DOM_ALIASES = { 'spot-signal': 'futures-signal' };
+// These pages must re-sync their content on every visit, not just the first time —
+// Futures/Spot Signal in particular, since without this, switching between them would
+// still show whichever mode was loaded first (the DOM container is shared, so lazy-load
+// alone can't tell them apart on a second visit).
+const ALWAYS_REFRESH_PAGES = ['strength','movers','performance','futures-signal','spot-signal'];
+
 function switchPage(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+page));
+  const domId = PAGE_DOM_ALIASES[page] || page;
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+domId));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
   closeDrawer();
   // Lazy-load each page's content only the first time it's opened, so switching pages
   // stays instant and we don't fire off widgets/fetches for pages nobody visits.
   if(!loadedPages.has(page) && PAGE_LOADERS[page]){ loadedPages.add(page); PAGE_LOADERS[page](); }
-  if(page==='strength' || page==='movers' || page==='performance'){ PAGE_LOADERS[page](); } // want a fresh render every visit
+  else if(ALWAYS_REFRESH_PAGES.includes(page) && PAGE_LOADERS[page]){ PAGE_LOADERS[page](); } // want a fresh render every visit
 }
 
 /* ---- Live Chart Pro: bigger Advanced Chart with full toolbar/drawing tools ---- */
@@ -4244,9 +4263,9 @@ let cmdkActiveIndex = 0, cmdkItems = [];
 function buildCommandIndex(){
   const pages = [
     {tag:'Halaman', label:'Dashboard', run:()=>switchPage('dashboard')},
-    {tag:'Halaman', label:'Trading Signal', run:()=>switchPage('trading')},
-    {tag:'Halaman', label:'Futures Signal', run:()=>{ switchPage('futures-signal'); switchSignalScanner('futures'); }},
-    {tag:'Halaman', label:'Spot Signal', run:()=>{ switchPage('futures-signal'); switchSignalScanner('spot'); }},
+    {tag:'Halaman', label:'Market Analysis', run:()=>switchPage('trading')},
+    {tag:'Halaman', label:'Futures Signal', run:()=>switchPage('futures-signal')},
+    {tag:'Halaman', label:'Spot Signal', run:()=>switchPage('spot-signal')},
     {tag:'Halaman', label:'Performa Sinyal', run:()=>switchPage('performance')},
     {tag:'Halaman', label:'Live Chart Pro', run:()=>switchPage('livechart')},
     {tag:'Halaman', label:'Market Heatmap', run:()=>switchPage('heatmap')},
