@@ -2096,6 +2096,16 @@ async function loadSignals(symbol){
   const nowStr = new Date().toLocaleTimeString(uiLocale());
   const su = document.getElementById('signalsUpdated'); if(su) su.textContent = nowStr;
   renderTimeframeTabs(rows);
+  // FIX: computeAdvancedTA() (Supply/Demand zones + Chart Patterns cards) used to only
+  // run at the very end of computeSetupRecommendation()'s try block, AFTER several other
+  // awaits (a second H1 OHLC fetch, getBtcH4Bias()) that can throw on network hiccups.
+  // If any of those failed, the catch block only patched up the Setup Recommendation
+  // card's text and never reached the computeAdvancedTA() call — so the S&D Zones and
+  // Struktur Pasar & Pola Chart cards stayed stuck on "Memuat analisis…" forever, even
+  // though computeAdvancedTA doesn't need any of that extra data: the H4 candles it
+  // uses are already sitting in `rows` from the loop above. Calling it here directly
+  // decouples it from computeSetupRecommendation's failure-prone awaits.
+  try{ computeAdvancedTA(symbol, rows); }catch(e){ console.error('computeAdvancedTA gagal', e); }
   computeSetupRecommendation(symbol, rows);
 }
 // FIX: loadSignals() — which fills the Sinyal Multi-Timeframe table, the per-tf tabs
@@ -2310,7 +2320,9 @@ async function computeSetupRecommendation(symbol, rows){
     };
     if(window.__foilsPromise) window.__foilsPromise.catch(()=>{}).then(()=>renderEntryWhy());
     computeWinRateScore();
-    computeAdvancedTA(symbol, rows);
+    // computeAdvancedTA(symbol, rows) is now called from loadSignals() directly (see the
+    // FIX note there) so the S&D Zones / Pattern cards don't depend on this try block
+    // succeeding all the way to the end.
   }catch(e){
     console.error(e);
     if(badge){ badge.className='setup-badge none'; badge.textContent=t('analysis_failed'); }
