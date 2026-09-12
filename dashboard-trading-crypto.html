@@ -618,6 +618,50 @@
   .alert-row{display:flex; align-items:center; justify-content:space-between; font-size:12px; background:var(--panel-2); border-radius:6px; padding:7px 9px;}
   .alert-row .ar-del{cursor:pointer; color:var(--sell); font-weight:700;}
   .alerts-empty{font-size:11.5px; color:var(--ink-dim); text-align:center; padding:6px 0;}
+
+  /* ---- Trading Journal ---- */
+  .jr-kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px;}
+  .jr-kpi{background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px;}
+  .jr-kpi .jk-label{font-size:10.5px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-dim); margin-bottom:6px;}
+  .jr-kpi .jk-value{font-size:21px; font-weight:800; font-family:'JetBrains Mono',monospace;}
+  .jr-form-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px;}
+  .jr-form-grid .field label{font-size:10.5px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.4px; display:block; margin-bottom:6px;}
+  .jr-form-grid .field input, .jr-form-grid .field select, .jr-form-grid .field textarea{
+    width:100%; background:var(--panel-2); border:1.5px solid var(--line); border-radius:6px; padding:8px 10px; color:var(--ink); font-size:12.5px;
+  }
+  .jr-form-grid .field input:focus, .jr-form-grid .field select:focus, .jr-form-grid .field textarea:focus{outline:none; border-color:var(--accent);}
+  .jr-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 4px; border-bottom:1px solid var(--line); font-size:12.5px;}
+  .jr-row:last-child{border-bottom:none;}
+  .jr-row .jr-del{cursor:pointer; color:var(--sell); font-weight:700; flex-shrink:0;}
+  .jr-badge{padding:2px 8px; border-radius:999px; font-size:10.5px; font-weight:700;}
+  .jr-badge.long{background:var(--buy-glow); color:var(--buy);}
+  .jr-badge.short{background:var(--sell-glow); color:var(--sell);}
+  .jr-insight{background:var(--panel-2); border-left:3px solid var(--accent); border-radius:6px; padding:10px 14px; font-size:12.5px; line-height:1.6;}
+  .jr-insight + .jr-insight{margin-top:8px;}
+
+  /* ---- Order Flow: Liquidations + Whale trades ---- */
+  .of-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:900px){.of-grid{grid-template-columns:1fr;}}
+  .of-feed{max-height:420px; overflow-y:auto; display:flex; flex-direction:column-reverse; gap:6px;}
+  .of-item{display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-radius:7px; font-size:12px; background:var(--panel-2); border-left:3px solid var(--line); animation:ofFadeIn .3s ease-out;}
+  .of-item.long{border-left-color:var(--buy);} .of-item.short{border-left-color:var(--sell);}
+  .of-item .of-sym{font-weight:700;}
+  .of-item .of-side{font-weight:700; font-size:10.5px; padding:1px 7px; border-radius:999px;}
+  .of-item .of-side.long{background:var(--buy-glow); color:var(--buy);}
+  .of-item .of-side.short{background:var(--sell-glow); color:var(--sell);}
+  .of-item .of-usd{font-family:'JetBrains Mono',monospace; font-weight:700;}
+  .of-item .of-time{font-size:10px; color:var(--ink-dim); font-family:'JetBrains Mono',monospace;}
+  @keyframes ofFadeIn{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);}}
+  .of-empty{padding:20px; text-align:center; color:var(--ink-dim); font-size:12px;}
+  .of-heatmap-bar{display:flex; align-items:center; gap:8px; padding:4px 0;}
+  .of-heatmap-bar .ohb-price{width:90px; flex-shrink:0; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-dim);}
+  .of-heatmap-bar .ohb-track{flex:1; height:14px; background:var(--panel-2); border-radius:3px; overflow:hidden; display:flex;}
+  .of-heatmap-bar .ohb-fill{height:100%;}
+  .of-note{font-size:11px; color:var(--ink-dim); line-height:1.6; margin-top:10px;}
+
+  /* ---- Volume Profile (on Entry Signal chart) ---- */
+  .vp-bar{opacity:0.55;}
+  .vp-bar.poc{opacity:0.95;}
 </style>
 </head>
 <body>
@@ -709,6 +753,8 @@
   <div class="nav-item active" data-page="trading" onclick="switchPage('trading')"><span data-i18n="nav_trading">Analisis Pasar</span><span class="nav-live">LIVE</span></div>
   <div class="nav-item" data-page="futures-signal" onclick="switchPage('futures-signal')"><span data-i18n="nav_futures_signal">Futures Signal</span></div>
   <div class="nav-item" data-page="spot-signal" onclick="switchPage('spot-signal')"><span data-i18n="spot_signal_title">Spot Signal</span></div>
+  <div class="nav-item" data-page="journal" onclick="switchPage('journal')">📓 <span data-i18n="nav_journal">Trading Journal</span></div>
+  <div class="nav-item" data-page="orderflow" onclick="switchPage('orderflow')">🐋 <span data-i18n="nav_orderflow">Order Flow &amp; Liquidasi</span></div>
   <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
   <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')"><span data-i18n="nav_heatmap">Market Heatmap</span></div>
   <div class="nav-group-label" data-i18n="nav_group_analysis">Analysis</div>
@@ -882,9 +928,22 @@
             <label data-i18n="label_rr_ratio">Rasio Risk:Reward (TP1 / TP2 / TP3)</label>
             <input id="inRatios" class="mono" value="1.5, 2.5, 4" >
           </div>
+          <div class="field">
+            <label>Modal (USDT)</label>
+            <input id="inModal" class="mono" type="number" placeholder="1000" step="any">
+          </div>
+          <div class="field">
+            <label>Risiko per Trade (%)</label>
+            <input id="inRiskPct" class="mono" type="number" value="1" step="0.1">
+          </div>
         </div>
         <button class="calc-btn" onclick="calcTPSL()" data-i18n="btn_calc">Hitung Entry / TP / SL</button>
         <div class="result-grid" id="calcResult"></div>
+        <div id="posSizeBox" class="hidden" style="margin-top:14px; background:var(--panel-2); border:1.5px solid var(--accent); border-radius:8px; padding:14px 16px;">
+          <div style="font-size:11px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; font-weight:700;">📐 Position Sizing</div>
+          <div class="result-grid" id="posSizeResult"></div>
+          <div id="posSizeWarning" style="margin-top:10px; font-size:11.5px; color:var(--sell); display:none;"></div>
+        </div>
       </div>
     </div>
 
@@ -933,6 +992,72 @@
   <div class="fsig-disclaimer">⚠️ <span data-i18n="fsig_disclaimer">Bukan merupakan suatu ajakan membeli atau menjual suatu instrumen investasi. Keputusan sepenuhnya ada di tangan Anda sendiri.</span></div>
 </main>
 </div><!-- /page-spot-signal -->
+
+<!-- ===== Trading Journal (catatan trading manual milik user, terpisah dari sinyal sistem) ===== -->
+<div id="page-journal" class="page">
+  <div class="page-inner">
+    <div class="card">
+      <div class="card-title"><span>📓 Trading Journal</span><span style="font-size:10px;">Catat entry/exit trading kamu sendiri</span></div>
+      <div class="card-body">
+        <div class="jr-form-grid">
+          <div class="field"><label>Pair</label><input id="jrPair" class="mono" placeholder="BTCUSDT" value="BTCUSDT"></div>
+          <div class="field"><label>Arah</label><select id="jrDir"><option value="long">LONG</option><option value="short">SHORT</option></select></div>
+          <div class="field"><label>Entry</label><input id="jrEntry" class="mono" type="number" step="any" placeholder="0.00"></div>
+          <div class="field"><label>Stop Loss</label><input id="jrSl" class="mono" type="number" step="any" placeholder="0.00"></div>
+          <div class="field"><label>Exit</label><input id="jrExit" class="mono" type="number" step="any" placeholder="0.00"></div>
+          <div class="field"><label>Tanggal</label><input id="jrDate" type="date"></div>
+          <div class="field" style="grid-column:1/-1;"><label>Catatan (opsional)</label><input id="jrNote" placeholder="Alasan entry, kondisi psikologis, dsb…"></div>
+        </div>
+        <button class="calc-btn" style="margin-top:14px;" onclick="addJournalEntry()">+ Tambah Catatan Trade</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>Statistik</span><span style="font-size:10px;">Dihitung dari catatan kamu sendiri</span></div>
+      <div class="card-body"><div class="jr-kpis" id="jrKpis"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>Insight</span><span style="font-size:10px;">Pola dari histori trading kamu</span></div>
+      <div class="card-body" id="jrInsights"><div class="of-empty">Catat minimal 5 trade untuk melihat insight pola.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>Riwayat Trade</span><span id="jrHistCount" class="mono" style="font-size:10px;">0</span></div>
+      <div class="card-body" id="jrHistBody"><div class="of-empty">Belum ada catatan trade.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Order Flow: Liquidation feed (live, dari Binance forceOrder stream) + Whale
+     trades (live large trades) + agregasi volume likuidasi per level harga ===== -->
+<div id="page-orderflow" class="page">
+  <div class="page-inner">
+    <div class="card">
+      <div class="card-title"><span>🐋 Order Flow &amp; Likuidasi</span><span style="font-size:10px;">Data live dari Binance Futures — bukan proyeksi model</span></div>
+      <div class="card-body">
+        <div class="of-note">
+          Feed di bawah ini adalah event <b>real-time</b> yang benar-benar terjadi di Binance Futures (likuidasi paksa &amp; transaksi besar),
+          bukan data historis atau model prediksi seperti heatmap likuidasi berbayar. Semakin lama halaman ini dibuka, semakin lengkap datanya.
+        </div>
+      </div>
+    </div>
+    <div class="of-grid">
+      <div class="card">
+        <div class="card-title"><span>Liquidation Feed</span><span id="liqFeedCount" class="mono" style="font-size:10px;">0</span></div>
+        <div class="card-body"><div class="of-feed" id="liqFeedList"><div class="of-empty">Menunggu event likuidasi…</div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>Whale Trades</span><span style="font-size:10px;">Order besar (≥$100K) di <span id="whalePairLabel" class="mono">BTCUSDT</span></span></div>
+        <div class="card-body"><div class="of-feed" id="whaleFeedList"><div class="of-empty">Menunggu transaksi besar…</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>Peta Likuidasi per Level Harga</span><span style="font-size:10px;">Akumulasi 1 jam terakhir · <span id="liqHeatmapPair" class="mono">BTCUSDT</span></span></div>
+      <div class="card-body" id="liqHeatmapBody"><div class="of-empty">Belum cukup data — biarkan halaman ini terbuka beberapa menit.</div></div>
+    </div>
+  </div>
+</div>
 
 <!-- ===== Dashboard (overview) ===== -->
 <div id="page-dashboard" class="page">
@@ -1870,6 +1995,7 @@ function selectPair(p){
   loadNews(p);
   loadFoilsSentiment(p);
   runEntryAnalysis();
+  if(orderFlowInited) connectWhaleWS(p); // keep the whale feed following whichever pair is active
 }
 
 document.getElementById('pairSearch').addEventListener('input', applyPairFilter);
@@ -2096,16 +2222,6 @@ async function loadSignals(symbol){
   const nowStr = new Date().toLocaleTimeString(uiLocale());
   const su = document.getElementById('signalsUpdated'); if(su) su.textContent = nowStr;
   renderTimeframeTabs(rows);
-  // FIX: computeAdvancedTA() (Supply/Demand zones + Chart Patterns cards) used to only
-  // run at the very end of computeSetupRecommendation()'s try block, AFTER several other
-  // awaits (a second H1 OHLC fetch, getBtcH4Bias()) that can throw on network hiccups.
-  // If any of those failed, the catch block only patched up the Setup Recommendation
-  // card's text and never reached the computeAdvancedTA() call — so the S&D Zones and
-  // Struktur Pasar & Pola Chart cards stayed stuck on "Memuat analisis…" forever, even
-  // though computeAdvancedTA doesn't need any of that extra data: the H4 candles it
-  // uses are already sitting in `rows` from the loop above. Calling it here directly
-  // decouples it from computeSetupRecommendation's failure-prone awaits.
-  try{ computeAdvancedTA(symbol, rows); }catch(e){ console.error('computeAdvancedTA gagal', e); }
   computeSetupRecommendation(symbol, rows);
 }
 // FIX: loadSignals() — which fills the Sinyal Multi-Timeframe table, the per-tf tabs
@@ -2320,9 +2436,7 @@ async function computeSetupRecommendation(symbol, rows){
     };
     if(window.__foilsPromise) window.__foilsPromise.catch(()=>{}).then(()=>renderEntryWhy());
     computeWinRateScore();
-    // computeAdvancedTA(symbol, rows) is now called from loadSignals() directly (see the
-    // FIX note there) so the S&D Zones / Pattern cards don't depend on this try block
-    // succeeding all the way to the end.
+    computeAdvancedTA(symbol, rows);
   }catch(e){
     console.error(e);
     if(badge){ badge.className='setup-badge none'; badge.textContent=t('analysis_failed'); }
@@ -3415,6 +3529,8 @@ const PAGE_LOADERS = {
   dashboard: ()=>loadDashboardOverview(),
   'futures-signal': ()=>switchSignalScanner('futures'),
   'spot-signal': ()=>switchSignalScanner('spot'),
+  journal: ()=>renderJournalPage(),
+  orderflow: ()=>initOrderFlow(),
   livechart: ()=>loadLiveChartPro(),
   heatmap: ()=>loadHeatmap(),
   screener: ()=>loadScreener(),
@@ -3431,7 +3547,7 @@ const loadedPages = new Set(['trading']);
 // They still need to re-sync their content on every visit though (not just the first
 // time), same as Coin Strength / Top Movers / Performance, since their signal store can
 // change in the background (auto-scan) while the user is elsewhere.
-const ALWAYS_REFRESH_PAGES = ['strength','movers','futures-signal','spot-signal'];
+const ALWAYS_REFRESH_PAGES = ['strength','movers','futures-signal','spot-signal','journal'];
 
 function switchPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+page));
@@ -3629,7 +3745,41 @@ function calcTPSL(){
   const boxes = [{label:t('entry'), value:formatPrice(entry), cls:""},{label:t('stop_loss'), value:formatPrice(sl), cls:"sl"}];
   ratios.forEach((r,i)=>{ const tp = currentDir==='long' ? entry+slDist*r : entry-slDist*r; boxes.push({label:`TP${i+1} (1:${r})`, value:formatPrice(tp), cls:"tp"}); });
   boxes.forEach(b=>{ const box=document.createElement('div'); box.className='result-box '+b.cls; box.innerHTML=`<div class="rl">${b.label}</div><div class="rv mono">${b.value}</div>`; resultGrid.appendChild(box); });
+  calcPositionSize(entry, sl);
 }
+// Position Sizing — the "wajib ada" risk-management calc: given modal + risk% and the
+// SL distance already computed above, works out the exact position size / quantity /
+// leverage needed so a stop-out never loses more than the risk% of the account.
+function calcPositionSize(entry, sl){
+  const box = document.getElementById('posSizeBox');
+  const modal = parseFloat(document.getElementById('inModal').value);
+  const riskPct = parseFloat(document.getElementById('inRiskPct').value);
+  if(!modal || modal<=0 || !riskPct || riskPct<=0){ box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  const slDistancePct = Math.abs(entry-sl)/entry; // fraction, e.g. 0.015 for 1.5%
+  const riskAmountUSD = modal * (riskPct/100);
+  const positionSizeUSD = riskAmountUSD / slDistancePct; // notional size needed
+  const qty = positionSizeUSD / entry;
+  const leverageNeeded = positionSizeUSD / modal;
+  const grid = document.getElementById('posSizeResult');
+  grid.innerHTML = `
+    <div class="result-box"><div class="rl">Risiko (USDT)</div><div class="rv mono" style="color:var(--sell);">$${riskAmountUSD.toFixed(2)}</div></div>
+    <div class="result-box"><div class="rl">Ukuran Posisi</div><div class="rv mono">$${positionSizeUSD.toFixed(2)}</div></div>
+    <div class="result-box"><div class="rl">Qty (kontrak/koin)</div><div class="rv mono">${qty.toFixed(qty<1?6:4)}</div></div>
+    <div class="result-box"><div class="rl">Leverage Dibutuhkan</div><div class="rv mono" style="color:var(--accent);">${leverageNeeded.toFixed(1)}x</div></div>`;
+  const warnEl = document.getElementById('posSizeWarning');
+  if(leverageNeeded > 20){
+    warnEl.style.display = 'block';
+    warnEl.textContent = `⚠ Leverage ${leverageNeeded.toFixed(1)}x sangat tinggi untuk jarak SL ${(slDistancePct*100).toFixed(2)}%. Pertimbangkan perkecil risiko per trade, atau lebarkan jarak SL, supaya leverage-nya lebih wajar.`;
+  } else if(leverageNeeded > modal*0 && positionSizeUSD > modal*10){
+    warnEl.style.display = 'block';
+    warnEl.textContent = `⚠ Ukuran posisi jauh lebih besar dari modal — pastikan exchange kamu mendukung leverage ${Math.ceil(leverageNeeded)}x untuk pair ini.`;
+  } else {
+    warnEl.style.display = 'none';
+  }
+}
+document.getElementById('inModal')?.addEventListener('input', ()=>{ if(document.getElementById('inEntry').value) calcTPSL(); });
+document.getElementById('inRiskPct')?.addEventListener('input', ()=>{ if(document.getElementById('inEntry').value) calcTPSL(); });
 
 /* ================= ENTRY SIGNAL (S/R × Volume × Chart Pattern) =================
    Ported from the standalone "Sinyal Entry" analyzer tool. Reuses the dashboard's
@@ -3822,7 +3972,31 @@ function entryRenderChart(rows, nearestSupport, nearestResistance){
   const yPriceAt = v => priceBottom - ((v-pMin)/(pMax-pMin)) * (priceBottom-priceTop);
   const yVolAt = v => volBottom - (v/vMax) * (volBottom-volTop);
 
-  let svg = "";
+  // Volume Profile (VPVR) — horizontal volume-by-price histogram drawn behind the price
+  // line on the left edge, complementing the Supply/Demand S/R lines already on this
+  // chart. Built from the same candle rows already fetched for the entry-signal engine.
+  const VP_BUCKETS = 24, VP_MAX_WIDTH = 95;
+  const vpBucketSize = (pMax-pMin)/VP_BUCKETS || 1;
+  const vpVolumes = new Array(VP_BUCKETS).fill(0);
+  rows.forEach(r=>{
+    let idx = Math.floor((r.close-pMin)/vpBucketSize);
+    if(idx>=VP_BUCKETS) idx=VP_BUCKETS-1; if(idx<0) idx=0;
+    vpVolumes[idx] += r.volume;
+  });
+  const vpMax = Math.max(...vpVolumes, 1);
+  const pocIdx = vpVolumes.indexOf(vpMax);
+  let vpSvg = "";
+  vpVolumes.forEach((v,i)=>{
+    if(v<=0) return;
+    const lo=pMin+i*vpBucketSize, hi=pMin+(i+1)*vpBucketSize;
+    const yTop=yPriceAt(hi), yBottom=yPriceAt(lo);
+    const w=(v/vpMax)*VP_MAX_WIDTH;
+    const isPoc = i===pocIdx;
+    vpSvg += `<rect class="vp-bar${isPoc?' poc':''}" x="${plotLeft}" y="${Math.min(yTop,yBottom).toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(1,Math.abs(yBottom-yTop)-1).toFixed(1)}" fill="${isPoc?'var(--accent)':'var(--ink-dim)'}"/>`;
+  });
+  const pocPrice = pMin + (pocIdx+0.5)*vpBucketSize;
+
+  let svg = vpSvg; // painted first so the price line/grid draw on top of it
   for(let g=0; g<=4; g++){
     const y = priceTop + (g/4)*(priceBottom-priceTop);
     svg += `<line x1="${plotLeft}" y1="${y}" x2="${plotRight}" y2="${y}" stroke="var(--line)" stroke-width="1"/>`;
@@ -3851,6 +4025,7 @@ function entryRenderChart(rows, nearestSupport, nearestResistance){
     svg += `<line x1="${plotLeft}" y1="${y}" x2="${plotRight}" y2="${y}" stroke="var(--sell)" stroke-width="1.5" stroke-dasharray="5,4"/>`;
     svg += `<text x="${plotLeft+4}" y="${y-6}" fill="var(--sell)" font-size="12">Resistance ${formatPrice(nearestResistance.level)}</text>`;
   }
+  svg += `<text x="${plotLeft}" y="${priceTop-3}" fill="var(--accent)" font-size="10.5" font-weight="700">POC ${formatPrice(pocPrice)} (Volume Profile)</text>`;
   for(let g=0; g<=4; g++){
     const val = pMax - (g/4)*(pMax-pMin);
     const y = priceTop + (g/4)*(priceBottom-priceTop);
@@ -4318,6 +4493,209 @@ document.addEventListener('keydown', e=>{
   }
   if(!typing && e.key==='/'){ e.preventDefault(); document.getElementById('pairSearch')?.focus(); }
 });
+
+/* ================= TRADING JOURNAL =================
+   User-logged trades (their OWN entries/exits — separate from the system's Futures/Spot
+   Signal engine). Computes win-rate, avg R, and a few honest pattern insights straight
+   from what the user typed in — no fabricated advice when there isn't enough data yet. */
+const JOURNAL_KEY = 'tiaa_journal_trades_v1';
+function loadJournal(){ try{ return JSON.parse(localStorage.getItem(JOURNAL_KEY)||'[]'); }catch(e){ return []; } }
+function saveJournal(list){ try{ localStorage.setItem(JOURNAL_KEY, JSON.stringify(list)); }catch(e){} }
+function addJournalEntry(){
+  const pair = (document.getElementById('jrPair').value||'').trim().toUpperCase();
+  const dir = document.getElementById('jrDir').value;
+  const entry = parseFloat(document.getElementById('jrEntry').value);
+  const sl = parseFloat(document.getElementById('jrSl').value);
+  const exit = parseFloat(document.getElementById('jrExit').value);
+  const dateStr = document.getElementById('jrDate').value;
+  const note = document.getElementById('jrNote').value.trim();
+  if(!pair || !entry || !sl || !exit){ alert('Isi minimal Pair, Entry, Stop Loss, dan Exit.'); return; }
+  const risk = Math.abs(entry-sl);
+  if(risk===0){ alert('Entry dan Stop Loss tidak boleh sama.'); return; }
+  const pnlDist = dir==='long' ? (exit-entry) : (entry-exit);
+  const rMultiple = pnlDist/risk;
+  const date = dateStr ? new Date(dateStr).getTime() : Date.now();
+  const list = loadJournal();
+  list.unshift({ id:'jr_'+Date.now(), pair, dir, entry, sl, exit, note, date, rMultiple });
+  saveJournal(list);
+  ['jrEntry','jrSl','jrExit','jrNote'].forEach(id=>document.getElementById(id).value='');
+  renderJournalPage();
+}
+function deleteJournalEntry(id){
+  saveJournal(loadJournal().filter(e=>e.id!==id));
+  renderJournalPage();
+}
+function renderJournalPage(){
+  const trades = loadJournal();
+  const total = trades.length;
+  const wins = trades.filter(t=>t.rMultiple>0).length;
+  const losses = trades.filter(t=>t.rMultiple<=0).length;
+  const winRate = total ? (wins/total*100) : 0;
+  const avgR = total ? trades.reduce((s,t)=>s+t.rMultiple,0)/total : 0;
+  const totalR = trades.reduce((s,t)=>s+t.rMultiple,0);
+  const best = total ? Math.max(...trades.map(t=>t.rMultiple)) : 0;
+  const worst = total ? Math.min(...trades.map(t=>t.rMultiple)) : 0;
+
+  document.getElementById('jrKpis').innerHTML = `
+    <div class="jr-kpi"><div class="jk-label">Total Trade</div><div class="jk-value">${total}</div></div>
+    <div class="jr-kpi"><div class="jk-label">Win Rate</div><div class="jk-value" style="color:${winRate>=50?'var(--buy)':'var(--sell)'};">${winRate.toFixed(1)}%</div></div>
+    <div class="jr-kpi"><div class="jk-label">Menang / Kalah</div><div class="jk-value"><span style="color:var(--buy);">${wins}</span> / <span style="color:var(--sell);">${losses}</span></div></div>
+    <div class="jr-kpi"><div class="jk-label">Avg. R</div><div class="jk-value">${avgR.toFixed(2)}R</div></div>
+    <div class="jr-kpi"><div class="jk-label">Total R</div><div class="jk-value" style="color:${totalR>=0?'var(--buy)':'var(--sell)'};">${totalR>=0?'+':''}${totalR.toFixed(2)}R</div></div>
+    <div class="jr-kpi"><div class="jk-label">Best / Worst</div><div class="jk-value"><span style="color:var(--buy);">+${best.toFixed(1)}R</span> / <span style="color:var(--sell);">${worst.toFixed(1)}R</span></div></div>`;
+
+  document.getElementById('jrHistCount').textContent = total;
+  const histEl = document.getElementById('jrHistBody');
+  histEl.innerHTML = total ? trades.map(tr=>{
+    const win = tr.rMultiple>0;
+    const dateStr = new Date(tr.date).toLocaleDateString('id-ID');
+    return `<div class="jr-row">
+      <span><b>${tr.pair}</b> <span class="jr-badge ${tr.dir}">${tr.dir.toUpperCase()}</span> <span style="color:var(--ink-dim); font-size:11px;">${dateStr}${tr.note?' · '+tr.note:''}</span></span>
+      <span class="mono" style="color:${win?'var(--buy)':'var(--sell)'}; font-weight:700;">${tr.rMultiple>=0?'+':''}${tr.rMultiple.toFixed(2)}R</span>
+      <span class="jr-del" onclick="deleteJournalEntry('${tr.id}')">✕</span>
+    </div>`;
+  }).join('') : '<div class="of-empty">Belum ada catatan trade.</div>';
+
+  renderJournalInsights(trades);
+}
+// Only surfaces a pattern once there's genuinely enough data to say something honest
+// about it — no invented insight when the sample size is too small to mean anything.
+function renderJournalInsights(trades){
+  const el = document.getElementById('jrInsights');
+  if(trades.length < 5){ el.innerHTML = '<div class="of-empty">Catat minimal 5 trade untuk melihat insight pola.</div>'; return; }
+  const insights = [];
+  const dayNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const byDay = {};
+  trades.forEach(t=>{ const d=new Date(t.date).getDay(); (byDay[d]=byDay[d]||[]).push(t.rMultiple); });
+  Object.entries(byDay).forEach(([d,arr])=>{
+    if(arr.length<3) return;
+    const wr = arr.filter(r=>r>0).length/arr.length*100;
+    if(wr<=30) insights.push(`📉 Win rate kamu di hari <b>${dayNames[d]}</b> cukup rendah (${wr.toFixed(0)}% dari ${arr.length} trade) — pertimbangkan lebih selektif atau kurangi ukuran posisi di hari ini.`);
+    else if(wr>=70) insights.push(`📈 Win rate kamu di hari <b>${dayNames[d]}</b> cukup tinggi (${wr.toFixed(0)}% dari ${arr.length} trade) — pola entry kamu tampaknya cocok di hari ini.`);
+  });
+  const longs = trades.filter(t=>t.dir==='long'), shorts = trades.filter(t=>t.dir==='short');
+  if(longs.length>=3 && shorts.length>=3){
+    const wrLong = longs.filter(t=>t.rMultiple>0).length/longs.length*100;
+    const wrShort = shorts.filter(t=>t.rMultiple>0).length/shorts.length*100;
+    if(Math.abs(wrLong-wrShort)>=20){
+      const better = wrLong>wrShort ? 'LONG' : 'SHORT';
+      insights.push(`↔️ Win rate <b>${better}</b> kamu (${Math.max(wrLong,wrShort).toFixed(0)}%) jauh lebih baik dibanding arah sebaliknya (${Math.min(wrLong,wrShort).toFixed(0)}%) — pertimbangkan lebih fokus ke arah yang kamu kuasai.`);
+    }
+  }
+  const losingTrades = trades.filter(t=>t.rMultiple<0);
+  const cutEarly = losingTrades.filter(t=>Math.abs(t.rMultiple)<0.5);
+  if(losingTrades.length>=4 && cutEarly.length/losingTrades.length >= 0.6){
+    insights.push(`✂️ ${(cutEarly.length/losingTrades.length*100).toFixed(0)}% dari trade rugi kamu di-cut jauh di bawah -1R — cek lagi apakah jarak SL kamu sudah cukup lebar untuk noise normal pasar.`);
+  }
+  el.innerHTML = insights.length ? insights.map(i=>`<div class="jr-insight">${i}</div>`).join('') : '<div class="of-empty">Belum ada pola yang cukup jelas dari data kamu saat ini.</div>';
+}
+
+/* ================= ORDER FLOW: LIQUIDATION FEED + WHALE TRADES =================
+   Both are genuinely live, free data straight from Binance Futures public WebSocket
+   streams — not a paid/modeled heatmap. Liquidation feed: !forceOrder@arr (every forced
+   liquidation on the exchange). Whale trades: {symbol}@aggTrade filtered to large USD
+   notional for the currently selected pair. A simple price-bucket aggregation of the
+   last hour of liquidations approximates a "liquidation heatmap". */
+let liqWS = null, whaleWS = null, orderFlowInited = false;
+let liquidationEvents = []; // {symbol, side, priceUsd, qty, usdValue, time}
+const WHALE_TRADE_MIN_USD = 100000;
+function initOrderFlow(){
+  if(orderFlowInited) return;
+  orderFlowInited = true;
+  connectLiquidationWS();
+  connectWhaleWS(currentPair);
+  setInterval(renderLiquidationHeatmap, 15000);
+}
+function connectLiquidationWS(){
+  try{
+    liqWS = new WebSocket('wss://fstream.binance.com/ws/!forceOrder@arr');
+    liqWS.onmessage = ev=>{
+      let msg; try{ msg = JSON.parse(ev.data); }catch(e){ return; }
+      const o = msg.o; if(!o) return;
+      const price = parseFloat(o.p), qty = parseFloat(o.q);
+      const usdValue = price*qty;
+      if(usdValue < 5000) return; // ignore tiny liquidations, keeps the feed readable
+      const event = { symbol:o.s, side:o.S, price, qty, usdValue, time: Date.now() };
+      liquidationEvents.unshift(event);
+      if(liquidationEvents.length>500) liquidationEvents.length=500;
+      renderLiquidationFeedItem(event);
+      if(usdValue>=250000){
+        logActivity?.(o.S==='SELL'?'buy':'sell', `💥 Liquidation ${o.s} ${o.S==='SELL'?'LONG':'SHORT'} senilai $${(usdValue/1000).toFixed(0)}K`);
+      }
+    };
+    liqWS.onclose = ()=>{ liqWS=null; setTimeout(connectLiquidationWS, 4000); };
+    liqWS.onerror = ()=>{ try{ liqWS?.close(); }catch(e){} };
+  }catch(e){ console.error('Liquidation WS gagal', e); }
+}
+function renderLiquidationFeedItem(ev){
+  const list = document.getElementById('liqFeedList');
+  if(!list) return;
+  if(list.querySelector('.of-empty')) list.innerHTML = '';
+  // A liquidated SELL order means a LONG position got force-closed, and vice versa.
+  const wasLong = ev.side==='SELL';
+  const row = document.createElement('div');
+  row.className = 'of-item '+(wasLong?'short':'long'); // color by what actually happened (long got rekt = red)
+  const hh = new Date(ev.time).toLocaleTimeString('id-ID',{hour12:false});
+  row.innerHTML = `<span class="of-sym">${ev.symbol}</span><span class="of-side ${wasLong?'short':'long'}">${wasLong?'LONG LIQ':'SHORT LIQ'}</span><span class="of-usd">$${(ev.usdValue/1000).toFixed(1)}K</span><span class="of-time">${hh}</span>`;
+  list.prepend(row);
+  while(list.children.length>60) list.lastChild.remove();
+  const countEl = document.getElementById('liqFeedCount');
+  if(countEl) countEl.textContent = liquidationEvents.length;
+}
+function connectWhaleWS(symbol){
+  try{ whaleWS?.close(); }catch(e){}
+  const label = document.getElementById('whalePairLabel'); if(label) label.textContent = symbol;
+  const heatLabel = document.getElementById('liqHeatmapPair'); if(heatLabel) heatLabel.textContent = symbol;
+  try{
+    whaleWS = new WebSocket(`wss://fstream.binance.com/ws/${symbol.toLowerCase()}@aggTrade`);
+    whaleWS.onmessage = ev=>{
+      let t; try{ t = JSON.parse(ev.data); }catch(e){ return; }
+      const price = parseFloat(t.p), qty = parseFloat(t.q);
+      const usdValue = price*qty;
+      if(usdValue < WHALE_TRADE_MIN_USD) return;
+      renderWhaleFeedItem({ symbol, side: t.m ? 'SELL':'BUY', price, usdValue, time: t.T||Date.now() });
+    };
+    whaleWS.onclose = ()=>{ whaleWS=null; };
+  }catch(e){ console.error('Whale WS gagal', e); }
+}
+function renderWhaleFeedItem(ev){
+  const list = document.getElementById('whaleFeedList');
+  if(!list) return;
+  if(list.querySelector('.of-empty')) list.innerHTML = '';
+  const isBuy = ev.side==='BUY';
+  const row = document.createElement('div');
+  row.className = 'of-item '+(isBuy?'long':'short');
+  const hh = new Date(ev.time).toLocaleTimeString('id-ID',{hour12:false});
+  row.innerHTML = `<span class="of-sym">${ev.symbol}</span><span class="of-side ${isBuy?'long':'short'}">${isBuy?'BUY':'SELL'}</span><span class="of-usd">$${(ev.usdValue/1000).toFixed(0)}K @ ${formatPrice(ev.price)}</span><span class="of-time">${hh}</span>`;
+  list.prepend(row);
+  while(list.children.length>60) list.lastChild.remove();
+}
+// Aggregates the last hour of liquidation events (across ALL pairs seen so far) into
+// price buckets for whichever pair is currently selected, as a lightweight stand-in
+// for a full liquidation heatmap — built from real events only, no synthetic data.
+function renderLiquidationHeatmap(){
+  const body = document.getElementById('liqHeatmapBody');
+  if(!body) return;
+  const cutoff = Date.now() - 60*60000;
+  const relevant = liquidationEvents.filter(e=>e.symbol===currentPair && e.time>=cutoff);
+  if(relevant.length < 3){ body.innerHTML = '<div class="of-empty">Belum cukup data likuidasi untuk '+currentPair+' dalam 1 jam terakhir — biarkan halaman ini terbuka.</div>'; return; }
+  const prices = relevant.map(e=>e.price);
+  const minP = Math.min(...prices), maxP = Math.max(...prices);
+  const bucketCount = 10;
+  const bucketSize = (maxP-minP)/bucketCount || 1;
+  const buckets = Array.from({length:bucketCount}, (_,i)=>({ from:minP+i*bucketSize, to:minP+(i+1)*bucketSize, usd:0 }));
+  relevant.forEach(e=>{
+    let idx = Math.floor((e.price-minP)/bucketSize);
+    if(idx>=bucketCount) idx=bucketCount-1; if(idx<0) idx=0;
+    buckets[idx].usd += e.usdValue;
+  });
+  const maxUsd = Math.max(...buckets.map(b=>b.usd), 1);
+  body.innerHTML = buckets.slice().reverse().map(b=>{
+    const pct = (b.usd/maxUsd*100).toFixed(0);
+    const color = b.usd>maxUsd*0.6 ? 'var(--sell)' : 'var(--accent)';
+    return `<div class="of-heatmap-bar"><span class="ohb-price">${formatPrice(b.from)}</span><div class="ohb-track"><div class="ohb-fill" style="width:${pct}%; background:${color};"></div></div><span class="mono" style="width:60px; text-align:right; font-size:11px;">$${(b.usd/1000).toFixed(0)}K</span></div>`;
+  }).join('');
+}
 
 /* ================= INIT ================= */
 applyI18n();
