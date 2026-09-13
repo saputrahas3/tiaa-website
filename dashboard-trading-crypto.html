@@ -734,21 +734,21 @@
   <div class="nav-item active" data-page="trading" onclick="switchPage('trading')"><span data-i18n="nav_trading">Analisis Pasar</span><span class="nav-live">LIVE</span></div>
   <div class="nav-item" data-page="futures-signal" onclick="switchPage('futures-signal')"><span data-i18n="nav_futures_signal">Futures Signal</span></div>
   <div class="nav-item" data-page="spot-signal" onclick="switchPage('spot-signal')"><span data-i18n="spot_signal_title">Spot Signal</span></div>
-  <div class="nav-item" data-page="journal" onclick="switchPage('journal')">📓 <span data-i18n="nav_journal">Journal Trading</span></div>
-  <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
+  <div class="nav-item" data-page="journal" onclick="switchPage('journal')"><span data-i18n="nav_journal">Journal Trading</span></div>
+  <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')"><span data-i18n="nav_livechart">Live Chart Pro</span></div>
   <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')"><span data-i18n="nav_heatmap">Market Heatmap</span></div>
   <div class="nav-group-label" data-i18n="nav_group_analysis">Analysis</div>
-  <div class="nav-item" data-page="screener" onclick="switchPage('screener')">🔍 <span data-i18n="nav_screener">Screener</span></div>
-  <div class="nav-item" data-page="strength" onclick="switchPage('strength')">💪 <span data-i18n="nav_strength">Coin Strength</span></div>
+  <div class="nav-item" data-page="screener" onclick="switchPage('screener')"><span data-i18n="nav_screener">Screener</span></div>
+  <div class="nav-item" data-page="strength" onclick="switchPage('strength')"><span data-i18n="nav_strength">Coin Strength</span></div>
   <div class="nav-group-label" data-i18n="nav_group_intel">Market Intel</div>
-  <div class="nav-item" data-page="econ" onclick="switchPage('econ')">📅 <span data-i18n="nav_econ">Econ Calendar</span></div>
-  <div class="nav-item" data-page="feargreed" onclick="switchPage('feargreed')">😨 <span data-i18n="nav_feargreed">Fear &amp; Greed</span></div>
+  <div class="nav-item" data-page="econ" onclick="switchPage('econ')"><span data-i18n="nav_econ">Econ Calendar</span></div>
+  <div class="nav-item" data-page="feargreed" onclick="switchPage('feargreed')"><span data-i18n="nav_feargreed">Fear &amp; Greed</span></div>
   <div class="nav-item" data-page="movers" onclick="switchPage('movers')"><span data-i18n="nav_movers">Top Movers</span></div>
-  <div class="nav-item" data-page="news" onclick="switchPage('news')">📰 <span data-i18n="nav_news">News Feed</span></div>
+  <div class="nav-item" data-page="news" onclick="switchPage('news')"><span data-i18n="nav_news">News Feed</span></div>
   <a class="nav-item" id="waNavItem" href="https://wa.me/6285821934478" target="_blank" rel="noopener">💬 <span data-i18n="nav_wa">Bantuan via WhatsApp</span></a>
   <div class="nav-group-label">Akun</div>
   <a class="nav-item" href="index.html">🏠 <span>Kembali ke Beranda</span></a>
-  <div class="nav-item" onclick="tiaaLogout()">🚪 <span>Keluar (Logout)</span></div>
+  <div class="nav-item" onclick="tiaaLogout()"><span>Keluar (Logout)</span></div>
 </nav>
 
 <div id="page-trading" class="page active">
@@ -861,7 +861,7 @@
           <ul class="entry-reasons" id="entryReasonsList"></ul>
 
           <div class="entry-disclaimer">
-            Analisis berbasis data historis (Smart Money Concept: struktur/BOS-CHoCH, Order Block, Fair Value Gap, liquidity sweep — dipadukan dengan Support & Resistance klasik) — bukan nasihat keuangan.
+            Analisis berbasis data historis (Smart Money Concept: struktur/BOS-CHoCH, Order Block, Fair Value Gap, liquidity sweep — dipadukan dengan Support & Resistance klasik dan pola chart seperti Double Top/Bottom & Triangle) — bukan nasihat keuangan.
             Selalu gunakan manajemen risiko (stop loss) sendiri.
           </div>
         </div>
@@ -920,7 +920,7 @@
         <button class="calc-btn" onclick="calcTPSL()" data-i18n="btn_calc">Hitung Entry / TP / SL</button>
         <div class="result-grid" id="calcResult"></div>
         <div id="posSizeBox" class="hidden" style="margin-top:14px; background:var(--panel-2); border:1.5px solid var(--accent); border-radius:8px; padding:14px 16px;">
-          <div style="font-size:11px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; font-weight:700;">📐 Position Sizing</div>
+          <div style="font-size:11px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; font-weight:700;">Position Sizing</div>
           <div class="result-grid" id="posSizeResult"></div>
           <div id="posSizeWarning" style="margin-top:10px; font-size:11.5px; color:var(--sell); display:none;"></div>
         </div>
@@ -977,7 +977,7 @@
 <div id="page-journal" class="page">
   <div class="page-inner">
     <div class="card">
-      <div class="card-title"><span>📓 Trading Journal</span><span style="font-size:10px;">Catat entry/exit trading kamu sendiri</span></div>
+      <div class="card-title"><span>Trading Journal</span><span style="font-size:10px;">Catat entry/exit trading kamu sendiri</span></div>
       <div class="card-body">
         <div class="jr-form-grid">
           <div class="field"><label>Pair</label><input id="jrPair" class="mono" placeholder="BTCUSDT" value="BTCUSDT"></div>
@@ -2126,6 +2126,18 @@ async function loadSignals(symbol){
   const su = document.getElementById('signalsUpdated'); if(su) su.textContent = nowStr;
   renderTimeframeTabs(rows);
   computeSetupRecommendation(symbol, rows);
+  // FIX: computeAdvancedTA() (fills Supply & Demand Zones + Struktur Pasar & Pola Chart)
+  // used to be called from the tail end of computeSetupRecommendation()'s try block —
+  // if ANYTHING earlier in that unrelated computation threw (e.g. a flaky OHLC fetch),
+  // its catch block never reached that line, leaving both cards stuck on "Memuat
+  // analisis…" forever. It's now completely independent, in its own try/catch, so a
+  // failure in one never blocks the other.
+  try{ computeAdvancedTA(symbol, rows); }
+  catch(e){
+    console.error('computeAdvancedTA gagal', e);
+    const msg = '<div class="ind-note">Gagal memuat analisis — coba pilih ulang pair atau refresh halaman.</div>';
+    ['sdZonesBody','patternBody'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML = msg; });
+  }
 }
 // FIX: loadSignals() — which fills the Sinyal Multi-Timeframe table, the per-tf tabs
 // (scalping M15/M30, day trading H1/H4, swing H4/D1/W1) and the Setup Recommendation
@@ -2339,7 +2351,6 @@ async function computeSetupRecommendation(symbol, rows){
     };
     if(window.__foilsPromise) window.__foilsPromise.catch(()=>{}).then(()=>renderEntryWhy());
     computeWinRateScore();
-    computeAdvancedTA(symbol, rows);
   }catch(e){
     console.error(e);
     if(badge){ badge.className='setup-badge none'; badge.textContent=t('analysis_failed'); }
@@ -2461,7 +2472,7 @@ function detectPatterns(highs, lows, closes){
    Single shared quant engine, reused by EVERY signal feature in the app (Futures Signal's
    Scalping / Day Trading / Swing branches, Spot Signal, and the "Sinyal Entry — S/R ×
    Volume × Pola Chart" card) so they all reach ONE consistent final conclusion, built
-   from the same five SMC + S/R concepts instead of each feature running its own
+   from the same core SMC + S/R concepts instead of each feature running its own
    unrelated indicator stack (EMA ribbon, VWAP, Bollinger, MACD, etc — all retired):
      1. Market Structure — sequence of swing highs/lows (HH/HL vs LH/LL) + BOS & CHoCH
      2. Order Blocks (OB) — last opposite candle before a strong impulsive move (reuses
@@ -2469,6 +2480,9 @@ function detectPatterns(highs, lows, closes){
      3. Fair Value Gaps (FVG) — 3-candle imbalance the market tends to trade back into
      4. Liquidity zones — equal highs/lows (resting stop-liquidity) + sweep detection
      5. Classic Support & Resistance — clustered pivot levels (touches = strength)
+     6. Volume confirmation on the triggering candle
+     7. Classic chart patterns (Double Top/Bottom, Ascending/Descending Triangle) — an
+        extra confluence layer combined WITH the SMC/S-R factors above, not a replacement
    Each factor casts a weighted vote toward BUY/SELL; the sum decides bias + confidence,
    and the nearest OB / S/R / swing point behind price anchors the stop-loss. */
 
@@ -2574,6 +2588,13 @@ function computeSMCSRSignal(highs, lows, closes, volumes, atrVal){
     if(priceUp){ long+=0.8; reasons.push({type:'bullish', text:`Volume ${volRatio.toFixed(1)}x rata-rata mengonfirmasi tekanan beli.`}); }
     else { short+=0.8; reasons.push({type:'bearish', text:`Volume ${volRatio.toFixed(1)}x rata-rata mengonfirmasi tekanan jual.`}); }
   }
+  // 7) Classic chart patterns (Double Top/Bottom, Ascending/Descending Triangle) — an
+  // extra, independent confluence layer on top of SMC + S/R rather than a replacement.
+  const chartPatterns = detectPatterns(highs, lows, closes);
+  chartPatterns.forEach(p=>{
+    if(p.dir==='bullish'){ long+=1.4; reasons.push({type:'bullish', text:`Pola chart klasik: ${p.name}.`}); }
+    else if(p.dir==='bearish'){ short+=1.4; reasons.push({type:'bearish', text:`Pola chart klasik: ${p.name}.`}); }
+  });
 
   const diff = long-short;
   const confidence = Math.round(Math.min(1, Math.abs(diff)/10)*100);
@@ -2585,7 +2606,7 @@ function computeSMCSRSignal(highs, lows, closes, volumes, atrVal){
   else if(bias==='SELL') slAnchor = Math.max(...[freshSupply?.high, sr.nearestResistance?.price, pivotHighs.at(-1)?.price].filter(v=>v!=null));
   if(slAnchor!=null && !isFinite(slAnchor)) slAnchor = null;
 
-  return { bias, confidence, long, short, diff, reasons: reasons.sort((a,b)=>0), structure, sr, ob, fvgs, liq, price, slAnchor, freshDemand, freshSupply };
+  return { bias, confidence, long, short, diff, reasons, structure, sr, ob, fvgs, liq, chartPatterns, price, slAnchor, freshDemand, freshSupply };
 }
 
 function computeAdvancedTA(symbol, rows){
