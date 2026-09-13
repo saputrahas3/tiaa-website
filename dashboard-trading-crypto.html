@@ -638,28 +638,7 @@
   .jr-badge.short{background:var(--sell-glow); color:var(--sell);}
   .jr-insight{background:var(--panel-2); border-left:3px solid var(--accent); border-radius:6px; padding:10px 14px; font-size:12.5px; line-height:1.6;}
   .jr-insight + .jr-insight{margin-top:8px;}
-
-  /* ---- Order Flow: Liquidations + Whale trades ---- */
-  .of-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
-  @media (max-width:900px){.of-grid{grid-template-columns:1fr;}}
-  .of-feed{max-height:420px; overflow-y:auto; display:flex; flex-direction:column-reverse; gap:6px;}
-  .of-item{display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-radius:7px; font-size:12px; background:var(--panel-2); border-left:3px solid var(--line); animation:ofFadeIn .3s ease-out;}
-  .of-item.long{border-left-color:var(--buy);} .of-item.short{border-left-color:var(--sell);}
-  .of-item .of-sym{font-weight:700;}
-  .of-item .of-side{font-weight:700; font-size:10.5px; padding:1px 7px; border-radius:999px;}
-  .of-item .of-side.long{background:var(--buy-glow); color:var(--buy);}
-  .of-item .of-side.short{background:var(--sell-glow); color:var(--sell);}
-  .of-item .of-usd{font-family:'JetBrains Mono',monospace; font-weight:700;}
-  .of-item .of-time{font-size:10px; color:var(--ink-dim); font-family:'JetBrains Mono',monospace;}
-  @keyframes ofFadeIn{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);}}
   .of-empty{padding:20px; text-align:center; color:var(--ink-dim); font-size:12px;}
-  .of-heatmap-bar{display:flex; align-items:center; gap:8px; padding:4px 0;}
-  .of-heatmap-bar .ohb-price{width:90px; flex-shrink:0; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-dim);}
-  .of-heatmap-bar .ohb-track{flex:1; height:14px; background:var(--panel-2); border-radius:3px; overflow:hidden; display:flex;}
-  .of-heatmap-bar .ohb-fill{height:100%;}
-  .of-note{font-size:11px; color:var(--ink-dim); line-height:1.6; margin-top:10px;}
-  .of-tier-btn{padding:6px 12px; border-radius:999px; font-size:11.5px; font-weight:600; border:1px solid var(--line); cursor:pointer; color:var(--ink-dim);}
-  .of-tier-btn.active{background:var(--accent-glow); color:var(--accent); border-color:var(--accent);}
 
   /* ---- Volume Profile (on Entry Signal chart) ---- */
   .vp-bar{opacity:0.55;}
@@ -756,7 +735,6 @@
   <div class="nav-item" data-page="futures-signal" onclick="switchPage('futures-signal')"><span data-i18n="nav_futures_signal">Futures Signal</span></div>
   <div class="nav-item" data-page="spot-signal" onclick="switchPage('spot-signal')"><span data-i18n="spot_signal_title">Spot Signal</span></div>
   <div class="nav-item" data-page="journal" onclick="switchPage('journal')">📓 <span data-i18n="nav_journal">Journal Trading</span></div>
-  <div class="nav-item" data-page="orderflow" onclick="switchPage('orderflow')"><span data-i18n="nav_orderflow">Order Flow</span></div>
   <div class="nav-item" data-page="livechart" onclick="switchPage('livechart')">🖥️ <span data-i18n="nav_livechart">Live Chart Pro</span></div>
   <div class="nav-item" data-page="heatmap" onclick="switchPage('heatmap')"><span data-i18n="nav_heatmap">Market Heatmap</span></div>
   <div class="nav-group-label" data-i18n="nav_group_analysis">Analysis</div>
@@ -825,7 +803,7 @@
     </div>
 
     <div class="card" id="entryCard">
-      <div class="card-title"><span>Sinyal Entry — S/R × Volume × Pola Chart</span><span id="entryUpdated" class="mono" style="font-size:10px;">–</span></div>
+      <div class="card-title"><span>Sinyal Entry — SMC × S/R</span><span id="entryUpdated" class="mono" style="font-size:10px;">–</span></div>
       <div class="card-body">
         <div class="entry-controls">
           <div class="entry-field">
@@ -883,7 +861,7 @@
           <ul class="entry-reasons" id="entryReasonsList"></ul>
 
           <div class="entry-disclaimer">
-            Analisis berbasis data historis (support/resistance, volume, pola chart) — bukan nasihat keuangan.
+            Analisis berbasis data historis (Smart Money Concept: struktur/BOS-CHoCH, Order Block, Fair Value Gap, liquidity sweep — dipadukan dengan Support & Resistance klasik) — bukan nasihat keuangan.
             Selalu gunakan manajemen risiko (stop loss) sendiri.
           </div>
         </div>
@@ -1031,42 +1009,6 @@
   </div>
 </div>
 
-<!-- ===== Order Flow: Liquidation feed (live, dari Binance forceOrder stream) + Whale
-     trades (live large trades) + agregasi volume likuidasi per level harga ===== -->
-<div id="page-orderflow" class="page">
-  <div class="page-inner">
-    <div class="card">
-      <div class="card-title"><span>🐋 Order Flow &amp; Likuidasi</span><span style="font-size:10px;">Data live dari Binance Futures — bukan proyeksi model</span></div>
-      <div class="card-body">
-        <div class="of-note">
-          Feed di bawah ini adalah event <b>real-time</b> yang benar-benar terjadi di Binance Futures (likuidasi paksa &amp; transaksi besar),
-          bukan data historis atau model prediksi seperti heatmap likuidasi berbayar. Semakin lama halaman ini dibuka, semakin lengkap datanya.
-        </div>
-        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:12px;">
-          <span style="font-size:11px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.4px;">Ukuran order:</span>
-          <div class="of-tier-btn" data-tier="small" onclick="setOrderFlowTier('small')">Kecil ≥$5K</div>
-          <div class="of-tier-btn active" data-tier="medium" onclick="setOrderFlowTier('medium')">Sedang ≥$25K</div>
-          <div class="of-tier-btn" data-tier="large" onclick="setOrderFlowTier('large')">Besar ≥$100K</div>
-        </div>
-      </div>
-    </div>
-    <div class="of-grid">
-      <div class="card">
-        <div class="card-title"><span>Liquidation Feed</span><span id="liqFeedCount" class="mono" style="font-size:10px;">0</span></div>
-        <div class="card-body"><div class="of-feed" id="liqFeedList"><div class="of-empty">Menunggu event likuidasi… (di semua pair)</div></div></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><span>Whale Trades</span><span style="font-size:10px;">Order besar di <span id="whalePairLabel" class="mono">BTCUSDT</span></span></div>
-        <div class="card-body"><div class="of-feed" id="whaleFeedList"><div class="of-empty">Menunggu transaksi besar…</div></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span>Peta Likuidasi per Level Harga</span><span style="font-size:10px;">Akumulasi 1 jam terakhir · <span id="liqHeatmapPair" class="mono">BTCUSDT</span></span></div>
-      <div class="card-body" id="liqHeatmapBody"><div class="of-empty">Belum cukup data — biarkan halaman ini terbuka beberapa menit.</div></div>
-    </div>
-  </div>
-</div>
-
 <!-- ===== Dashboard (overview) ===== -->
 <div id="page-dashboard" class="page">
   <div class="page-inner">
@@ -1117,12 +1059,8 @@
     <div class="card">
       <div class="card-title"><span data-i18n="card_heatmap">Liquidation Heatmap</span><span style="font-size:10px;">Estimasi klaster likuidasi · <span id="liqHmPairLabel" class="mono">BTCUSDT</span></span></div>
       <div class="card-body">
-        <div class="of-note">
-          ⚠️ Ini adalah <b>estimasi/model kami sendiri</b> (klaster likuidasi diproyeksikan dari volume-at-price riil Binance Futures × beberapa tier leverage umum),
-          <b>bukan</b> data dari bitcoincounterflow.com — API mereka ada di paket berbayar (Nakamoto PRO / Pro Desk) yang belum kami punya aksesnya.
-          Semakin terang/kuning suatu zona, semakin banyak estimasi posisi leverage yang berpotensi ter-likuidasi di sekitar harga itu.
-        </div>
-        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:12px;">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <select id="liqHmPair" onchange="loadHeatmap()" style="background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:7px 10px; color:var(--ink); font-size:12px; min-width:140px;"></select>
           <select id="liqHmTf" onchange="loadHeatmap()" style="background:var(--panel-2); border:1px solid var(--line); border-radius:6px; padding:7px 10px; color:var(--ink); font-size:12px;">
             <option value="H4">4 jam</option>
             <option value="D1" selected>1 hari</option>
@@ -1246,7 +1184,7 @@ const I18N = {
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
     nav_movers: "Top Movers", nav_news: "News Feed", nav_wa: "Bantuan via WhatsApp",
-    nav_journal: "Journal Trading", nav_orderflow: "Order Flow",
+    nav_journal: "Journal Trading",
     search_placeholder: "Cari pair…",
     card_chart: "Chart — TradingView", card_indicators: "Indikator Teknikal",
     card_signal_chart: "Signal Chart — Buy/Sell Markers",
@@ -1315,7 +1253,7 @@ const I18N = {
     nav_group_analysis: "Analysis", nav_screener: "Screener", nav_strength: "Coin Strength",
     nav_group_intel: "Market Intel", nav_econ: "Econ Calendar", nav_feargreed: "Fear & Greed",
     nav_movers: "Top Movers", nav_news: "News Feed", nav_wa: "WhatsApp Support",
-    nav_journal: "Trading Journal", nav_orderflow: "Order Flow",
+    nav_journal: "Trading Journal",
     search_placeholder: "Search pair…",
     card_chart: "Chart — TradingView", card_indicators: "Technical Indicators",
     card_signal_chart: "Signal Chart — Buy/Sell Markers",
@@ -1530,63 +1468,6 @@ function stochastic(highs, lows, closes, kPeriod=14, dPeriod=3){
   const crossUp = kPrev!=null && dPrev!=null && kPrev<=dPrev && k>d;
   const crossDown = kPrev!=null && dPrev!=null && kPrev>=dPrev && k<d;
   return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20 };
-}
-// Stochastic RSI — applies the classic %K/%D stochastic formula on top of the RSI
-// series itself (instead of price), which makes it react far faster to short-term
-// momentum swings than a plain RSI. Used for the Scalping strategy where entries/exits
-// happen within minutes and a slower oscillator would arrive too late.
-function stochasticRSI(closes, rsiPeriod=14, stochPeriod=14, kSmooth=3, dSmooth=3){
-  const rsiArr = rsi14Series(closes, rsiPeriod).filter(v=>v!=null);
-  if(rsiArr.length < stochPeriod+kSmooth+dSmooth) return null;
-  const kRaw=[];
-  for(let i=stochPeriod-1;i<rsiArr.length;i++){
-    const slice=rsiArr.slice(i-stochPeriod+1,i+1);
-    const hh=Math.max(...slice), ll=Math.min(...slice);
-    kRaw.push(hh>ll ? (rsiArr[i]-ll)/(hh-ll)*100 : 50);
-  }
-  if(kRaw.length<kSmooth) return null;
-  const kSmoothed=[];
-  for(let i=kSmooth-1;i<kRaw.length;i++) kSmoothed.push(kRaw.slice(i-kSmooth+1,i+1).reduce((s,v)=>s+v,0)/kSmooth);
-  if(kSmoothed.length<dSmooth+1) return null;
-  const dVals=[];
-  for(let i=dSmooth-1;i<kSmoothed.length;i++) dVals.push(kSmoothed.slice(i-dSmooth+1,i+1).reduce((s,v)=>s+v,0)/dSmooth);
-  const k=kSmoothed.at(-1), d=dVals.at(-1), kPrev=kSmoothed.at(-2), dPrev=dVals.at(-2);
-  const crossUp = kPrev!=null && dPrev!=null && kPrev<=dPrev && k>d;
-  const crossDown = kPrev!=null && dPrev!=null && kPrev>=dPrev && k<d;
-  return { k, d, crossUp, crossDown, overbought:k>80, oversold:k<20 };
-}
-// EMA Ribbon (default 5/8/13/21) — a stack of fast EMAs used as a single "is momentum
-// compressed or expanding" gauge for scalping: bullish when stacked fast>...>slow and
-// the spread between them is widening (fresh directional push), bearish on the mirror.
-function emaRibbon(closes, periods=[5,8,13,21]){
-  if(closes.length < Math.max(...periods)+6) return null;
-  const arrs = {}; periods.forEach(p=>{ arrs[p]=ema(closes,p); });
-  const values = {}; periods.forEach(p=>{ values[p]=arrs[p].at(-1); });
-  const bullish = values[periods[0]]>values[periods[1]] && values[periods[1]]>values[periods[2]] && values[periods[2]]>values[periods[3]];
-  const bearish = values[periods[0]]<values[periods[1]] && values[periods[1]]<values[periods[2]] && values[periods[2]]<values[periods[3]];
-  const price = closes.at(-1);
-  const spreadAt = (idx)=>{
-    const vals = periods.map(p=>arrs[p][idx]);
-    return (Math.max(...vals)-Math.min(...vals)) / closes[idx];
-  };
-  const lastIdx = closes.length-1;
-  const backIdx = Math.max(0, lastIdx-5);
-  const spreadNow = spreadAt(lastIdx), spreadBack = spreadAt(backIdx);
-  const expanding = spreadNow > spreadBack*1.15;
-  return { values, bullish, bearish, expanding };
-}
-// Rolling VWAP (Volume-Weighted Average Price) over the last `period` candles — a 24h
-// rolling window when fed 24 x 1H candles approximates the intraday session VWAP that
-// day-traders watch, without needing an exact UTC-midnight session reset.
-function vwapRolling(highs, lows, closes, volumes, period=24){
-  const n = closes.length;
-  const p = Math.min(period, n);
-  let pv=0, vol=0;
-  for(let i=n-p;i<n;i++){
-    const typical=(highs[i]+lows[i]+closes[i])/3;
-    pv += typical*volumes[i]; vol += volumes[i];
-  }
-  return vol>0 ? pv/vol : closes.at(-1);
 }
 // Classic Support/Resistance: cluster pivot highs/lows (>=2 touches within a tight
 // tolerance) into horizontal levels — distinct from the ATR-impulse Supply/Demand
@@ -2018,7 +1899,6 @@ function selectPair(p){
   loadNews(p);
   loadFoilsSentiment(p);
   runEntryAnalysis();
-  if(orderFlowInited) connectWhaleWS(p); // keep the whale feed following whichever pair is active
 }
 
 document.getElementById('pairSearch').addEventListener('input', applyPairFilter);
@@ -2577,6 +2457,137 @@ function detectPatterns(highs, lows, closes){
   }
   return patterns;
 }
+/* ================= SMART MONEY CONCEPT (SMC) + S/R — UNIFIED SIGNAL ENGINE =================
+   Single shared quant engine, reused by EVERY signal feature in the app (Futures Signal's
+   Scalping / Day Trading / Swing branches, Spot Signal, and the "Sinyal Entry — S/R ×
+   Volume × Pola Chart" card) so they all reach ONE consistent final conclusion, built
+   from the same five SMC + S/R concepts instead of each feature running its own
+   unrelated indicator stack (EMA ribbon, VWAP, Bollinger, MACD, etc — all retired):
+     1. Market Structure — sequence of swing highs/lows (HH/HL vs LH/LL) + BOS & CHoCH
+     2. Order Blocks (OB) — last opposite candle before a strong impulsive move (reuses
+        findSupplyDemandZones, which is exactly what an OB/demand-supply zone is)
+     3. Fair Value Gaps (FVG) — 3-candle imbalance the market tends to trade back into
+     4. Liquidity zones — equal highs/lows (resting stop-liquidity) + sweep detection
+     5. Classic Support & Resistance — clustered pivot levels (touches = strength)
+   Each factor casts a weighted vote toward BUY/SELL; the sum decides bias + confidence,
+   and the nearest OB / S/R / swing point behind price anchors the stop-loss. */
+
+// Fair Value Gap: a 3-candle imbalance where candle 2 moves so fast it leaves a price
+// gap between candle 1 and candle 3 that never traded. Price often returns to "fill" it.
+function findFairValueGaps(highs, lows, closes, lookback=100){
+  const n = highs.length;
+  const start = Math.max(2, n-lookback);
+  const gaps = [];
+  for(let i=start; i<n; i++){
+    if(lows[i] > highs[i-2]) gaps.push({type:'bullish', top:lows[i], bottom:highs[i-2], idx:i-1});
+    else if(highs[i] < lows[i-2]) gaps.push({type:'bearish', top:lows[i-2], bottom:highs[i], idx:i-1});
+  }
+  gaps.forEach(g=>{
+    const after = closes.slice(g.idx+2);
+    g.filled = g.type==='bullish' ? after.some(c=>c<=g.top) : after.some(c=>c>=g.bottom);
+  });
+  return gaps;
+}
+// Liquidity zones: clusters of nearly-equal swing highs/lows are where retail stop-losses
+// pile up (buy-stops above equal highs, sell-stops below equal lows). A "sweep" — price
+// wicks through the level then closes back on the other side — is the classic SMC tell
+// that smart money grabbed that liquidity before reversing.
+function findLiquidityZones(highs, lows, closes, tolPct=0.0015){
+  const {pivotHighs, pivotLows} = findPivots(highs, lows, 3);
+  const recentHighs = pivotHighs.slice(-10), recentLows = pivotLows.slice(-10);
+  const eqHighs = [], eqLows = [];
+  for(let i=0;i<recentHighs.length;i++) for(let j=i+1;j<recentHighs.length;j++){
+    if(Math.abs(recentHighs[i].price-recentHighs[j].price)/recentHighs[i].price < tolPct)
+      eqHighs.push({price:(recentHighs[i].price+recentHighs[j].price)/2, idx:Math.max(recentHighs[i].i,recentHighs[j].i)});
+  }
+  for(let i=0;i<recentLows.length;i++) for(let j=i+1;j<recentLows.length;j++){
+    if(Math.abs(recentLows[i].price-recentLows[j].price)/recentLows[i].price < tolPct)
+      eqLows.push({price:(recentLows[i].price+recentLows[j].price)/2, idx:Math.max(recentLows[i].i,recentLows[j].i)});
+  }
+  const n=closes.length, lastHigh=highs[n-1], lastLow=lows[n-1], lastClose=closes[n-1];
+  const sweptHigh = eqHighs.find(z => lastHigh>z.price*1.0005 && lastClose<z.price);
+  const sweptLow = eqLows.find(z => lastLow<z.price*0.9995 && lastClose>z.price);
+  return { eqHighs, eqLows, sweptHigh, sweptLow };
+}
+// BOS (Break of Structure) = price closes beyond the last swing point in the direction
+// of the existing trend → continuation. CHoCH (Change of Character) = price closes
+// beyond the last swing point AGAINST the existing trend → first sign of a reversal.
+function detectBosChoch(pivotHighs, pivotLows, closes){
+  if(pivotHighs.length<2 || pivotLows.length<2) return {trend:'neutral', event:null, lastSwingHigh:null, lastSwingLow:null};
+  const hh = pivotHighs.at(-1).price > pivotHighs.at(-2).price;
+  const hl = pivotLows.at(-1).price > pivotLows.at(-2).price;
+  const lh = pivotHighs.at(-1).price < pivotHighs.at(-2).price;
+  const ll = pivotLows.at(-1).price < pivotLows.at(-2).price;
+  let trend = 'neutral';
+  if(hh && hl) trend='bullish'; else if(lh && ll) trend='bearish';
+  const price = closes.at(-1);
+  const lastSwingHigh = pivotHighs.at(-1)?.price, lastSwingLow = pivotLows.at(-1)?.price;
+  let event = null;
+  if(trend==='bullish' && lastSwingLow!=null && price<lastSwingLow) event='CHoCH_bearish';
+  else if(trend==='bearish' && lastSwingHigh!=null && price>lastSwingHigh) event='CHoCH_bullish';
+  else if(trend==='bullish' && lastSwingHigh!=null && price>lastSwingHigh) event='BOS_bullish';
+  else if(trend==='bearish' && lastSwingLow!=null && price<lastSwingLow) event='BOS_bearish';
+  return { trend, event, lastSwingHigh, lastSwingLow };
+}
+// THE unified SMC+S/R signal: combines all five concepts above into one weighted score,
+// a BUY/SELL/NETRAL bias, confidence %, a human-readable reasons list, and a suggested
+// stop-loss anchor (nearest structural level behind price) that every caller reuses.
+function computeSMCSRSignal(highs, lows, closes, volumes, atrVal){
+  const price = closes.at(-1);
+  const {pivotHighs, pivotLows} = findPivots(highs, lows, 3);
+  const structure = detectBosChoch(pivotHighs, pivotLows, closes);
+  const sr = findSupportResistance(highs, lows, closes);
+  const ob = findSupplyDemandZones(highs, lows, closes, atrVal); // Order Blocks (demand/supply)
+  const fvgs = findFairValueGaps(highs, lows, closes);
+  const liq = findLiquidityZones(highs, lows, closes);
+
+  let long=0, short=0; const reasons=[];
+  // 1) Market Structure — BOS/CHoCH is the primary SMC directional signal
+  if(structure.event==='BOS_bullish'){ long+=3; reasons.push({type:'bullish', text:'Break of Structure (BOS) bullish — harga menembus swing high sebelumnya, konfirmasi kelanjutan tren naik.'}); }
+  else if(structure.event==='BOS_bearish'){ short+=3; reasons.push({type:'bearish', text:'Break of Structure (BOS) bearish — harga menembus swing low sebelumnya, konfirmasi kelanjutan tren turun.'}); }
+  else if(structure.event==='CHoCH_bullish'){ long+=2.5; reasons.push({type:'bullish', text:'Change of Character (CHoCH) bullish — struktur turun mulai patah, indikasi potensi pembalikan naik.'}); }
+  else if(structure.event==='CHoCH_bearish'){ short+=2.5; reasons.push({type:'bearish', text:'Change of Character (CHoCH) bearish — struktur naik mulai patah, indikasi potensi pembalikan turun.'}); }
+  else if(structure.trend==='bullish'){ long+=1; reasons.push({type:'bullish', text:'Struktur pasar Higher High + Higher Low (uptrend) masih berlanjut.'}); }
+  else if(structure.trend==='bearish'){ short+=1; reasons.push({type:'bearish', text:'Struktur pasar Lower High + Lower Low (downtrend) masih berlanjut.'}); }
+  // 2) Order Blocks — price sitting in a fresh (untested) demand/supply zone
+  const freshDemand = ob.demandZones.filter(z=>!z.tested).find(z=>price>=z.low*0.997 && price<=z.high*1.01);
+  const freshSupply = ob.supplyZones.filter(z=>!z.tested).find(z=>price<=z.high*1.003 && price>=z.low*0.99);
+  if(freshDemand){ long+=2; reasons.push({type:'bullish', text:`Harga berada di Order Block demand segar ${formatPrice(freshDemand.low)}–${formatPrice(freshDemand.high)} (belum pernah diuji ulang).`}); }
+  if(freshSupply){ short+=2; reasons.push({type:'bearish', text:`Harga berada di Order Block supply segar ${formatPrice(freshSupply.low)}–${formatPrice(freshSupply.high)} (belum pernah diuji ulang).`}); }
+  // 3) Fair Value Gap — unfilled imbalance nearby tends to act as support/resistance
+  const nearbyBullFvg = fvgs.filter(g=>g.type==='bullish' && !g.filled).find(g=>price>=g.bottom*0.995 && price<=g.top*1.02);
+  const nearbyBearFvg = fvgs.filter(g=>g.type==='bearish' && !g.filled).find(g=>price<=g.top*1.005 && price>=g.bottom*0.98);
+  if(nearbyBullFvg){ long+=1.3; reasons.push({type:'bullish', text:`Fair Value Gap bullish belum terisi di ${formatPrice(nearbyBullFvg.bottom)}–${formatPrice(nearbyBullFvg.top)} — area ini cenderung jadi support.`}); }
+  if(nearbyBearFvg){ short+=1.3; reasons.push({type:'bearish', text:`Fair Value Gap bearish belum terisi di ${formatPrice(nearbyBearFvg.bottom)}–${formatPrice(nearbyBearFvg.top)} — area ini cenderung jadi resistance.`}); }
+  // 4) Liquidity sweep — stop-hunt then rejection is a high-conviction SMC reversal cue
+  if(liq.sweptLow){ long+=2.2; reasons.push({type:'bullish', text:`Liquidity sweep di bawah Equal Low ${formatPrice(liq.sweptLow.price)} — stop loss short "disapu" lalu harga ditolak naik.`}); }
+  if(liq.sweptHigh){ short+=2.2; reasons.push({type:'bearish', text:`Liquidity sweep di atas Equal High ${formatPrice(liq.sweptHigh.price)} — stop loss long "disapu" lalu harga ditolak turun.`}); }
+  // 5) Classic Support & Resistance confluence
+  const nearSupport = sr.nearestSupport && Math.abs(price-sr.nearestSupport.price)/price < 0.006;
+  const nearResistance = sr.nearestResistance && Math.abs(price-sr.nearestResistance.price)/price < 0.006;
+  if(nearSupport){ long+=1.2; reasons.push({type:'bullish', text:`Harga dekat Support klasik ${formatPrice(sr.nearestSupport.price)} (${sr.nearestSupport.touches}x teruji).`}); }
+  if(nearResistance){ short+=1.2; reasons.push({type:'bearish', text:`Harga dekat Resistance klasik ${formatPrice(sr.nearestResistance.price)} (${sr.nearestResistance.touches}x teruji).`}); }
+  // 6) Volume confirmation on the triggering candle
+  const volRatio = volumeRatio(volumes, 20);
+  if(volRatio!=null && volRatio>1.3){
+    const priceUp = closes.at(-1) > closes.at(-2);
+    if(priceUp){ long+=0.8; reasons.push({type:'bullish', text:`Volume ${volRatio.toFixed(1)}x rata-rata mengonfirmasi tekanan beli.`}); }
+    else { short+=0.8; reasons.push({type:'bearish', text:`Volume ${volRatio.toFixed(1)}x rata-rata mengonfirmasi tekanan jual.`}); }
+  }
+
+  const diff = long-short;
+  const confidence = Math.round(Math.min(1, Math.abs(diff)/10)*100);
+  let bias = 'NETRAL';
+  if(diff>=2) bias='BUY'; else if(diff<=-2) bias='SELL';
+
+  let slAnchor = null;
+  if(bias==='BUY') slAnchor = Math.min(...[freshDemand?.low, sr.nearestSupport?.price, pivotLows.at(-1)?.price].filter(v=>v!=null));
+  else if(bias==='SELL') slAnchor = Math.max(...[freshSupply?.high, sr.nearestResistance?.price, pivotHighs.at(-1)?.price].filter(v=>v!=null));
+  if(slAnchor!=null && !isFinite(slAnchor)) slAnchor = null;
+
+  return { bias, confidence, long, short, diff, reasons: reasons.sort((a,b)=>0), structure, sr, ob, fvgs, liq, price, slAnchor, freshDemand, freshSupply };
+}
+
 function computeAdvancedTA(symbol, rows){
   const zonesEl = document.getElementById('sdZonesBody'), fibEl = document.getElementById('fibBody'), patEl = document.getElementById('patternBody');
   const h4 = rows.find(r=>r.tf==='H4')?.ohlc;
@@ -3017,81 +3028,40 @@ function saveStoredSignals(mode, style, obj){
 
 async function computeConfirmedSignal(pairSymbol, isFutures){
   const h4k = await fetchKlinesCrypto(pairSymbol, SIGNAL_CONFIRM_INTERVAL, 260);
-  const h4closes = h4k.map(c=>parseFloat(c[4])), h4highs = h4k.map(c=>parseFloat(c[2])), h4lows = h4k.map(c=>parseFloat(c[3]));
-  if(h4closes.length < 210) return null; // not enough history for a reliable EMA200
-
-  const h4Ema50 = ema(h4closes,50).at(-1);
-  const h4Ema200 = ema(h4closes,200).at(-1);
-  const h4Rsi = rsi(h4closes,14);
-  const h4Macd = macdFull(h4closes);
-  const h4Bb = bollinger(h4closes,20,2);
-  const h4Atr = atr(h4highs, h4lows, h4closes, 14);
+  const h4closes = h4k.map(c=>parseFloat(c[4])), h4highs = h4k.map(c=>parseFloat(c[2])), h4lows = h4k.map(c=>parseFloat(c[3])), h4vol = h4k.map(c=>parseFloat(c[5]));
+  if(h4closes.length < 60) return null;
   const price = h4closes.at(-1);
-  if([h4Ema50,h4Ema200,h4Rsi,h4Atr].some(v=>v==null)) return null;
+  const h4Atr = atr(h4highs, h4lows, h4closes, 14);
+  if(h4Atr==null) return null;
+
+  // Core H4 bias: Smart Money Concept (struktur/BOS-CHoCH/Order Block/FVG/liquidity
+  // sweep) combined with classic Support & Resistance — the same unified engine used
+  // by every Futures Signal style, so Spot reaches its conclusion the same way.
+  const smc = computeSMCSRSignal(h4highs, h4lows, h4closes, h4vol, h4Atr);
 
   const m15k = await fetchKlinesCrypto(pairSymbol, SIGNAL_ENTRY_INTERVAL, 150);
-  const m15closes = m15k.map(c=>parseFloat(c[4]));
+  const m15closes = m15k.map(c=>parseFloat(c[4])), m15highs = m15k.map(c=>parseFloat(c[2])), m15lows = m15k.map(c=>parseFloat(c[3]));
   if(m15closes.length < 30) return null;
-  const m15Ema9 = ema(m15closes,9).at(-1), m15Ema21 = ema(m15closes,21).at(-1);
-  const m15Rsi = rsi(m15closes,14);
-  const m15Macd = macdFull(m15closes);
+  const {pivotHighs:m15PH, pivotLows:m15PL} = findPivots(m15highs, m15lows, 3);
+  const m15Structure = detectBosChoch(m15PH, m15PL, m15closes); // M15 entry-timeframe SMC trigger
 
   const ob = await fetchOrderBookBias(pairSymbol, isFutures);
 
-  // Struktur pasar (Smart Money Concept): HH+HL = uptrend, LH+LL = downtrend — dihitung
-  // murni dari price action koin ini sendiri (bukan dari BTC), jadi tiap koin bisa punya
-  // arah sinyal yang berbeda tergantung polanya masing-masing.
-  const patterns = detectPatterns(h4highs, h4lows, h4closes);
-  const structureTrend = patterns[0]?.dir || 'neutral'; // 'bullish' | 'bearish' | 'neutral'
-  // Smart Money Concept: fresh demand/supply zone (base sebuah impulsive move) dekat harga
-  const sd = findSupplyDemandZones(h4highs, h4lows, h4closes, h4Atr);
-  const inFreshDemand = sd.demandZones.some(z=>!z.tested && price>=z.low && price<=z.high*1.01);
-  const inFreshSupply = sd.supplyZones.some(z=>!z.tested && price<=z.high && price>=z.low*0.99);
-  // Support & Resistance klasik (cluster pivot dengan banyak sentuhan)
-  const sr = findSupportResistance(h4highs, h4lows, h4closes);
-  const nearSupport = sr.nearestSupport && Math.abs(price-sr.nearestSupport.price)/price<0.006;
-  const nearResistance = sr.nearestResistance && Math.abs(price-sr.nearestResistance.price)/price<0.006;
+  let long = smc.long, short = smc.short;
+  const reasons = smc.reasons.slice();
+  if(m15Structure.event==='BOS_bullish' || m15Structure.event==='CHoCH_bullish'){ long+=1.5; reasons.push({type:'bullish', text:`M15: ${m15Structure.event.replace('_',' ')} — trigger entry searah bias H4.`}); }
+  if(m15Structure.event==='BOS_bearish' || m15Structure.event==='CHoCH_bearish'){ short+=1.5; reasons.push({type:'bearish', text:`M15: ${m15Structure.event.replace('_',' ')} — trigger entry searah bias H4.`}); }
+  if(ob.bias==='buy'){ long+=1.5; reasons.push({type:'bullish', text:'Order book menunjukkan dominasi buy-wall.'}); }
+  else if(ob.bias==='sell'){ short+=1.5; reasons.push({type:'bearish', text:'Order book menunjukkan dominasi sell-wall.'}); }
 
-  let long=0, short=0;
-  // Arah tren utama & struktur pasar (SMC) — bobot terbesar karena ini penentu arah LONG/SHORT
-  if(structureTrend==='bullish') long+=3; else if(structureTrend==='bearish') short+=3;
-  // EMA50/EMA200 (arah tren jangka panjang / dynamic S&R)
-  if(h4Ema50>h4Ema200) long+=2; else short+=2;
-  if(price>h4Ema50) long+=1; else short+=1;
-  // RSI(14) oversold / overbought
-  if(h4Rsi<30) long+=1.5; else if(h4Rsi>70) short+=1.5;
-  // MACD golden cross / death cross
-  const h4CrossUp = h4Macd.prev.macd<=h4Macd.prev.signal && h4Macd.last.macd>h4Macd.last.signal;
-  const h4CrossDown = h4Macd.prev.macd>=h4Macd.prev.signal && h4Macd.last.macd<h4Macd.last.signal;
-  if(h4CrossUp) long+=2; else if(h4Macd.last.hist>0) long+=1;
-  if(h4CrossDown) short+=2; else if(h4Macd.last.hist<0) short+=1;
-  // Bollinger Bands cheap/expensive zone
-  if(h4Bb){ if(h4Bb.pctB<0.2) long+=1; else if(h4Bb.pctB>0.8) short+=1; }
-  // Smart Money Concept: fresh demand/supply zone
-  if(inFreshDemand) long+=1.5;
-  if(inFreshSupply) short+=1.5;
-  // Support & Resistance proximity
-  if(nearSupport) long+=1;
-  if(nearResistance) short+=1;
-  // M15 scalping entry trigger
-  const m15CrossUp = m15Macd.prev.macd<=m15Macd.prev.signal && m15Macd.last.macd>m15Macd.last.signal;
-  const m15CrossDown = m15Macd.prev.macd>=m15Macd.prev.signal && m15Macd.last.macd<m15Macd.last.signal;
-  if(m15CrossUp) long+=1.5; else if(m15CrossDown) short+=1.5;
-  if(m15Ema9>m15Ema21) long+=0.5; else short+=0.5;
-  if(m15Rsi!=null){ if(m15Rsi<35) long+=0.5; else if(m15Rsi>65) short+=0.5; }
-  // Order Book / Volume Profile buy-wall / sell-wall
-  if(ob.bias==='buy') long+=1.5; else if(ob.bias==='sell') short+=1.5;
-
-  const total = long+short, diff = long-short;
-  if(total<4 || Math.abs(diff)<3) return null; // not confluent enough — skip
+  const diff = long-short;
+  if(Math.abs(diff)<3) return null; // not confluent enough — skip
   const direction = diff>0 ? 'LONG' : 'SHORT';
-  const h4Regime = h4Ema50>h4Ema200 ? 'LONG' : 'SHORT';
-  if(h4Regime !== direction) return null; // must be confirmed by the 4H regime
-  // Arah sinyal wajib selaras dengan struktur tren koin itu sendiri (naik->long, turun->short)
-  if(structureTrend==='bullish' && direction==='SHORT') return null;
-  if(structureTrend==='bearish' && direction==='LONG') return null;
+  // Direction wajib selaras dengan struktur pasar SMC di H4 (naik->long, turun->short)
+  if(smc.structure.trend==='bullish' && direction==='SHORT') return null;
+  if(smc.structure.trend==='bearish' && direction==='LONG') return null;
 
-  const confidence = Math.max(40, Math.min(97, Math.round((Math.abs(diff)/15.5)*100)));
+  const confidence = Math.max(40, Math.min(97, Math.round((Math.abs(diff)/13)*100)));
   const atrPct = h4Atr/price*100;
   let leverage;
   if(atrPct<1) leverage=10; else if(atrPct<2) leverage=8; else if(atrPct<3.5) leverage=5; else if(atrPct<6) leverage=3; else leverage=2;
@@ -3099,15 +3069,16 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
 
   const dir = direction==='LONG' ? 1 : -1;
   const entry = price;
-  const sl = entry - dir*1.3*h4Atr;
+  let sl = smc.slAnchor!=null ? smc.slAnchor - dir*0.3*h4Atr : entry - dir*1.3*h4Atr;
+  if(dir>0 && sl>=entry) sl = entry - 1.3*h4Atr; if(dir<0 && sl<=entry) sl = entry + 1.3*h4Atr;
   const targets = [0.8,1.6,2.8,4.5].map(m=> entry + dir*m*h4Atr);
 
-  const trendLabel = structureTrend==='bullish' ? 'Uptrend (HH/HL)' : structureTrend==='bearish' ? 'Downtrend (LH/LL)' : 'Netral';
-  const reason = `Trend: ${trendLabel} · RSI H4 ${h4Rsi.toFixed(0)} · ATR ${atrPct.toFixed(2)}% · Order Book: ${ob.bias.toUpperCase()} · Confidence ${confidence}%`;
+  const trendLabel = smc.structure.trend==='bullish' ? 'Uptrend (HH/HL)' : smc.structure.trend==='bearish' ? 'Downtrend (LH/LL)' : 'Netral';
+  const reason = `${reasons.map(r=>r.text).join(' · ')} · Struktur H4: ${trendLabel} · ATR ${atrPct.toFixed(2)}% · Order Book: ${ob.bias.toUpperCase()} · Confidence ${confidence}%`;
 
   return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
-    entry, sl, targets, leverage, capitalPct, atrPct, obBias: ob.bias, rsiH4: h4Rsi,
-    structureTrend, timeframe:'H4 + M15', reason, openTime: Date.now() };
+    entry, sl, targets, leverage, capitalPct, atrPct, obBias: ob.bias, rsiH4: null,
+    structureTrend: smc.structure.trend, timeframe:'H4 + M15', reason, smcReasons: reasons, openTime: Date.now() };
 }
 
 /* ================= FUTURES SIGNAL — BRANCHED STRATEGIES ================= */
@@ -3117,179 +3088,103 @@ async function computeConfirmedSignal(pairSymbol, isFutures){
 // Each keeps its own locked signal list — switching style never mixes results.
 
 // ---- 1) SCALPING (menit) — Stochastic RSI + EMA Ribbon (EMA 5/8/13/21) on M5 ----
+// ---- 1) SCALPING (menit) — SMC + S/R pada M5 (timeframe tercepat, sesuai gaya) ----
 async function computeScalpingSignal(pairSymbol){
   const k5 = await fetchKlinesCrypto(pairSymbol, '5m', 150);
-  const closes=k5.map(c=>parseFloat(c[4])), highs=k5.map(c=>parseFloat(c[2])), lows=k5.map(c=>parseFloat(c[3]));
+  const closes=k5.map(c=>parseFloat(c[4])), highs=k5.map(c=>parseFloat(c[2])), lows=k5.map(c=>parseFloat(c[3])), vols=k5.map(c=>parseFloat(c[5]));
   if(closes.length<40) return null;
   const price = closes.at(-1);
-  const ribbon = emaRibbon(closes, [5,8,13,21]);
-  const srsi = stochasticRSI(closes, 14, 14, 3, 3);
   const atrVal = atr(highs, lows, closes, 14);
-  if(!ribbon || !srsi || atrVal==null) return null;
+  if(atrVal==null) return null;
 
-  let long=0, short=0; const reasons=[];
-  if(ribbon.bullish){ long+=2; reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun naik (tren naik kuat)'); }
-  else if(ribbon.bearish){ short+=2; reasons.push('EMA Ribbon 5/8/13/21 rapi tersusun turun (tren turun kuat)'); }
-  if(ribbon.expanding && ribbon.bullish){ long+=1; reasons.push('Ribbon mulai membuka lebar ke atas (momentum menguat)'); }
-  if(ribbon.expanding && ribbon.bearish){ short+=1; reasons.push('Ribbon mulai membuka lebar ke bawah (momentum melemah)'); }
-  if(srsi.crossUp && srsi.k<40){ long+=2.5; reasons.push(`Stoch RSI cross up dari oversold (K ${srsi.k.toFixed(0)})`); }
-  if(srsi.crossDown && srsi.k>60){ short+=2.5; reasons.push(`Stoch RSI cross down dari overbought (K ${srsi.k.toFixed(0)})`); }
-  if(srsi.oversold) long+=0.5;
-  if(srsi.overbought) short+=0.5;
-  if(price>ribbon.values[5]) long+=0.5; else if(price<ribbon.values[5]) short+=0.5;
+  const smc = computeSMCSRSignal(highs, lows, closes, vols, atrVal);
+  if(smc.bias==='NETRAL') return null;
+  const direction = smc.bias==='BUY' ? 'LONG' : 'SHORT';
 
-  const total=long+short, diff=long-short;
-  if(total<3 || Math.abs(diff)<2) return null;
-  const direction = diff>0 ? 'LONG' : 'SHORT';
-  if(ribbon.bullish && direction==='SHORT') return null;
-  if(ribbon.bearish && direction==='LONG') return null;
-
-  const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
+  const confidence = Math.max(40, smc.confidence);
   const atrPct = atrVal/price*100;
-  // Scalping SL is required to sit strictly beyond EMA21 (a small ATR buffer keeps it
-  // from sitting exactly on the line, which would get stopped out by noise).
   const dir = direction==='LONG' ? 1 : -1;
   const entry = price;
-  const sl = direction==='LONG' ? ribbon.values[21] - 0.15*atrVal : ribbon.values[21] + 0.15*atrVal;
+  // Scalping SL: tight, anchored to the nearest SMC structural level (Order Block /
+  // S-R / swing point) with a small ATR buffer so normal noise doesn't stop it out.
+  let sl = smc.slAnchor!=null ? smc.slAnchor - dir*0.15*atrVal : entry - dir*1*atrVal;
+  if(dir>0 && sl>=entry) sl = entry - 1*atrVal; if(dir<0 && sl<=entry) sl = entry + 1*atrVal;
   // Targets are intentionally tight (small ATR multiples) — scalping exits are meant to
-  // land within minutes (Stoch RSI hits 80/20, or price breaks back through EMA5).
+  // land within minutes once the SMC trigger (BOS/CHoCH/sweep) plays out.
   const targets = [0.5,1.0,1.6,2.2].map(m=> entry + dir*m*atrVal);
   let leverage; if(atrPct<0.5) leverage=15; else if(atrPct<1) leverage=10; else if(atrPct<2) leverage=6; else if(atrPct<3.5) leverage=4; else leverage=2;
   const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
-  const reason = `${reasons.join(' · ')} · ATR ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
+  const reason = `${smc.reasons.map(r=>r.text).join(' · ')} · ATR ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
 
   return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
-    entry, sl, targets, leverage, capitalPct, atrPct, style:'scalping', timeframe:'M5', reason, openTime: Date.now() };
+    entry, sl, targets, leverage, capitalPct, atrPct, style:'scalping', timeframe:'M5', reason, smcReasons: smc.reasons, openTime: Date.now() };
 }
 
-// ---- 2) DAY TRADING (4–12 jam) — VWAP + RSI Standar + Volume, M15 entry / H1 trend ----
+// ---- 2) DAY TRADING (4–12 jam) — SMC + S/R pada M15 (entry), dikonfirmasi struktur H1 ----
 async function computeDayTradingSignal(pairSymbol){
-  const k1h = await fetchKlinesCrypto(pairSymbol, '1h', 60);
-  const h1closes=k1h.map(c=>parseFloat(c[4])), h1highs=k1h.map(c=>parseFloat(c[2])), h1lows=k1h.map(c=>parseFloat(c[3])), h1vol=k1h.map(c=>parseFloat(c[5]));
-  if(h1closes.length<26) return null;
-  const vwap1h = vwapRolling(h1highs, h1lows, h1closes, h1vol, 24); // ~24h rolling VWAP
-  const price = h1closes.at(-1);
-  const aboveVwap = price>vwap1h;
-  const atr1h = atr(h1highs, h1lows, h1closes, 14);
-  if(atr1h==null) return null;
+  const k1h = await fetchKlinesCrypto(pairSymbol, '1h', 100);
+  const h1closes=k1h.map(c=>parseFloat(c[4])), h1highs=k1h.map(c=>parseFloat(c[2])), h1lows=k1h.map(c=>parseFloat(c[3]));
+  if(h1closes.length<30) return null;
+  const {pivotHighs:h1PH, pivotLows:h1PL} = findPivots(h1highs, h1lows, 3);
+  const h1Structure = detectBosChoch(h1PH, h1PL, h1closes); // higher-timeframe bias filter
 
-  const k15 = await fetchKlinesCrypto(pairSymbol, '15m', 100);
-  const m15closes=k15.map(c=>parseFloat(c[4])), m15highs=k15.map(c=>parseFloat(c[2])), m15lows=k15.map(c=>parseFloat(c[3])), m15vol=k15.map(c=>parseFloat(c[5]));
-  if(m15closes.length<30) return null;
-  const price15 = m15closes.at(-1);
-  const rsi15 = rsi(m15closes, 14);
-  const volRatio = volumeRatio(m15vol, 20);
-  const sr = findSupportResistance(m15highs, m15lows, m15closes);
-  const nearVwap = Math.abs(price15-vwap1h)/price15 < 0.015;
-  const nearSupport = sr.nearestSupport && Math.abs(price15-sr.nearestSupport.price)/price15 < 0.01;
-  const nearResistance = sr.nearestResistance && Math.abs(price15-sr.nearestResistance.price)/price15 < 0.01;
-
-  // Each condition now contributes its own weight independently (instead of requiring
-  // several narrow conditions to all line up on the exact same candle) — this keeps the
-  // strategy's logic (VWAP bias + RSI pullback + volume) while actually being able to
-  // fire on real market data instead of staying empty almost all the time.
-  let long=0, short=0; const reasons=[];
-  if(aboveVwap){ long+=2; reasons.push('Harga H1 di atas VWAP ~24h (bias bullish harian)'); }
-  else { short+=2; reasons.push('Harga H1 di bawah VWAP ~24h (bias bearish harian)'); }
-  if(rsi15!=null){
-    if(rsi15<=45){ long+=2; reasons.push(`RSI M15 ${rsi15.toFixed(0)} — area koreksi/oversold, berpotensi memantul`); }
-    else if(rsi15>=55){ short+=2; reasons.push(`RSI M15 ${rsi15.toFixed(0)} — area koreksi/overbought, berpotensi turun`); }
-  }
-  if(nearVwap){ if(aboveVwap) long+=1; else short+=1; reasons.push('Harga M15 sedang berada di dekat garis VWAP'); }
-  if(nearSupport){ long+=1; reasons.push('Harga M15 dekat level Support'); }
-  if(nearResistance){ short+=1; reasons.push('Harga M15 dekat level Resistance'); }
-  if(volRatio!=null && volRatio>1.1){
-    if(aboveVwap) long+=1; else short+=1;
-    reasons.push(`Volume M15 di atas rata-rata (${volRatio.toFixed(1)}x)`);
-  }
-
-  const total=long+short, diff=long-short;
-  if(total<3 || Math.abs(diff)<2) return null;
-  const direction = diff>0 ? 'LONG' : 'SHORT';
-  if(aboveVwap && direction==='SHORT') return null;
-  if(!aboveVwap && direction==='LONG') return null;
-
-  const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
-  const atrPct = atr1h/price*100;
-  const dir = direction==='LONG' ? 1 : -1;
-  const entry = price15;
-  // SL sits just beyond the VWAP line — if price breaks VWAP against the position with
-  // volume, the daily trend has flipped and the setup is invalidated.
-  const sl = direction==='LONG' ? vwap1h - 0.3*atr1h : vwap1h + 0.3*atr1h;
-  const resistanceTp = direction==='LONG' ? sr.nearestResistance?.price : sr.nearestSupport?.price;
-  const targets = [1.2,2.2,3.5,5].map((m,idx)=>{
-    const atrTarget = entry + dir*m*atr1h;
-    // First target prefers the nearest horizontal resistance/support if it's beyond entry.
-    if(idx===0 && resistanceTp && (dir>0 ? resistanceTp>entry : resistanceTp<entry)) return resistanceTp;
-    return atrTarget;
-  });
-  let leverage; if(atrPct<1) leverage=8; else if(atrPct<2) leverage=6; else if(atrPct<3.5) leverage=4; else leverage=2;
-  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
-  const reason = `${reasons.join(' · ')} · ATR H1 ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
-
-  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
-    entry, sl, targets, leverage, capitalPct, atrPct, style:'daytrading', timeframe:'M15 + H1', reason, openTime: Date.now() };
-}
-
-// ---- 3) SWING TRADING (1–3 hari) — Bollinger Bands + MACD Histogram on H4 ----
-async function computeSwingSignal(pairSymbol){
-  const k4h = await fetchKlinesCrypto(pairSymbol, '4h', 150);
-  const closes=k4h.map(c=>parseFloat(c[4])), highs=k4h.map(c=>parseFloat(c[2])), lows=k4h.map(c=>parseFloat(c[3]));
-  if(closes.length<35) return null;
-  const bb = bollinger(closes, 20, 2);
-  const m = macdFull(closes);
-  const atrVal = atr(highs, lows, closes, 14);
-  if(!bb || atrVal==null) return null;
+  const k15 = await fetchKlinesCrypto(pairSymbol, '15m', 150);
+  const closes=k15.map(c=>parseFloat(c[4])), highs=k15.map(c=>parseFloat(c[2])), lows=k15.map(c=>parseFloat(c[3])), vols=k15.map(c=>parseFloat(c[5]));
+  if(closes.length<40) return null;
   const price = closes.at(-1);
+  const atrVal = atr(highs, lows, closes, 14);
+  if(atrVal==null) return null;
 
-  // Primary trigger is now the price's position *within* the bands (bb.pctB) rather
-  // than requiring an exact touch of the band line — being in the cheap/expensive third
-  // of the band is what the "menyentuh Lower/Upper Band" rule is really after, and an
-  // exact-touch requirement was rarely true at the moment of any given scan. An actual
-  // touch/break still adds bonus weight and shows up in the reason text.
-  let long=0, short=0; const reasons=[];
-  const touchLower = price<=bb.lower*1.003;
-  const touchUpper = price>=bb.upper*0.997;
-  if(bb.pctB<=0.35){ long+=2; reasons.push(`Harga di area bawah Bollinger Band (%B ${bb.pctB.toFixed(2)})`); }
-  else if(bb.pctB>=0.65){ short+=2; reasons.push(`Harga di area atas Bollinger Band (%B ${bb.pctB.toFixed(2)})`); }
-  if(touchLower){ long+=1; reasons.push('Harga menyentuh/menembus Lower Bollinger Band'); }
-  if(touchUpper){ short+=1; reasons.push('Harga menyentuh/menembus Upper Bollinger Band'); }
-  const histNow=m.last.hist, histPrev=m.prev.hist;
-  const fadingDown = histNow<0 && Math.abs(histNow)<Math.abs(histPrev);
-  const fadingUp = histNow>0 && Math.abs(histNow)<Math.abs(histPrev);
-  if(fadingDown){ long+=1; reasons.push('MACD Histogram merah mulai memudar (tekanan jual habis)'); }
-  if(fadingUp){ short+=1; reasons.push('MACD Histogram hijau mulai memudar (tekanan beli habis)'); }
-  if(histNow>0){ long+=0.5; } else if(histNow<0){ short+=0.5; }
-  const crossUp = m.prev.macd<=m.prev.signal && m.last.macd>m.last.signal;
-  const crossDown = m.prev.macd>=m.prev.signal && m.last.macd<m.last.signal;
-  if(crossUp){ long+=2; reasons.push('Golden Cross MACD terkonfirmasi'); }
-  if(crossDown){ short+=2; reasons.push('Death Cross MACD terkonfirmasi'); }
+  const smc = computeSMCSRSignal(highs, lows, closes, vols, atrVal);
+  if(smc.bias==='NETRAL') return null;
+  const direction = smc.bias==='BUY' ? 'LONG' : 'SHORT';
+  // Entry-timeframe (M15) SMC signal must not fight the higher-timeframe (H1) structure.
+  if(h1Structure.trend==='bullish' && direction==='SHORT') return null;
+  if(h1Structure.trend==='bearish' && direction==='LONG') return null;
 
-  const total=long+short, diff=long-short;
-  if(total<2.5 || Math.abs(diff)<1.5) return null;
-  const direction = diff>0 ? 'LONG' : 'SHORT';
-  if(bb.pctB<=0.35 && direction==='SHORT') return null;
-  if(bb.pctB>=0.65 && direction==='LONG') return null;
-
-  const confidence = Math.max(40, Math.min(95, Math.round((Math.abs(diff)/6)*100)));
+  const confidence = Math.max(40, smc.confidence);
   const atrPct = atrVal/price*100;
   const dir = direction==='LONG' ? 1 : -1;
   const entry = price;
-  // SL sits below/above the most recent swing low/high, per the swing-trading rule.
-  const swingLow = Math.min(...lows.slice(-8));
-  const swingHigh = Math.max(...highs.slice(-8));
-  const sl = direction==='LONG' ? swingLow - 0.3*atrVal : swingHigh + 0.3*atrVal;
-  // Primary exit is the opposite Bollinger Band; extra extension targets beyond it are
-  // offered for those who want to trail rather than exit all at once.
-  const targets = direction==='LONG'
-    ? [bb.basis, bb.upper, bb.upper+0.6*atrVal, bb.upper+1.2*atrVal]
-    : [bb.basis, bb.lower, bb.lower-0.6*atrVal, bb.lower-1.2*atrVal];
-  let leverage; if(atrPct<1.5) leverage=5; else if(atrPct<3) leverage=3; else leverage=2;
+  let sl = smc.slAnchor!=null ? smc.slAnchor - dir*0.3*atrVal : entry - dir*1.3*atrVal;
+  if(dir>0 && sl>=entry) sl = entry - 1.3*atrVal; if(dir<0 && sl<=entry) sl = entry + 1.3*atrVal;
+  const targets = [1.2,2.2,3.5,5].map(m=> entry + dir*m*atrVal);
+  let leverage; if(atrPct<1) leverage=8; else if(atrPct<2) leverage=6; else if(atrPct<3.5) leverage=4; else leverage=2;
   const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
-  const reason = `${reasons.join(' · ')} · ATR H4 ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
+  const reason = `${smc.reasons.map(r=>r.text).join(' · ')} · Struktur H1: ${h1Structure.trend} · ATR H1 ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
 
   return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
-    entry, sl, targets, leverage, capitalPct, atrPct, style:'swing', timeframe:'H4', reason, openTime: Date.now() };
+    entry, sl, targets, leverage, capitalPct, atrPct, style:'daytrading', timeframe:'M15 + H1', reason, smcReasons: smc.reasons, openTime: Date.now() };
+}
+
+// ---- 3) SWING TRADING (1–3 hari) — SMC + S/R pada H4 ----
+async function computeSwingSignal(pairSymbol){
+  const k4h = await fetchKlinesCrypto(pairSymbol, '4h', 200);
+  const closes=k4h.map(c=>parseFloat(c[4])), highs=k4h.map(c=>parseFloat(c[2])), lows=k4h.map(c=>parseFloat(c[3])), vols=k4h.map(c=>parseFloat(c[5]));
+  if(closes.length<50) return null;
+  const price = closes.at(-1);
+  const atrVal = atr(highs, lows, closes, 14);
+  if(atrVal==null) return null;
+
+  const smc = computeSMCSRSignal(highs, lows, closes, vols, atrVal);
+  if(smc.bias==='NETRAL') return null;
+  const direction = smc.bias==='BUY' ? 'LONG' : 'SHORT';
+
+  const confidence = Math.max(40, smc.confidence);
+  const atrPct = atrVal/price*100;
+  const dir = direction==='LONG' ? 1 : -1;
+  const entry = price;
+  // SL sits beyond the nearest SMC structural anchor (Order Block / S-R / swing point);
+  // falls back to a wider ATR multiple (swing holds longer, needs more breathing room).
+  let sl = smc.slAnchor!=null ? smc.slAnchor - dir*0.3*atrVal : entry - dir*1.5*atrVal;
+  if(dir>0 && sl>=entry) sl = entry - 1.5*atrVal; if(dir<0 && sl<=entry) sl = entry + 1.5*atrVal;
+  const targets = [1.5,2.8,4.5,7].map(m=> entry + dir*m*atrVal);
+  let leverage; if(atrPct<1.5) leverage=5; else if(atrPct<3) leverage=3; else leverage=2;
+  const capitalPct = confidence>=80 ? 3 : confidence>=65 ? 2 : 1;
+  const reason = `${smc.reasons.map(r=>r.text).join(' · ')} · ATR H4 ${atrPct.toFixed(2)}% · Confidence ${confidence}%`;
+
+  return { symbol: pairSymbol.replace('USDT',''), pair: pairSymbol, direction, confidence,
+    entry, sl, targets, leverage, capitalPct, atrPct, style:'swing', timeframe:'H4', reason, smcReasons: smc.reasons, openTime: Date.now() };
 }
 
 async function computeStyleSignal(pairSymbol, style){
@@ -3553,7 +3448,6 @@ const PAGE_LOADERS = {
   'futures-signal': ()=>switchSignalScanner('futures'),
   'spot-signal': ()=>switchSignalScanner('spot'),
   journal: ()=>renderJournalPage(),
-  orderflow: ()=>initOrderFlow(),
   livechart: ()=>loadLiveChartPro(),
   heatmap: ()=>loadHeatmap(),
   screener: ()=>loadScreener(),
@@ -3614,7 +3508,14 @@ const LIQ_HEATMAP_LEVERAGE_TIERS = [
   {lev:5, weight:0.12}, {lev:10, weight:0.22}, {lev:20, weight:0.26}, {lev:50, weight:0.24}, {lev:100, weight:0.16}
 ];
 async function loadHeatmap(){
-  const pair = currentPair || 'BTCUSDT';
+  const pairSelect = document.getElementById('liqHmPair');
+  // Populate the pair dropdown once (from the full PAIRS list) so switching pairs on
+  // this page doesn't require navigating back to the sidebar/Trading page.
+  if(pairSelect && !pairSelect.options.length && PAIRS.length){
+    pairSelect.innerHTML = PAIRS.map(c=>`<option value="${c.pair}">${c.symbol}/USDT</option>`).join('');
+    pairSelect.value = currentPair;
+  }
+  const pair = pairSelect?.value || currentPair || 'BTCUSDT';
   document.getElementById('liqHmPairLabel').textContent = pair;
   const tfLabel = document.getElementById('liqHmTf')?.value || 'D1';
   const svg = document.getElementById('liqHeatmapSvg');
@@ -3904,156 +3805,50 @@ function entrySma(values, period, idx){
   let sum=0; for(let i=idx-period+1;i<=idx;i++) sum+=values[i];
   return sum/period;
 }
-function entryFindSwings(rows, window=3){
-  const highs=[], lows=[];
-  for(let i=window;i<rows.length-window;i++){
-    const sliceH=rows.slice(i-window,i+window+1).map(r=>r.high);
-    const sliceL=rows.slice(i-window,i+window+1).map(r=>r.low);
-    if(rows[i].high===Math.max(...sliceH)) highs.push({index:i, price:rows[i].high});
-    if(rows[i].low===Math.min(...sliceL)) lows.push({index:i, price:rows[i].low});
-  }
-  return {highs, lows};
-}
-function entryClusterLevels(points, currentPrice, tolerancePct=0.02){
-  const sorted=[...points].sort((a,b)=>a.price-b.price);
-  const clusters=[];
-  for(const p of sorted){
-    const last=clusters[clusters.length-1];
-    if(last && Math.abs(p.price-last.avg)/last.avg<=tolerancePct){
-      last.items.push(p);
-      last.avg=last.items.reduce((s,x)=>s+x.price,0)/last.items.length;
-      last.lastIndex=Math.max(last.lastIndex,p.index);
-    } else {
-      clusters.push({avg:p.price, items:[p], lastIndex:p.index});
-    }
-  }
-  return clusters.map(c=>({
-    level:c.avg, touches:c.items.length, lastIndex:c.lastIndex,
-    side: c.avg>=currentPrice ? "resistance" : "support"
-  })).sort((a,b)=> b.touches-a.touches || b.lastIndex-a.lastIndex);
-}
-function entryDetectSRPatterns(rows, highs, lows, currentPrice, resistance, support){
-  const reasons=[]; let score=0; const tol=0.025;
-  const recentHighs=highs.slice(-6), recentLows=lows.slice(-6);
-
-  for(let i=0;i<recentHighs.length-1;i++){
-    const h1=recentHighs[i], h2=recentHighs[i+1];
-    if(Math.abs(h1.price-h2.price)/h1.price<=tol){
-      const between=lows.filter(l=>l.index>h1.index && l.index<h2.index);
-      if(between.length){
-        const neckline=Math.min(...between.map(l=>l.price));
-        if(currentPrice<neckline){ score-=2; reasons.push({type:"bearish",weight:2,text:"Terdeteksi pola Double Top dan neckline sudah ditembus ke bawah — indikasi pembalikan turun."});}
-        else { score-=0.7; reasons.push({type:"bearish",weight:0.7,text:"Terbentuk dua puncak sejajar (Double Top), waspadai pembalikan jika neckline tertembus."});}
-      }
-    }
-  }
-  for(let i=0;i<recentLows.length-1;i++){
-    const l1=recentLows[i], l2=recentLows[i+1];
-    if(Math.abs(l1.price-l2.price)/l1.price<=tol){
-      const between=highs.filter(h=>h.index>l1.index && h.index<l2.index);
-      if(between.length){
-        const neckline=Math.max(...between.map(h=>h.price));
-        if(currentPrice>neckline){ score+=2; reasons.push({type:"bullish",weight:2,text:"Terdeteksi pola Double Bottom dan neckline sudah ditembus ke atas — indikasi pembalikan naik."});}
-        else { score+=0.7; reasons.push({type:"bullish",weight:0.7,text:"Terbentuk dua lembah sejajar (Double Bottom), potensi pembalikan naik jika neckline tertembus."});}
-      }
-    }
-  }
-  if(recentHighs.length>=3){
-    const [h1,h2,h3]=recentHighs.slice(-3);
-    if(h2.price>h1.price && h2.price>h3.price && Math.abs(h1.price-h3.price)/h1.price<=0.04){
-      const necklineLows=lows.filter(l=>l.index>h1.index && l.index<h3.index);
-      const neckline=necklineLows.length ? Math.min(...necklineLows.map(l=>l.price)) : null;
-      if(neckline && currentPrice<neckline){ score-=2.2; reasons.push({type:"bearish",weight:2.2,text:"Pola Head & Shoulders lengkap dan neckline sudah pecah — sinyal bearish kuat."});}
-      else { score-=0.8; reasons.push({type:"bearish",weight:0.8,text:"Terbentuk pola menyerupai Head & Shoulders, perhatikan area neckline."});}
-    }
-  }
-  if(recentLows.length>=3){
-    const [l1,l2,l3]=recentLows.slice(-3);
-    if(l2.price<l1.price && l2.price<l3.price && Math.abs(l1.price-l3.price)/l1.price<=0.04){
-      const necklineHighs=highs.filter(h=>h.index>l1.index && h.index<l3.index);
-      const neckline=necklineHighs.length ? Math.max(...necklineHighs.map(h=>h.price)) : null;
-      if(neckline && currentPrice>neckline){ score+=2.2; reasons.push({type:"bullish",weight:2.2,text:"Pola Inverse Head & Shoulders lengkap dan neckline sudah pecah — sinyal bullish kuat."});}
-      else { score+=0.8; reasons.push({type:"bullish",weight:0.8,text:"Terbentuk pola menyerupai Inverse Head & Shoulders, perhatikan area neckline."});}
-    }
-  }
-  if(recentHighs.length>=3 && recentLows.length>=3){
-    const lastHighs=recentHighs.slice(-3).map(h=>h.price);
-    const lastLows=recentLows.slice(-3).map(l=>l.price);
-    const highsFlat=(Math.max(...lastHighs)-Math.min(...lastHighs))/Math.min(...lastHighs)<=0.02;
-    const lowsRising=lastLows[0]<lastLows[1] && lastLows[1]<lastLows[2];
-    const lowsFlat=(Math.max(...lastLows)-Math.min(...lastLows))/Math.min(...lastLows)<=0.02;
-    const highsFalling=lastHighs[0]>lastHighs[1] && lastHighs[1]>lastHighs[2];
-    if(highsFlat && lowsRising){ score+=1.2; reasons.push({type:"bullish",weight:1.2,text:"Pola Ascending Triangle: resistance mendatar, low semakin tinggi — bias breakout naik."});}
-    if(lowsFlat && highsFalling){ score-=1.2; reasons.push({type:"bearish",weight:1.2,text:"Pola Descending Triangle: support mendatar, high semakin rendah — bias breakdown turun."});}
-  }
-  const lastVol=rows[rows.length-1].volume;
-  const volAvg=entrySma(rows.map(r=>r.volume),20,rows.length-1) || lastVol;
-  const volSpike=lastVol>volAvg*1.3;
-  if(resistance && currentPrice>resistance.level && volSpike){ score+=1.8; reasons.push({type:"bullish",weight:1.8,text:`Harga breakout di atas resistance ${formatPrice(resistance.level)} disertai volume tinggi.`});}
-  if(support && currentPrice<support.level && volSpike){ score-=1.8; reasons.push({type:"bearish",weight:1.8,text:`Harga breakdown di bawah support ${formatPrice(support.level)} disertai volume tinggi.`});}
-
-  return {score, reasons};
-}
 function entryAnalyze(rows){
-  const closes=rows.map(r=>r.close), volumes=rows.map(r=>r.volume), n=rows.length;
-  const last=rows[n-1], prev=rows[n-2];
+  const closes=rows.map(r=>r.close), highs=rows.map(r=>r.high), lows=rows.map(r=>r.low), volumes=rows.map(r=>r.volume), n=rows.length;
+  const last=rows[n-1];
   const sma20=entrySma(closes,20,n-1), sma50=entrySma(closes, Math.min(50,n-1), n-1);
   const volSma20=entrySma(volumes,20,n-1);
-  const {highs,lows}=entryFindSwings(rows,3);
-  const allSwings=[...highs,...lows];
-  const clusters=entryClusterLevels(allSwings,last.close);
-  const supports=clusters.filter(c=>c.side==="support").sort((a,b)=>b.level-a.level);
-  const resistances=clusters.filter(c=>c.side==="resistance").sort((a,b)=>a.level-b.level);
-  const nearestSupport=supports[0]||null, nearestResistance=resistances[0]||null;
-  const nextSupport=supports[1]||nearestSupport, nextResistance=resistances[1]||nearestResistance;
+  const atrVal = atr(highs, lows, closes, 14);
 
-  const reasons=[]; let score=0;
-  if(sma20 && sma50){
-    if(last.close>sma20 && sma20>sma50){ score+=1.5; reasons.push({type:"bullish",weight:1.5,text:"Tren jangka pendek & menengah naik (harga > SMA20 > SMA50)."});}
-    else if(last.close<sma20 && sma20<sma50){ score-=1.5; reasons.push({type:"bearish",weight:1.5,text:"Tren jangka pendek & menengah turun (harga < SMA20 < SMA50)."});}
-    else { reasons.push({type:"netral",weight:0,text:"Tren campuran / sideways — SMA20 dan SMA50 belum searah."}); }
-  }
-  const priceUp=last.close>prev.close;
-  const volSpike=volSma20 && last.volume>volSma20*1.3;
-  const volWeak=volSma20 && last.volume<volSma20*0.7;
-  if(volSpike && priceUp){ score+=1.3; reasons.push({type:"bullish",weight:1.3,text:"Volume di atas rata-rata mengonfirmasi kenaikan harga terakhir."});}
-  else if(volSpike && !priceUp){ score-=1.3; reasons.push({type:"bearish",weight:1.3,text:"Volume di atas rata-rata mengonfirmasi penurunan harga terakhir."});}
-  else if(volWeak){ reasons.push({type:"netral",weight:0,text:"Volume di bawah rata-rata — pergerakan harga saat ini kurang meyakinkan."});}
+  // Unified SMC + S/R engine (same formula used by Futures Signal's Scalping/Day
+  // Trading/Swing branches and Spot Signal) — Market Structure (BOS/CHoCH), Order
+  // Blocks, Fair Value Gaps, Liquidity sweeps, and classic Support & Resistance all
+  // feed into ONE final conclusion instead of a separate chart-pattern detector.
+  const smc = atrVal!=null ? computeSMCSRSignal(highs, lows, closes, volumes, atrVal) : null;
 
-  if(nearestSupport){
-    const dist=(last.close-nearestSupport.level)/nearestSupport.level;
-    if(dist>=0 && dist<=0.02 && last.close>prev.close){ score+=1; reasons.push({type:"bullish",weight:1,text:`Harga memantul dari area support kuat ${formatPrice(nearestSupport.level)} (disentuh ${nearestSupport.touches}x).`});}
-  }
-  if(nearestResistance){
-    const dist=(nearestResistance.level-last.close)/nearestResistance.level;
-    if(dist>=0 && dist<=0.02 && last.close<prev.close){ score-=1; reasons.push({type:"bearish",weight:1,text:`Harga ditolak di area resistance kuat ${formatPrice(nearestResistance.level)} (disentuh ${nearestResistance.touches}x).`});}
+  const toLvl = l => l ? { level:l.price, touches:l.touches } : null;
+  let nearestSupport=null, nearestResistance=null, nextSupport=null, nextResistance=null;
+  if(smc){
+    nearestSupport = toLvl(smc.sr.nearestSupport);
+    nearestResistance = toLvl(smc.sr.nearestResistance);
+    const supportLevels = smc.sr.supportLevels.filter(l=>l.price<last.close);
+    const resistanceLevels = smc.sr.resistanceLevels.filter(l=>l.price>last.close);
+    nextSupport = toLvl(supportLevels[1]) || nearestSupport;
+    nextResistance = toLvl(resistanceLevels[1]) || nearestResistance;
   }
 
-  const patternResult=entryDetectSRPatterns(rows, highs, lows, last.close, nearestResistance, nearestSupport);
-  score += patternResult.score;
-  reasons.push(...patternResult.reasons);
-
-  const maxScale=8;
-  const clamped=Math.max(-maxScale, Math.min(maxScale, score));
-  const confidence=Math.round((Math.abs(clamped)/maxScale)*100);
-  let signal="TUNGGU";
-  if(score>=1.8) signal="BUY"; else if(score<=-1.8) signal="SELL";
+  const score = smc ? smc.diff : 0;
+  const confidence = smc ? smc.confidence : 0;
+  const signal = !smc ? "TUNGGU" : smc.bias==='BUY' ? "BUY" : smc.bias==='SELL' ? "SELL" : "TUNGGU";
+  const reasons = smc ? smc.reasons : [];
 
   let entryPlan=null;
   if(signal==="BUY"){
-    const sl = nearestSupport ? nearestSupport.level*0.98 : last.close*0.95;
+    const sl = smc.slAnchor!=null ? smc.slAnchor*0.997 : (nearestSupport ? nearestSupport.level*0.98 : last.close*0.95);
     const tp = nextResistance ? nextResistance.level : last.close*1.08;
     entryPlan={entry:last.close, stopLoss:sl, takeProfit:tp,
       rr: (tp>last.close && last.close>sl) ? ((tp-last.close)/(last.close-sl)).toFixed(2) : null};
   } else if(signal==="SELL"){
-    const sl = nearestResistance ? nearestResistance.level*1.02 : last.close*1.05;
+    const sl = smc.slAnchor!=null ? smc.slAnchor*1.003 : (nearestResistance ? nearestResistance.level*1.02 : last.close*1.05);
     const tp = nextSupport ? nextSupport.level : last.close*0.92;
     entryPlan={entry:last.close, stopLoss:sl, takeProfit:tp,
       rr: (sl>last.close && last.close>tp) ? ((last.close-tp)/(sl-last.close)).toFixed(2) : null};
   }
 
   return {last, sma20, sma50, volSma20, nearestSupport, nearestResistance, nextSupport, nextResistance,
-    reasons: reasons.sort((a,b)=>b.weight-a.weight), score, confidence, signal, entryPlan, rows};
+    reasons, score, confidence, signal, entryPlan, rows, smc};
 }
 function entryFormatVol(n){
   if(n>=1000000) return (n/1000000).toFixed(2)+'jt';
@@ -4696,133 +4491,6 @@ function renderJournalInsights(trades){
     insights.push(`✂️ ${(cutEarly.length/losingTrades.length*100).toFixed(0)}% dari trade rugi kamu di-cut jauh di bawah -1R — cek lagi apakah jarak SL kamu sudah cukup lebar untuk noise normal pasar.`);
   }
   el.innerHTML = insights.length ? insights.map(i=>`<div class="jr-insight">${i}</div>`).join('') : '<div class="of-empty">Belum ada pola yang cukup jelas dari data kamu saat ini.</div>';
-}
-
-/* ================= ORDER FLOW: LIQUIDATION FEED + WHALE TRADES =================
-   Both are genuinely live, free data straight from Binance Futures public WebSocket
-   streams — not a paid/modeled heatmap. Liquidation feed: !forceOrder@arr (every forced
-   liquidation on the exchange). Whale trades: {symbol}@aggTrade filtered to large USD
-   notional for the currently selected pair. A simple price-bucket aggregation of the
-   last hour of liquidations approximates a "liquidation heatmap". Both feeds keep a
-   bounded in-memory history so switching the size-tier filter re-filters instantly
-   instead of needing to wait for new events at the new threshold. */
-let liqWS = null, whaleWS = null, orderFlowInited = false;
-let liquidationEvents = []; // {symbol, side, price, qty, usdValue, time} — ALL events ≥ smallest tier
-let whaleTradeEvents = [];  // {symbol, side, price, usdValue, time} — ALL trades ≥ smallest tier
-const ORDER_FLOW_TIERS = { small:5000, medium:25000, large:100000 };
-const ORDER_FLOW_FLOOR_USD = ORDER_FLOW_TIERS.small; // raw WS filter floor, below the smallest selectable tier
-let orderFlowTier = 'medium';
-function currentOrderFlowMinUsd(){ return ORDER_FLOW_TIERS[orderFlowTier]; }
-function setOrderFlowTier(tier){
-  orderFlowTier = tier;
-  document.querySelectorAll('.of-tier-btn').forEach(b=>b.classList.toggle('active', b.dataset.tier===tier));
-  rerenderLiquidationFeed();
-  rerenderWhaleFeed();
-  renderLiquidationHeatmap();
-}
-function initOrderFlow(){
-  if(orderFlowInited) return;
-  orderFlowInited = true;
-  connectLiquidationWS();
-  connectWhaleWS(currentPair);
-  setInterval(renderLiquidationHeatmap, 15000);
-}
-function connectLiquidationWS(){
-  try{
-    liqWS = new WebSocket('wss://fstream.binance.com/ws/!forceOrder@arr');
-    liqWS.onmessage = ev=>{
-      let msg; try{ msg = JSON.parse(ev.data); }catch(e){ return; }
-      const o = msg.o; if(!o) return;
-      const price = parseFloat(o.p), qty = parseFloat(o.q);
-      const usdValue = price*qty;
-      if(usdValue < ORDER_FLOW_FLOOR_USD) return; // below even the smallest tier, skip storing it
-      const event = { symbol:o.s, side:o.S, price, qty, usdValue, time: Date.now() };
-      liquidationEvents.unshift(event);
-      if(liquidationEvents.length>300) liquidationEvents.length=300;
-      if(usdValue>=currentOrderFlowMinUsd()) rerenderLiquidationFeed();
-      if(usdValue>=250000){
-        logActivity?.(o.S==='SELL'?'buy':'sell', `💥 Liquidation ${o.s} ${o.S==='SELL'?'LONG':'SHORT'} senilai $${(usdValue/1000).toFixed(0)}K`);
-      }
-    };
-    liqWS.onclose = ()=>{ liqWS=null; setTimeout(connectLiquidationWS, 4000); };
-    liqWS.onerror = ()=>{ try{ liqWS?.close(); }catch(e){} };
-  }catch(e){ console.error('Liquidation WS gagal', e); }
-}
-function liqRowHtml(ev){
-  const wasLong = ev.side==='SELL'; // a liquidated SELL order means a LONG got force-closed
-  const hh = new Date(ev.time).toLocaleTimeString('id-ID',{hour12:false});
-  return `<div class="of-item ${wasLong?'short':'long'}"><span class="of-sym">${ev.symbol}</span><span class="of-side ${wasLong?'short':'long'}">${wasLong?'LONG LIQ':'SHORT LIQ'}</span><span class="of-usd">$${(ev.usdValue/1000).toFixed(1)}K</span><span class="of-time">${hh}</span></div>`;
-}
-function rerenderLiquidationFeed(){
-  const list = document.getElementById('liqFeedList');
-  if(!list) return;
-  const min = currentOrderFlowMinUsd();
-  const filtered = liquidationEvents.filter(e=>e.usdValue>=min).slice(0,60);
-  const countEl = document.getElementById('liqFeedCount');
-  if(countEl) countEl.textContent = filtered.length;
-  list.innerHTML = filtered.length ? filtered.map(liqRowHtml).join('')
-    : '<div class="of-empty">Belum ada event likuidasi ≥ ambang batas ini di semua pair. Coba turunkan filter ukuran, atau tunggu sebentar.</div>';
-}
-function connectWhaleWS(symbol){
-  try{ whaleWS?.close(); }catch(e){}
-  whaleTradeEvents = []; // trades are pair-specific — clear history when switching pairs
-  rerenderWhaleFeed();
-  const label = document.getElementById('whalePairLabel'); if(label) label.textContent = symbol;
-  const heatLabel = document.getElementById('liqHeatmapPair'); if(heatLabel) heatLabel.textContent = symbol;
-  try{
-    whaleWS = new WebSocket(`wss://fstream.binance.com/ws/${symbol.toLowerCase()}@aggTrade`);
-    whaleWS.onmessage = ev=>{
-      let tr; try{ tr = JSON.parse(ev.data); }catch(e){ return; }
-      const price = parseFloat(tr.p), qty = parseFloat(tr.q);
-      const usdValue = price*qty;
-      if(usdValue < ORDER_FLOW_FLOOR_USD) return;
-      const event = { symbol, side: tr.m ? 'SELL':'BUY', price, usdValue, time: tr.T||Date.now() };
-      whaleTradeEvents.unshift(event);
-      if(whaleTradeEvents.length>300) whaleTradeEvents.length=300;
-      if(usdValue>=currentOrderFlowMinUsd()) rerenderWhaleFeed();
-    };
-    whaleWS.onclose = ()=>{ whaleWS=null; };
-  }catch(e){ console.error('Whale WS gagal', e); }
-}
-function whaleRowHtml(ev){
-  const isBuy = ev.side==='BUY';
-  const hh = new Date(ev.time).toLocaleTimeString('id-ID',{hour12:false});
-  return `<div class="of-item ${isBuy?'long':'short'}"><span class="of-sym">${ev.symbol}</span><span class="of-side ${isBuy?'long':'short'}">${isBuy?'BUY':'SELL'}</span><span class="of-usd">$${(ev.usdValue/1000).toFixed(0)}K @ ${formatPrice(ev.price)}</span><span class="of-time">${hh}</span></div>`;
-}
-function rerenderWhaleFeed(){
-  const list = document.getElementById('whaleFeedList');
-  if(!list) return;
-  const min = currentOrderFlowMinUsd();
-  const filtered = whaleTradeEvents.filter(e=>e.usdValue>=min).slice(0,60);
-  list.innerHTML = filtered.length ? filtered.map(whaleRowHtml).join('')
-    : `<div class="of-empty">Belum ada transaksi ≥ ambang batas ini untuk ${currentPair}. Coba turunkan filter ukuran, atau tunggu sebentar.</div>`;
-}
-// Aggregates the last hour of liquidation events (across ALL pairs seen so far) into
-// price buckets for whichever pair is currently selected, as a lightweight stand-in
-// for a full liquidation heatmap — built from real events only, no synthetic data.
-function renderLiquidationHeatmap(){
-  const body = document.getElementById('liqHeatmapBody');
-  if(!body) return;
-  const cutoff = Date.now() - 60*60000;
-  const min = currentOrderFlowMinUsd();
-  const relevant = liquidationEvents.filter(e=>e.symbol===currentPair && e.time>=cutoff && e.usdValue>=min);
-  if(relevant.length < 3){ body.innerHTML = '<div class="of-empty">Belum cukup data likuidasi untuk '+currentPair+' dalam 1 jam terakhir pada filter ini — coba turunkan filter ukuran, atau biarkan halaman ini terbuka.</div>'; return; }
-  const prices = relevant.map(e=>e.price);
-  const minP = Math.min(...prices), maxP = Math.max(...prices);
-  const bucketCount = 10;
-  const bucketSize = (maxP-minP)/bucketCount || 1;
-  const buckets = Array.from({length:bucketCount}, (_,i)=>({ from:minP+i*bucketSize, to:minP+(i+1)*bucketSize, usd:0 }));
-  relevant.forEach(e=>{
-    let idx = Math.floor((e.price-minP)/bucketSize);
-    if(idx>=bucketCount) idx=bucketCount-1; if(idx<0) idx=0;
-    buckets[idx].usd += e.usdValue;
-  });
-  const maxUsd = Math.max(...buckets.map(b=>b.usd), 1);
-  body.innerHTML = buckets.slice().reverse().map(b=>{
-    const pct = (b.usd/maxUsd*100).toFixed(0);
-    const color = b.usd>maxUsd*0.6 ? 'var(--sell)' : 'var(--accent)';
-    return `<div class="of-heatmap-bar"><span class="ohb-price">${formatPrice(b.from)}</span><div class="ohb-track"><div class="ohb-fill" style="width:${pct}%; background:${color};"></div></div><span class="mono" style="width:60px; text-align:right; font-size:11px;">$${(b.usd/1000).toFixed(0)}K</span></div>`;
-  }).join('');
 }
 
 /* ================= INIT ================= */
